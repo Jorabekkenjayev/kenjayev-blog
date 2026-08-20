@@ -217,7 +217,7 @@ def check_rate_limit(user_id):
 
 # --- UI BUILDERS ---
 def get_main_menu_keyboard():
-    """Generates the 2 core buttons required by specification."""
+    """Generates the 3 core buttons required by specification."""
     return {
         "inline_keyboard": [
             [
@@ -230,6 +230,12 @@ def get_main_menu_keyboard():
                 {
                     "text": "🔞 18+ reklamani o'chirish",
                     "callback_data": "anti_spam_info"
+                }
+            ],
+            [
+                {
+                    "text": "💬 Jo’rabekka yozish",
+                    "callback_data": "write_to_admin"
                 }
             ]
         ]
@@ -380,6 +386,17 @@ class BotEngine:
                 # Mark pending verifications resolved so user's message is preserved
                 bot_db.resolve_pending_verification(group_id, user_id)
                 return
+
+        # 3. Jo'rabekka yozish button handler
+        if data == "write_to_admin":
+            bot_db.set_user_state(user_id, "WRITING_TO_ADMIN")
+            self.client.answer_callback_query(cq_id)
+            prompt_text = (
+                "✍️ <b>Jo’rabekka xabaringizni yozing.</b>\n\n"
+                "Xabaringiz to’g’ridan-to’g’ri unga yuboriladi."
+            )
+            self.client.send_message(chat_id, prompt_text)
+            return
 
     def process_message(self, message):
         chat = message.get("chat", {})

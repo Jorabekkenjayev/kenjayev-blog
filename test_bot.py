@@ -128,9 +128,12 @@ class TestKenjayevTelegramBot(unittest.TestCase):
 
         welcome_msg = [m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Kenjayev Jo’rabek botiga xush kelibsiz" in m["text"]][0]
         buttons = welcome_msg["reply_markup"]["inline_keyboard"]
+        self.assertEqual(len(buttons), 3)
         self.assertEqual(buttons[0][0]["text"], "🌐 Saytga kirish")
         self.assertEqual(buttons[1][0]["text"], "🔞 18+ reklamani o'chirish")
         self.assertEqual(buttons[1][0]["callback_data"], "anti_spam_info")
+        self.assertEqual(buttons[2][0]["text"], "💬 Jo’rabekka yozish")
+        self.assertEqual(buttons[2][0]["callback_data"], "write_to_admin")
 
         # 3. User clicks "🔞 18+ reklamani o'chirish"
         self.bot_engine.handle_update({
@@ -147,6 +150,19 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         self.assertIn("Guruhni 18+ spam va reklamalardan tozalash", info_msg["text"])
         self.assertIn("Guruhga admin sifatida qo'shish", info_msg["reply_markup"]["inline_keyboard"][0][0]["text"])
         self.assertIn("startgroup=true&admin=delete_messages+restrict_members", info_msg["reply_markup"]["inline_keyboard"][0][0]["url"])
+
+        # 4. User clicks "💬 Jo’rabekka yozish"
+        self.bot_engine.handle_update({
+            "update_id": 4,
+            "callback_query": {
+                "id": "cq_2",
+                "from": {"id": user_id},
+                "data": "write_to_admin",
+                "message": {"chat": {"id": chat_id}, "message_id": welcome_msg["message_id"]}
+            }
+        })
+        prompt_admin_msg = self.mock_client.sent_messages[-1]
+        self.assertIn("Jo’rabekka xabaringizni yozing", prompt_admin_msg["text"])
 
     def test_group_anti_spam_verification_flow(self):
         group_id = -100123456789
