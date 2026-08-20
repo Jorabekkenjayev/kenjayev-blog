@@ -271,7 +271,7 @@ class BotEngine:
                         bot_db.mark_verification_expired(v_id)
                 except Exception as e:
                     logger.debug(f"Expiration worker xatosi: {e}")
-                time.sleep(2)
+                time.sleep(1)
 
         self._expiration_thread = threading.Thread(target=worker, daemon=True, name="CaptchaExpirationWorker")
         self._expiration_thread.start()
@@ -815,8 +815,48 @@ class BotEngine:
 class GuardBotEngine:
     def __init__(self, client=None):
         self.client = client or TelegramClient(GUARD_BOT_TOKEN)
+        self._expiration_thread = None
         self._running = True
         self.bot_username = "Botlarni_tekshiruvchi_Bot"
+        self.start_expiration_worker()
+
+    def start_expiration_worker(self):
+        """Dedicated expiration worker for Guard Bot to delete unverified messages promptly."""
+        if self._expiration_thread and self._expiration_thread.is_alive():
+            return
+
+        def worker():
+            while self._running:
+                try:
+                    now_ts = time.time()
+                    expired_items = bot_db.get_expired_verifications(now_ts)
+                    for item in expired_items:
+                        v_id = item["id"]
+                        group_id = item["group_id"]
+                        user_msg_id = item["user_message_id"]
+                        bot_msg_id = item["bot_message_id"]
+
+                        # Delete unverified user's message from group
+                        try:
+                            self.client.delete_message(group_id, user_msg_id)
+                        except Exception as e:
+                            logger.error(f"Guard Bot: User message delete xatosi ({group_id}/{user_msg_id}): {e}")
+
+                        # Delete bot's warning message from group
+                        try:
+                            self.client.delete_message(group_id, bot_msg_id)
+                        except Exception as e:
+                            logger.error(f"Guard Bot: Bot warning delete xatosi ({group_id}/{bot_msg_id}): {e}")
+
+                        # Mark expired
+                        bot_db.mark_verification_expired(v_id)
+                        logger.info(f"🗑 [GUARD ANTI-SPAM] Guruhdan ({group_id}) tasdiqlanmagan xabar o'chirildi (ID: {user_msg_id})")
+                except Exception as e:
+                    logger.debug(f"Guard Expiration worker xatosi: {e}")
+                time.sleep(1)
+
+        self._expiration_thread = threading.Thread(target=worker, daemon=True, name="GuardCaptchaExpirationWorker")
+        self._expiration_thread.start()
 
     def handle_update(self, update):
         try:
