@@ -235,6 +235,31 @@ def get_welcome_text():
     )
 
 
+def schedule_message_deletion(client, group_id, user_id, user_msg_id, bot_msg_id, timeout_sec):
+    """Guaranteed instant timer that deletes unverified message precisely after timeout_sec."""
+    def timer_task():
+        if bot_db.is_user_verified(user_id):
+            return
+        
+        # 1. Delete user message
+        try:
+            client.delete_message(group_id, user_msg_id)
+            logger.info(f"🗑 [EXACT TIMER] Guruhdan ({group_id}) xabar o'chirildi (MsgID: {user_msg_id})")
+        except Exception as e:
+            logger.error(f"❌ User message delete xatosi ({group_id}/{user_msg_id}): {e}")
+
+        # 2. Delete bot warning prompt
+        try:
+            client.delete_message(group_id, bot_msg_id)
+            logger.info(f"🗑 [EXACT TIMER] Guruhdan ({group_id}) bot ogohlantirishi o'chirildi (MsgID: {bot_msg_id})")
+        except Exception as e:
+            logger.error(f"❌ Bot prompt delete xatosi ({group_id}/{bot_msg_id}): {e}")
+
+    t = threading.Timer(max(1.0, float(timeout_sec)), timer_task)
+    t.daemon = True
+    t.start()
+
+
 # --- MAIN BOT ENGINE (Kenjayev Jo'rabek Bot) ---
 class BotEngine:
     def __init__(self, client=None):
@@ -429,6 +454,7 @@ class BotEngine:
                 bot_prompt_id = prompt_res["message_id"]
                 expires_at = time.time() + timeout_sec
                 bot_db.add_pending_verification(chat_id, user_id, message_id, bot_prompt_id, expires_at)
+                schedule_message_deletion(self.client, chat_id, user_id, message_id, bot_prompt_id, timeout_sec)
             return
 
         # PRIVATE CHAT (USER / ADMIN) PROCESSING
@@ -967,6 +993,7 @@ class GuardBotEngine:
                 bot_prompt_id = prompt_res["message_id"]
                 expires_at = time.time() + timeout_sec
                 bot_db.add_pending_verification(chat_id, user_id, message_id, bot_prompt_id, expires_at)
+                schedule_message_deletion(self.client, chat_id, user_id, message_id, bot_prompt_id, timeout_sec)
             return
 
         # PRIVATE CHAT HANDLING
