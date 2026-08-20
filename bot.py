@@ -64,6 +64,7 @@ class TelegramClient:
     def __init__(self, token=None):
         self.token = token or BOT_TOKEN
         self.base_url = f"https://api.telegram.org/bot{self.token}"
+        self.bot_username = "KenjayevBlogBot"
 
     def _request(self, method, data=None):
         if not self.token:
@@ -92,7 +93,10 @@ class TelegramClient:
             return None
 
     def get_me(self):
-        return self._request("getMe")
+        res = self._request("getMe")
+        if res and "username" in res:
+            self.bot_username = res["username"]
+        return res
 
     def set_my_commands(self, commands):
         return self._request("setMyCommands", {"commands": commands})
@@ -109,6 +113,13 @@ class TelegramClient:
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
         return self._request("sendMessage", payload)
+
+    def delete_message(self, chat_id, message_id):
+        payload = {
+            "chat_id": chat_id,
+            "message_id": message_id
+        }
+        return self._request("deleteMessage", payload)
 
     def set_message_reaction(self, chat_id, message_id, emoji="❤️"):
         """Telegram Bot API 7.0+ setMessageReaction"""
@@ -148,7 +159,7 @@ class TelegramClient:
         return self._request("answerCallbackQuery", payload)
 
     def get_updates(self, offset=None, timeout=30):
-        payload = {"timeout": timeout, "allowed_updates": ["message", "callback_query"]}
+        payload = {"timeout": timeout, "allowed_updates": ["message", "callback_query", "my_chat_member"]}
         if offset is not None:
             payload["offset"] = offset
         return self._request("getUpdates", payload)
@@ -180,13 +191,11 @@ def validate_full_name(text):
         return None
 
     for w in words:
-        # Each part must have at least 2 characters and consist of letters/apostrophes/hyphens
         if len(w) < 2:
             return None
         if not re.match(r"^[a-zA-Zа-яА-ЯёЁoʻo'gʻg'OʻO'GʻG'\-']+$", w, re.UNICODE):
             return None
 
-    # Return neatly capitalized name
     formatted = " ".join([w.capitalize() for w in words])
     return formatted
 
@@ -199,7 +208,6 @@ def check_rate_limit(user_id):
             _rate_limits[user_id] = [now]
             return True
         
-        # Prune old timestamps
         _rate_limits[user_id] = [t for t in _rate_limits[user_id] if now - t < RATE_LIMIT_WINDOW]
         if len(_rate_limits[user_id]) >= RATE_LIMIT_MAX_COUNT:
             return False
@@ -220,8 +228,8 @@ def get_main_menu_keyboard():
             ],
             [
                 {
-                    "text": "💬 Jo’rabekka yozish",
-                    "callback_data": "write_to_admin"
+                    "text": "🔞 18+ reklamani o'chirish",
+                    "callback_data": "anti_spam_info"
                 }
             ]
         ]
@@ -239,6 +247,46 @@ def get_welcome_text():
 class BotEngine:
     def __init__(self, client=None):
         self.client = client or TelegramClient()
+        self._expiration_thread = None
+        self._running = True
+        self.start_expiration_worker()
+
+    def start_expiration_worker(self):
+        """Background worker that continuously deletes expired unverified messages from groups."""
+        if self._expiration_thread and self._expiration_thread.is_alive():
+            return
+
+        def worker():
+            while self._running:
+                try:
+                    now_ts = time.time()
+                    expired_items = bot_db.get_expired_verifications(now_ts)
+                    for item in expired_items:
+                        v_id = item["id"]
+                        group_id = item["group_id"]
+                        user_msg_id = item["user_message_id"]
+                        bot_msg_id = item["bot_message_id"]
+
+                        # Delete unverified user's message
+                        try:
+                            self.client.delete_message(group_id, user_msg_id)
+                        except Exception as e:
+                            logger.debug(f"User message delete xatosi: {e}")
+
+                        # Delete bot's warning message
+                        try:
+                            self.client.delete_message(group_id, bot_msg_id)
+                        except Exception as e:
+                            logger.debug(f"Bot warning delete xatosi: {e}")
+
+                        # Mark expired
+                        bot_db.mark_verification_expired(v_id)
+                except Exception as e:
+                    logger.debug(f"Expiration worker xatosi: {e}")
+                time.sleep(2)
+
+        self._expiration_thread = threading.Thread(target=worker, daemon=True, name="CaptchaExpirationWorker")
+        self._expiration_thread.start()
 
     def handle_update(self, update):
         try:
@@ -246,40 +294,158 @@ class BotEngine:
                 self.process_message(update["message"])
             elif "callback_query" in update:
                 self.process_callback_query(update["callback_query"])
+            elif "my_chat_member" in update:
+                self.process_my_chat_member(update["my_chat_member"])
         except Exception as e:
             logger.error(f"Update qayta ishlashda kutilmagan xatolik: {e}", exc_info=True)
+
+    def process_my_chat_member(self, mcm):
+        """Handles bot being added/removed from groups."""
+        chat = mcm.get("chat", {})
+        chat_id = chat.get("id")
+        chat_title = chat.get("title", "")
+        chat_username = chat.get("username")
+        new_status = mcm.get("new_chat_member", {}).get("status")
+
+        if chat_id and chat.get("type") in ["group", "supergroup"]:
+            is_active = 1 if new_status in ["administrator", "member"] else 0
+            bot_db.upsert_group(chat_id, chat_title, chat_username, is_active=is_active)
+            logger.info(f"Guruh statusi yangilandi: {chat_title} ({chat_id}) -> {new_status}")
 
     def process_callback_query(self, cq):
         cq_id = cq.get("id")
         user_data = cq.get("from", {})
         user_id = user_data.get("id")
-        data = cq.get("data")
-        chat_id = cq.get("message", {}).get("chat", {}).get("id", user_id)
+        data = cq.get("data", "")
+        message = cq.get("message", {})
+        chat_id = message.get("chat", {}).get("id", user_id)
+        bot_msg_id = message.get("message_id")
 
         if not user_id:
             return
 
         bot_db.touch_user_activity(user_id)
 
-        if data == "write_to_admin":
-            bot_db.set_user_state(user_id, "WRITING_TO_ADMIN")
+        # 1. Anti-spam / 18+ reklamani o'chirish info button
+        if data == "anti_spam_info":
             self.client.answer_callback_query(cq_id)
-            prompt_text = (
-                "✍️ <b>Jo’rabekka xabaringizni yozing.</b>\n\n"
-                "Xabaringiz to’g’ridan-to’g’ri unga yuboriladi."
+            timeout = bot_db.get_setting("captcha_timeout", "60")
+            bot_uname = self.client.bot_username or "KenjayevBlogBot"
+            
+            info_text = (
+                "🛡 <b>Guruhni 18+ spam va reklamalardan tozalash:</b>\n\n"
+                "Botni guruhingizga qo'shib, <b>admin</b> huquqini bersangiz:\n"
+                f"• Guruhga yozgan har bir yangi a'zo bot emasligini tasdiqlashi kerak bo'ladi.\n"
+                f"• Agar <b>{timeout} soniya</b> ichida tasdiqlamasa, uning xabari avtomatik o'chiriladi!\n"
+                "• Bir marta tasdiqlagan odamdan keyingi safar qayta so'ralmaydi.\n\n"
+                "👇 Pastdagi tugma orqali botni guruhingizga admin sifatida qo'shing:"
             )
-            self.client.send_message(chat_id, prompt_text)
+            
+            add_group_kb = {
+                "inline_keyboard": [
+                    [
+                        {
+                            "text": "➕ Guruhga admin sifatida qo'shish",
+                            "url": f"https://t.me/{bot_uname}?startgroup=true&admin=delete_messages+restrict_members"
+                        }
+                    ]
+                ]
+            }
+            self.client.send_message(chat_id, info_text, reply_markup=add_group_kb)
+            return
+
+        # 2. Captcha: "Men bot emasman" Verification
+        if data.startswith("verify_human:"):
+            parts = data.split(":")
+            if len(parts) >= 4:
+                target_user_id = int(parts[1])
+                user_msg_id = int(parts[2])
+                group_id = int(parts[3])
+
+                # Check if clicker is the target user
+                if user_id != target_user_id:
+                    self.client.answer_callback_query(cq_id, text="⚠️ Bu tugma siz uchun emas!", show_alert=True)
+                    return
+
+                # Mark verified in DB
+                bot_db.verify_user(user_id)
+                self.client.answer_callback_query(cq_id, text="✅ Rahmat! Siz bot emasligingiz tasdiqlandi.")
+
+                # Delete bot prompt message immediately
+                try:
+                    self.client.delete_message(group_id, bot_msg_id)
+                except Exception as e:
+                    logger.debug(f"Bot prompt delete xatosi: {e}")
+
+                # Mark pending verifications resolved so user's message is preserved
+                bot_db.resolve_pending_verification(group_id, user_id)
+                return
 
     def process_message(self, message):
         chat = message.get("chat", {})
         chat_id = chat.get("id")
+        chat_type = chat.get("type", "private")
         from_user = message.get("from", {})
         user_id = from_user.get("id")
         message_id = message.get("message_id")
         text = message.get("text", "")
         reply_to_msg = message.get("reply_to_message")
 
-        if not user_id or not chat_id:
+        if not chat_id:
+            return
+
+        # ==========================================
+        # GROUP / SUPERGROUP MESSAGE PROCESSING
+        # ==========================================
+        if chat_type in ["group", "supergroup"]:
+            chat_title = chat.get("title", "Group")
+            chat_username = chat.get("username")
+            bot_db.upsert_group(chat_id, chat_title, chat_username, is_active=1)
+
+            # Skip service messages or messages from bots/channels
+            if not user_id or from_user.get("is_bot") or message.get("sender_chat"):
+                return
+
+            # Skip if user is already verified
+            if bot_db.is_user_verified(user_id):
+                return
+
+            # User is NOT verified -> Prompt Captcha & queue for deletion if timeout
+            timeout_sec = int(bot_db.get_setting("captcha_timeout", "60"))
+            user_name = html.escape(from_user.get("first_name") or "Foydalanuvchi", quote=False)
+
+            warning_text = (
+                f"⚠️ <a href=\"tg://user?id={user_id}\">{user_name}</a>, guruhda spam va 18+ reklamalarni oldini olish uchun "
+                f"pastdagi tugmani bosib <b>bot emasligingizni tasdiqlang</b>, aks holda xabaringiz <b>{timeout_sec} soniyada</b> o'chiriladi!"
+            )
+            captcha_kb = {
+                "inline_keyboard": [
+                    [
+                        {
+                            "text": "✅ Men bot emasman",
+                            "callback_data": f"verify_human:{user_id}:{message_id}:{chat_id}"
+                        }
+                    ]
+                ]
+            }
+
+            prompt_res = self.client.send_message(
+                chat_id,
+                warning_text,
+                reply_markup=captcha_kb,
+                reply_to_message_id=message_id
+            )
+
+            if prompt_res and "message_id" in prompt_res:
+                bot_prompt_id = prompt_res["message_id"]
+                expires_at = time.time() + timeout_sec
+                bot_db.add_pending_verification(chat_id, user_id, message_id, bot_prompt_id, expires_at)
+            return
+
+        # ==========================================
+        # PRIVATE CHAT (USER / ADMIN) PROCESSING
+        # ==========================================
+        if not user_id:
             return
 
         # Rate Limit Check
@@ -295,7 +461,6 @@ class BotEngine:
         last_name = from_user.get("last_name", "")
 
         # --- ADMIN REPLY DISPATCHER ---
-        # If Admin replies to a message sent by the bot in admin chat
         if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and reply_to_msg:
             self.handle_admin_reply(message)
             return
@@ -355,7 +520,6 @@ class BotEngine:
 
         valid_name = validate_full_name(text)
         if not valid_name:
-            # Invalid name response
             error_text = (
                 "Iltimos, ism va familiyangizni to’liq kiriting.\n\n"
                 "<i>Masalan: Ali Valiyev</i>"
@@ -369,8 +533,9 @@ class BotEngine:
         except Exception as e:
             logger.debug(f"Reaction qo'yishda ogohlantirish: {e}")
 
-        # 2. Save user to database as REGISTERED
+        # 2. Save user to database as REGISTERED & VERIFIED
         bot_db.set_user_full_name(user_id, valid_name)
+        bot_db.verify_user(user_id)
         bot_db.log_action(user_id, "REGISTERED", f"Name: {valid_name}")
 
         # 3. Notify Admin about the new user profile
@@ -394,7 +559,6 @@ class BotEngine:
         last_name_val = html.escape(user.get("last_name") or "")
         joined_time = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        # Telegram Profile Link
         display_profile = f"{first_name_val} {last_name_val}".strip() or f"User {user_id}"
         profile_link = f'<a href="tg://user?id={user_id}">{display_profile}</a>'
 
@@ -441,7 +605,6 @@ class BotEngine:
             admin_msg_res = self.client.send_message(ADMIN_CHAT_ID, full_admin_text)
             snippet = text_content[:100]
         else:
-            # Media message (Photo, Video, Voice, Audio, Document, etc.)
             caption = f"{admin_header}\n💬 <b>Izoh:</b>\n{html.escape(caption_content, quote=False)}" if caption_content else admin_header
             admin_msg_res = self.client.copy_message(
                 ADMIN_CHAT_ID,
@@ -484,10 +647,10 @@ class BotEngine:
         reply_header = "✍️ <b>Jo’rabekdan javob:</b>\n\n"
         res = None
         if admin_text:
-            user_msg = f"{reply_header}{html.escape(admin_text)}"
+            user_msg = f"{reply_header}{html.escape(admin_text, quote=False)}"
             res = self.client.send_message(target_user_id, user_msg)
         else:
-            caption = f"{reply_header}{html.escape(caption_text)}" if caption_text else reply_header
+            caption = f"{reply_header}{html.escape(caption_text, quote=False)}" if caption_text else reply_header
             res = self.client.copy_message(target_user_id, ADMIN_CHAT_ID, message["message_id"], caption=caption)
 
         if res:
@@ -508,13 +671,16 @@ class BotEngine:
         chat_id = message["chat"]["id"]
 
         if text == "/start":
+            timeout = bot_db.get_setting("captcha_timeout", "60")
             welcome_admin = (
                 "👑 <b>Assalomu alaykum, Jo’rabek!</b>\n\n"
                 "Siz botning boshqaruv panelidasiz.\n\n"
                 "<b>Mavjud buyruqlar:</b>\n"
-                "📊 /stats — Bot statistikasi\n"
+                "📊 /stats — Bot va guruhlar statistikasi\n"
                 "👥 /users — Oxirgi foydalanuvchilar\n"
-                "📢 /broadcast [matn] — Barcha foydalanuvchilarga xabar tarqatish\n\n"
+                "🛡 /groups — Ulangan guruhlar ro'yxati\n"
+                f"⏱ /set_timeout [soniya] — Guruhda tekshirish vaqtini belgilash (Hozir: {timeout}s)\n"
+                "📢 /broadcast [matn] — Barcha userlar va guruhlarga xabar tarqatish\n\n"
                 "<i>Foydalanuvchilar yozgan xabarlarga Telegram 'Reply' orqali bevosita javob bera olasiz.</i>"
             )
             self.client.send_message(chat_id, welcome_admin)
@@ -522,14 +688,47 @@ class BotEngine:
 
         elif text == "/stats":
             stats = bot_db.get_stats()
+            timeout = bot_db.get_setting("captcha_timeout", "60")
             stats_text = (
-                "📊 <b>BOT STATISTIKASI</b>\n\n"
+                "📊 <b>BOT VA GURUHLAR STATISTIKASI</b>\n\n"
                 f"👥 <b>Jami foydalanuvchilar:</b> {stats['total_users']}\n"
                 f"✅ <b>Ro'yxatdan o'tganlar:</b> {stats['registered_users']}\n"
+                f"🛡 <b>Ulangan guruhlar:</b> {stats['total_groups']}\n"
+                f"👤 <b>Tasdiqlangan odamlar (Anti-bot):</b> {stats['verified_humans']}\n"
                 f"🔥 <b>Oxirgi 24 soatda faol:</b> {stats['active_24h']}\n"
-                f"💬 <b>Yetkazilgan xabarlar:</b> {stats['total_messages']}"
+                f"💬 <b>Yetkazilgan xabarlar:</b> {stats['total_messages']}\n"
+                f"⏱ <b>O'chirish vaqti:</b> {timeout} soniya"
             )
             self.client.send_message(chat_id, stats_text)
+            return True
+
+        elif text.startswith("/set_timeout"):
+            parts = text.split()
+            if len(parts) < 2 or not parts[1].isdigit():
+                cur = bot_db.get_setting("captcha_timeout", "60")
+                self.client.send_message(
+                    chat_id,
+                    f"ℹ️ Hozirgi tekshirish vaqti: <b>{cur} soniya</b>.\n\nO'zgartirish uchun: <code>/set_timeout 60</code> (10 dan 300 gacha soniya kiriting)."
+                )
+                return True
+            new_val = int(parts[1])
+            if new_val < 5 or new_val > 600:
+                self.client.send_message(chat_id, "⚠️ Iltimos, 5 dan 600 gacha bo'lgan soniya kiriting.")
+                return True
+            bot_db.set_setting("captcha_timeout", str(new_val))
+            self.client.send_message(chat_id, f"✅ <b>Guruhdagi tekshirish vaqti {new_val} soniyaga o'rnatildi!</b>")
+            return True
+
+        elif text == "/groups":
+            groups = bot_db.get_all_active_groups()
+            if not groups:
+                self.client.send_message(chat_id, "ℹ️ Hozircha ulangan guruhlar mavjud emas.")
+                return True
+            lines = ["🛡 <b>ULANGAN GURUHLAR RO'YXATI:</b>\n"]
+            for idx, g in enumerate(groups, 1):
+                uname = f"(@{g['username']})" if g.get('username') else ""
+                lines.append(f"{idx}. <b>{html.escape(g['title'] or 'Group', quote=False)}</b> {uname} (ID: <code>{g['group_id']}</code>)")
+            self.client.send_message(chat_id, "\n".join(lines))
             return True
 
         elif text == "/users":
@@ -540,7 +739,7 @@ class BotEngine:
             
             lines = ["👥 <b>OXIRGI 10 TA FOYDALANUVCHI:</b>\n"]
             for idx, u in enumerate(users, 1):
-                name = html.escape(u.get("full_name") or u.get("first_name") or "User")
+                name = html.escape(u.get("full_name") or u.get("first_name") or "User", quote=False)
                 uid = u["telegram_id"]
                 reg = "✅" if u.get("is_registered") else "⏳"
                 lines.append(f"{idx}. {reg} <a href=\"tg://user?id={uid}\">{name}</a> (<code>{uid}</code>) — {u['created_at'][:16]}")
@@ -559,29 +758,48 @@ class BotEngine:
 
             broadcast_text = parts[1].strip()
             all_ids = bot_db.get_all_registered_user_ids()
+            all_groups = bot_db.get_all_active_groups()
+
             self.client.send_message(
                 chat_id,
-                f"📢 <i>{len(all_ids)} ta foydalanuvchiga xabar yuborish boshlandi...</i>"
+                f"📢 <i>{len(all_ids)} ta foydalanuvchi va {len(all_groups)} ta guruhga xabar yuborish boshlandi...</i>"
             )
 
-            sent_count = 0
+            sent_users = 0
+            sent_groups = 0
             fail_count = 0
+
+            # 1. Send to users
             for uid in all_ids:
                 try:
                     res = self.client.send_message(uid, broadcast_text)
                     if res:
-                        sent_count += 1
+                        sent_users += 1
                     else:
                         fail_count += 1
-                    time.sleep(0.05)  # Telegram broadcast throttle
+                    time.sleep(0.04)
+                except Exception:
+                    fail_count += 1
+
+            # 2. Send to groups
+            for g in all_groups:
+                try:
+                    gid = g["group_id"]
+                    res = self.client.send_message(gid, broadcast_text)
+                    if res:
+                        sent_groups += 1
+                    else:
+                        fail_count += 1
+                    time.sleep(0.05)
                 except Exception:
                     fail_count += 1
 
             self.client.send_message(
                 chat_id,
                 f"✅ <b>Tarqatish yakunlandi!</b>\n\n"
-                f"Yuborildi: <b>{sent_count}</b> ta\n"
-                f"Yetib bormadi (bloklangan): <b>{fail_count}</b> ta"
+                f"👤 Foydalanuvchilarga yetkazildi: <b>{sent_users}</b> ta\n"
+                f"🛡 Guruhlarga yetkazildi: <b>{sent_groups}</b> ta\n"
+                f"❌ Yetib bormadi (bloklangan/chiqarilgan): <b>{fail_count}</b> ta"
             )
             return True
 
@@ -590,7 +808,7 @@ class BotEngine:
     def setup_commands_menu(self):
         """Sets standard menu commands in BotFather."""
         commands = [
-            {"command": "start", "description": "Botni ishga tushirish / Bosh sahifa"}
+            {"command": "start", "description": "Bosh sahifa / Menyu"}
         ]
         self.client.set_my_commands(commands)
 
@@ -619,6 +837,7 @@ class BotEngine:
                         self.handle_update(update)
             except KeyboardInterrupt:
                 logger.info("🛑 Bot to'xtatildi.")
+                self._running = False
                 break
             except Exception as e:
                 logger.error(f"Polling davomida xatolik: {e}")

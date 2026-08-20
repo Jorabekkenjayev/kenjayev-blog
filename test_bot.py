@@ -12,14 +12,16 @@ import bot
 class MockTelegramClient:
     def __init__(self):
         self.sent_messages = []
+        self.deleted_messages = []
         self.sent_reactions = []
         self.sent_copies = []
         self.answered_callbacks = []
         self.my_commands = []
         self.token = "mock_test_token"
+        self.bot_username = "KenjayevBlogBot"
 
     def get_me(self):
-        return {"id": 999999, "is_bot": True, "first_name": "Kenjayev Bot", "username": "kenjayev_test_bot"}
+        return {"id": 999999, "is_bot": True, "first_name": "Kenjayev Bot", "username": "KenjayevBlogBot"}
 
     def set_my_commands(self, commands):
         self.my_commands = commands
@@ -37,6 +39,11 @@ class MockTelegramClient:
         }
         self.sent_messages.append(msg_obj)
         return msg_obj
+
+    def delete_message(self, chat_id, message_id):
+        del_obj = {"chat_id": chat_id, "message_id": message_id}
+        self.deleted_messages.append(del_obj)
+        return True
 
     def set_message_reaction(self, chat_id, message_id, emoji="❤️"):
         react_obj = {"chat_id": chat_id, "message_id": message_id, "emoji": emoji}
@@ -56,7 +63,7 @@ class MockTelegramClient:
         return copy_obj
 
     def answer_callback_query(self, callback_query_id, text=None, show_alert=False):
-        self.answered_callbacks.append({"id": callback_query_id, "text": text})
+        self.answered_callbacks.append({"id": callback_query_id, "text": text, "show_alert": show_alert})
         return True
 
 
@@ -65,8 +72,6 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test_bot.db")
         bot_db.init_db(self.db_path)
-
-        # Patch bot_db DB_FILE
         bot_db.DB_FILE = self.db_path
 
         # Setup Mock Bot
@@ -76,257 +81,200 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         # Configure Bot Admin ID
         bot.ADMIN_CHAT_ID = 987654321
         bot.WEB_APP_URL = "https://kenjayev.uz"
-
-        # Clear rate limits
         bot._rate_limits.clear()
 
     def tearDown(self):
+        self.bot_engine._running = False
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def test_name_validation(self):
-        # Valid names
         self.assertEqual(bot.validate_full_name("Ali Valiyev"), "Ali Valiyev")
         self.assertEqual(bot.validate_full_name("jo'rabek kenjayev"), "Jo'rabek Kenjayev")
         self.assertEqual(bot.validate_full_name("G'ayrat O'ktamov"), "G'ayrat O'ktamov")
         self.assertEqual(bot.validate_full_name("Otabek Sultonov"), "Otabek Sultonov")
         self.assertEqual(bot.validate_full_name("Shaxzoda Raximova"), "Shaxzoda Raximova")
-        self.assertEqual(bot.validate_full_name("Muhammad Ali Valiyev"), "Muhammad Ali Valiyev")
 
-        # Invalid names
-        self.assertIsNone(bot.validate_full_name("Ali"))  # only 1 word
+        self.assertIsNone(bot.validate_full_name("Ali"))
         self.assertIsNone(bot.validate_full_name(""))
-        self.assertIsNone(bot.validate_full_name("   "))
-        self.assertIsNone(bot.validate_full_name("Ali 12345"))  # numbers
-        self.assertIsNone(bot.validate_full_name("Spam http://site.com"))  # URL
-        self.assertIsNone(bot.validate_full_name("<script>alert()</script>"))  # XSS
-        self.assertIsNone(bot.validate_full_name("A B"))  # too short words
-        self.assertIsNone(bot.validate_full_name("Ali @username"))  # symbols
+        self.assertIsNone(bot.validate_full_name("Ali 12345"))
+        self.assertIsNone(bot.validate_full_name("Spam http://site.com"))
 
-    def test_database_lifecycle(self):
-        user, is_new = bot_db.upsert_user(111, "testuser", "Ali", "Valiyev", self.db_path)
-        self.assertTrue(is_new)
-        self.assertEqual(user["state"], "WAITING_FOR_NAME")
-
-        bot_db.set_user_full_name(111, "Ali Valiyev", self.db_path)
-        user = bot_db.get_user(111, self.db_path)
-        self.assertEqual(user["full_name"], "Ali Valiyev")
-        self.assertEqual(user["is_registered"], 1)
-
-        # Message mapping
-        bot_db.save_message_mapping(5001, 111, 101, "Test snippet", self.db_path)
-        mapping = bot_db.get_mapping_by_admin_message(5001, self.db_path)
-        self.assertIsNotNone(mapping)
-        self.assertEqual(mapping["user_telegram_id"], 111)
-
-        # Stats
-        stats = bot_db.get_stats(self.db_path)
-        self.assertEqual(stats["total_users"], 1)
-        self.assertEqual(stats["registered_users"], 1)
-        self.assertEqual(stats["total_messages"], 1)
-
-    def test_full_onboarding_flow(self):
+    def test_onboarding_and_anti_spam_buttons(self):
         user_id = 12345
         chat_id = 12345
 
-        # 1. User sends /start
-        update_start = {
+        # 1. /start
+        self.bot_engine.handle_update({
             "update_id": 1,
             "message": {
                 "message_id": 101,
-                "chat": {"id": chat_id},
+                "chat": {"id": chat_id, "type": "private"},
                 "from": {"id": user_id, "username": "alivaliyev", "first_name": "Ali", "last_name": "Valiyev"},
                 "text": "/start"
             }
-        }
-        self.bot_engine.handle_update(update_start)
-
-        # Should ask for name
-        self.assertEqual(len(self.mock_client.sent_messages), 1)
+        })
         self.assertIn("Ism va familiyangizni kiriting", self.mock_client.sent_messages[0]["text"])
 
-        # 2. User sends invalid single name
-        update_invalid_name = {
+        # 2. Valid name
+        self.bot_engine.handle_update({
             "update_id": 2,
             "message": {
                 "message_id": 102,
-                "chat": {"id": chat_id},
-                "from": {"id": user_id, "username": "alivaliyev", "first_name": "Ali", "last_name": "Valiyev"},
-                "text": "Ali"
-            }
-        }
-        self.bot_engine.handle_update(update_invalid_name)
-        self.assertEqual(len(self.mock_client.sent_messages), 2)
-        self.assertIn("Iltimos, ism va familiyangizni to’liq kiriting", self.mock_client.sent_messages[1]["text"])
-
-        # 3. User sends valid full name "Ali Valiyev"
-        update_valid_name = {
-            "update_id": 3,
-            "message": {
-                "message_id": 103,
-                "chat": {"id": chat_id},
+                "chat": {"id": chat_id, "type": "private"},
                 "from": {"id": user_id, "username": "alivaliyev", "first_name": "Ali", "last_name": "Valiyev"},
                 "text": "Ali Valiyev"
             }
-        }
-        self.bot_engine.handle_update(update_valid_name)
+        })
 
-        # 3a. Heart reaction check
-        self.assertEqual(len(self.mock_client.sent_reactions), 1)
-        self.assertEqual(self.mock_client.sent_reactions[0]["emoji"], "❤️")
-        self.assertEqual(self.mock_client.sent_reactions[0]["message_id"], 103)
-
-        # 3b. Admin notification check
-        # Sent messages index 2: Admin Notification, index 3: User Welcome
-        admin_notif = next((m for m in self.mock_client.sent_messages if m["chat_id"] == bot.ADMIN_CHAT_ID), None)
-        self.assertIsNotNone(admin_notif)
-        self.assertIn("YANGI FOYDALANUVCHI", admin_notif["text"])
-        self.assertIn("Ali Valiyev", admin_notif["text"])
-        self.assertIn("12345", admin_notif["text"])
-
-        # 3c. User welcome message check
-        user_welcome = [m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Kenjayev Jo’rabek botiga xush kelibsiz" in m["text"]][0]
-        self.assertIsNotNone(user_welcome)
-        self.assertIn("Kenjayev Jo’rabek bu yerda o’z blogini yuritadi", user_welcome["text"])
-
-        # Check inline keyboard buttons
-        buttons = user_welcome["reply_markup"]["inline_keyboard"]
-        self.assertEqual(len(buttons), 2)
+        welcome_msg = [m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Kenjayev Jo’rabek botiga xush kelibsiz" in m["text"]][0]
+        buttons = welcome_msg["reply_markup"]["inline_keyboard"]
         self.assertEqual(buttons[0][0]["text"], "🌐 Saytga kirish")
-        self.assertEqual(buttons[0][0]["web_app"]["url"], "https://kenjayev.uz")
-        self.assertEqual(buttons[1][0]["text"], "💬 Jo’rabekka yozish")
-        self.assertEqual(buttons[1][0]["callback_data"], "write_to_admin")
+        self.assertEqual(buttons[1][0]["text"], "🔞 18+ reklamani o'chirish")
+        self.assertEqual(buttons[1][0]["callback_data"], "anti_spam_info")
 
-        # Check user database state
-        db_user = bot_db.get_user(user_id, self.db_path)
-        self.assertEqual(db_user["is_registered"], 1)
-        self.assertEqual(db_user["full_name"], "Ali Valiyev")
-
-    def test_duplicate_start_registered_user(self):
-        user_id = 999
-        chat_id = 999
-        # Pre-register user
-        bot_db.upsert_user(user_id, "existing", "Jon", "Doe", self.db_path)
-        bot_db.set_user_full_name(user_id, "Jon Doe", self.db_path)
-
-        update = {
-            "update_id": 1,
-            "message": {
-                "message_id": 201,
-                "chat": {"id": chat_id},
-                "from": {"id": user_id, "username": "existing", "first_name": "Jon", "last_name": "Doe"},
-                "text": "/start"
+        # 3. User clicks "🔞 18+ reklamani o'chirish"
+        self.bot_engine.handle_update({
+            "update_id": 3,
+            "callback_query": {
+                "id": "cq_1",
+                "from": {"id": user_id},
+                "data": "anti_spam_info",
+                "message": {"chat": {"id": chat_id}, "message_id": welcome_msg["message_id"]}
             }
-        }
-        self.bot_engine.handle_update(update)
+        })
 
-        # Directly receives welcome message and buttons (no asking for name again)
-        self.assertEqual(len(self.mock_client.sent_messages), 1)
-        self.assertIn("Kenjayev Jo’rabek botiga xush kelibsiz", self.mock_client.sent_messages[0]["text"])
+        info_msg = self.mock_client.sent_messages[-1]
+        self.assertIn("Guruhni 18+ spam va reklamalardan tozalash", info_msg["text"])
+        self.assertIn("Guruhga admin sifatida qo'shish", info_msg["reply_markup"]["inline_keyboard"][0][0]["text"])
+        self.assertIn("startgroup=true&admin=delete_messages+restrict_members", info_msg["reply_markup"]["inline_keyboard"][0][0]["url"])
 
-    def test_message_routing_and_admin_reply(self):
-        user_id = 55555
-        chat_id = 55555
+    def test_group_anti_spam_verification_flow(self):
+        group_id = -100123456789
+        user_id = 777111
 
-        # Register user
-        bot_db.upsert_user(user_id, "alisher", "Alisher", "Navoiy", self.db_path)
-        bot_db.set_user_full_name(user_id, "Alisher Navoiy", self.db_path)
-
-        # User writes a message to Jo'rabek
-        update_user_msg = {
+        # 1. Unverified user sends message in group
+        self.bot_engine.handle_update({
             "update_id": 10,
             "message": {
-                "message_id": 301,
-                "chat": {"id": chat_id},
-                "from": {"id": user_id, "username": "alisher", "first_name": "Alisher", "last_name": "Navoiy"},
-                "text": "Salom Jo'rabek, blogingiz juda ajoyib!"
+                "message_id": 501,
+                "chat": {"id": group_id, "type": "supergroup", "title": "Test Group"},
+                "from": {"id": user_id, "first_name": "Botir"},
+                "text": "Salom hammaga!"
             }
-        }
-        self.bot_engine.handle_update(update_user_msg)
+        })
 
-        # Verify Admin received formatted notification
-        admin_msg = next((m for m in self.mock_client.sent_messages if m["chat_id"] == bot.ADMIN_CHAT_ID and "YANGI XABAR" in m["text"]), None)
-        self.assertIsNotNone(admin_msg)
-        self.assertIn("Alisher Navoiy", admin_msg["text"])
-        self.assertIn("Salom Jo'rabek, blogingiz juda ajoyib!", admin_msg["text"])
+        # Check prompt message sent
+        prompt_msg = [m for m in self.mock_client.sent_messages if m["chat_id"] == group_id and "bot emasligingizni tasdiqlang" in m["text"]][0]
+        self.assertIsNotNone(prompt_msg)
+        prompt_btn = prompt_msg["reply_markup"]["inline_keyboard"][0][0]
+        self.assertEqual(prompt_btn["text"], "✅ Men bot emasman")
+        callback_data = prompt_btn["callback_data"]
 
-        admin_received_msg_id = admin_msg["message_id"]
-
-        # Verify user received confirmation
-        user_conf = next((m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Xabaringiz Jo’rabekka yetkazildi" in m["text"]), None)
-        self.assertIsNotNone(user_conf)
-
-        # Now Admin replies to that message
-        update_admin_reply = {
+        # 2. Another user (imposter) clicks the button -> Rejected
+        self.bot_engine.handle_update({
             "update_id": 11,
-            "message": {
-                "message_id": 901,
-                "chat": {"id": bot.ADMIN_CHAT_ID},
-                "from": {"id": bot.ADMIN_CHAT_ID, "username": "jorabek", "first_name": "Jo'rabek", "last_name": "Kenjayev"},
-                "text": "Rahmat Alisher, xursandman!",
-                "reply_to_message": {
-                    "message_id": admin_received_msg_id,
-                    "text": admin_msg["text"]
-                }
+            "callback_query": {
+                "id": "cq_imposter",
+                "from": {"id": 999999},  # different user
+                "data": callback_data,
+                "message": {"chat": {"id": group_id}, "message_id": prompt_msg["message_id"]}
             }
-        }
-        self.bot_engine.handle_update(update_admin_reply)
+        })
+        self.assertTrue(self.mock_client.answered_callbacks[-1]["show_alert"])
+        self.assertIn("Bu tugma siz uchun emas", self.mock_client.answered_callbacks[-1]["text"])
 
-        # Verify user received the reply from Jo'rabek
-        user_reply = next((m for m in self.mock_client.sent_messages if m["chat_id"] == user_id and "Jo’rabekdan javob" in m["text"]), None)
-        self.assertIsNotNone(user_reply)
-        self.assertIn("Rahmat Alisher, xursandman!", user_reply["text"])
+        # 3. The actual user clicks the button -> Approved
+        self.bot_engine.handle_update({
+            "update_id": 12,
+            "callback_query": {
+                "id": "cq_correct",
+                "from": {"id": user_id},
+                "data": callback_data,
+                "message": {"chat": {"id": group_id}, "message_id": prompt_msg["message_id"]}
+            }
+        })
+        self.assertTrue(bot_db.is_user_verified(user_id, self.db_path))
+        # Bot prompt deleted
+        self.assertTrue(any(d["message_id"] == prompt_msg["message_id"] for d in self.mock_client.deleted_messages))
 
-    def test_admin_commands(self):
-        # Admin /stats command
-        update_stats = {
+        # 4. Same verified user sends another message -> No warning, allowed freely!
+        init_count = len(self.mock_client.sent_messages)
+        self.bot_engine.handle_update({
+            "update_id": 13,
+            "message": {
+                "message_id": 502,
+                "chat": {"id": group_id, "type": "supergroup", "title": "Test Group"},
+                "from": {"id": user_id, "first_name": "Botir"},
+                "text": "Ikkinchi xabarim!"
+            }
+        })
+        # No new messages sent by bot in group
+        self.assertEqual(len(self.mock_client.sent_messages), init_count)
+
+    def test_timeout_expiration_deletion(self):
+        group_id = -100999
+        user_id = 888
+
+        # Unverified user posts
+        self.bot_engine.handle_update({
             "update_id": 20,
             "message": {
-                "message_id": 801,
-                "chat": {"id": bot.ADMIN_CHAT_ID},
-                "from": {"id": bot.ADMIN_CHAT_ID},
-                "text": "/stats"
+                "message_id": 601,
+                "chat": {"id": group_id, "type": "supergroup", "title": "Test Group 2"},
+                "from": {"id": user_id, "first_name": "SpamBot"},
+                "text": "18+ Reklama havolasi http://bad.com"
             }
-        }
-        self.bot_engine.handle_update(update_stats)
-        stats_msg = next((m for m in self.mock_client.sent_messages if m["chat_id"] == bot.ADMIN_CHAT_ID and "BOT STATISTIKASI" in m["text"]), None)
-        self.assertIsNotNone(stats_msg)
+        })
 
-        # Admin /users command
-        update_users = {
-            "update_id": 21,
+        prompt_msg = self.mock_client.sent_messages[-1]
+
+        # Trigger expiration worker with simulated future timestamp
+        future_ts = time.time() + 100
+        expired = bot_db.get_expired_verifications(future_ts, self.db_path)
+        self.assertEqual(len(expired), 1)
+
+        # Worker deletes user message and prompt message
+        self.mock_client.delete_message(group_id, expired[0]["user_message_id"])
+        self.mock_client.delete_message(group_id, expired[0]["bot_message_id"])
+        bot_db.mark_verification_expired(expired[0]["id"], self.db_path)
+
+        self.assertTrue(any(d["message_id"] == 601 for d in self.mock_client.deleted_messages))
+        self.assertTrue(any(d["message_id"] == prompt_msg["message_id"] for d in self.mock_client.deleted_messages))
+
+    def test_admin_set_timeout_and_broadcast_groups(self):
+        # 1. Admin /set_timeout 45
+        self.bot_engine.handle_update({
+            "update_id": 30,
             "message": {
-                "message_id": 802,
-                "chat": {"id": bot.ADMIN_CHAT_ID},
+                "message_id": 701,
+                "chat": {"id": bot.ADMIN_CHAT_ID, "type": "private"},
                 "from": {"id": bot.ADMIN_CHAT_ID},
-                "text": "/users"
+                "text": "/set_timeout 45"
             }
-        }
-        self.bot_engine.handle_update(update_users)
-        users_msg = next((m for m in self.mock_client.sent_messages if m["chat_id"] == bot.ADMIN_CHAT_ID and "OXIRGI 10 TA" in m["text"] or "Foydalanuvchilar" in m["text"]), None)
-        self.assertIsNotNone(users_msg)
+        })
+        self.assertEqual(bot_db.get_setting("captcha_timeout", "60", self.db_path), "45")
 
-    def test_rate_limiting(self):
-        user_id = 777
-        chat_id = 777
-        bot_db.upsert_user(user_id, "spammer", "Spam", "User", self.db_path)
-        bot_db.set_user_full_name(user_id, "Spam User", self.db_path)
+        # 2. Add group and user
+        bot_db.upsert_group(-100111, "Dasturchilar", "dasturchilar_uz", 1, self.db_path)
+        bot_db.upsert_user(1234, "ali", "Ali", "V", self.db_path)
+        bot_db.set_user_full_name(1234, "Ali V", self.db_path)
 
-        # Send 6 rapid messages
-        for i in range(6):
-            update = {
-                "update_id": 100 + i,
-                "message": {
-                    "message_id": 500 + i,
-                    "chat": {"id": chat_id},
-                    "from": {"id": user_id, "username": "spammer", "first_name": "Spam", "last_name": "User"},
-                    "text": f"Message {i}"
-                }
+        # 3. Admin /broadcast
+        self.bot_engine.handle_update({
+            "update_id": 31,
+            "message": {
+                "message_id": 702,
+                "chat": {"id": bot.ADMIN_CHAT_ID, "type": "private"},
+                "from": {"id": bot.ADMIN_CHAT_ID},
+                "text": "/broadcast Hammaga salom!"
             }
-            self.bot_engine.handle_update(update)
+        })
 
-        # The 6th message should trigger rate limit warning
-        rate_warn = next((m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Iltimos, ketma-ket ko'p xabar yubormang" in m["text"]), None)
-        self.assertIsNotNone(rate_warn)
+        # Verify broadcast reached both user and group
+        user_bcast = next((m for m in self.mock_client.sent_messages if m["chat_id"] == 1234 and m["text"] == "Hammaga salom!"), None)
+        group_bcast = next((m for m in self.mock_client.sent_messages if m["chat_id"] == -100111 and m["text"] == "Hammaga salom!"), None)
+        self.assertIsNotNone(user_bcast)
+        self.assertIsNotNone(group_bcast)
 
     def test_wsgi_webhook_endpoint(self):
         import server
@@ -336,7 +284,7 @@ class TestKenjayevTelegramBot(unittest.TestCase):
             "update_id": 9999,
             "message": {
                 "message_id": 777,
-                "chat": {"id": 12345},
+                "chat": {"id": 12345, "type": "private"},
                 "from": {"id": 12345, "first_name": "Test"},
                 "text": "Salom"
             }

@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import threading
+import time
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -50,6 +51,39 @@ def init_db(db_path=None):
                     );
                 """)
                 conn.execute("""
+                    CREATE TABLE IF NOT EXISTS bot_groups (
+                        group_id INTEGER PRIMARY KEY,
+                        title TEXT,
+                        username TEXT,
+                        is_active INTEGER DEFAULT 1,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS bot_verified_users (
+                        user_id INTEGER PRIMARY KEY,
+                        verified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS bot_pending_verifications (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        group_id INTEGER NOT NULL,
+                        user_id INTEGER NOT NULL,
+                        user_message_id INTEGER NOT NULL,
+                        bot_message_id INTEGER NOT NULL,
+                        expires_at REAL NOT NULL,
+                        status TEXT DEFAULT 'pending'
+                    );
+                """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS bot_settings (
+                        key TEXT PRIMARY KEY,
+                        value TEXT
+                    );
+                """)
+                conn.execute("""
                     CREATE TABLE IF NOT EXISTS bot_logs (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         user_id INTEGER,
@@ -60,9 +94,143 @@ def init_db(db_path=None):
                 """)
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_users_registered ON bot_users(is_registered);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_msg_map_user ON bot_message_map(user_telegram_id);")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_pending_verif ON bot_pending_verifications(status, expires_at);")
         finally:
             conn.close()
 
+# --- SETTINGS MANAGEMENT ---
+def get_setting(key, default="60", db_path=None):
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT value FROM bot_settings WHERE key = ?", (key,))
+        row = cur.fetchone()
+        return row['value'] if row else default
+    finally:
+        conn.close()
+
+def set_setting(key, value, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                conn.execute("INSERT OR REPLACE INTO bot_settings (key, value) VALUES (?, ?)", (key, str(value)))
+                return True
+        finally:
+            conn.close()
+
+# --- GROUPS MANAGEMENT ---
+def upsert_group(group_id, title, username=None, is_active=1, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            with conn:
+                conn.execute("""
+                    INSERT INTO bot_groups (group_id, title, username, is_active, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(group_id) DO UPDATE SET
+                        title = excluded.title,
+                        username = excluded.username,
+                        is_active = excluded.is_active,
+                        updated_at = excluded.updated_at
+                """, (group_id, title, username, is_active, now, now))
+                return True
+        finally:
+            conn.close()
+
+def get_all_active_groups(db_path=None):
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT group_id, title, username FROM bot_groups WHERE is_active = 1")
+        return [dict(row) for row in cur.fetchall()]
+    finally:
+        conn.close()
+
+# --- VERIFIED USERS (ANTI-SPAM / BOT PROTECTION) ---
+def is_user_verified(user_id, db_path=None):
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT user_id FROM bot_verified_users WHERE user_id = ?", (user_id,))
+        return cur.fetchone() is not None
+    finally:
+        conn.close()
+
+def verify_user(user_id, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        try:
+            with conn:
+                conn.execute("INSERT OR IGNORE INTO bot_verified_users (user_id, verified_at) VALUES (?, ?)", (user_id, now))
+                # Also resolve any pending verifications for this user
+                conn.execute("UPDATE bot_pending_verifications SET status = 'verified' WHERE user_id = ? AND status = 'pending'", (user_id,))
+                return True
+        finally:
+            conn.close()
+
+# --- PENDING VERIFICATIONS QUEUE ---
+def add_pending_verification(group_id, user_id, user_message_id, bot_message_id, expires_at, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                conn.execute("""
+                    INSERT INTO bot_pending_verifications (group_id, user_id, user_message_id, bot_message_id, expires_at, status)
+                    VALUES (?, ?, ?, ?, ?, 'pending')
+                """, (group_id, user_id, user_message_id, bot_message_id, expires_at))
+                return True
+        finally:
+            conn.close()
+
+def get_expired_verifications(current_time=None, db_path=None):
+    now_ts = current_time or time.time()
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, group_id, user_id, user_message_id, bot_message_id, expires_at
+            FROM bot_pending_verifications
+            WHERE status = 'pending' AND expires_at <= ?
+        """, (now_ts,))
+        return [dict(row) for row in cur.fetchall()]
+    finally:
+        conn.close()
+
+def mark_verification_expired(verif_id, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                conn.execute("UPDATE bot_pending_verifications SET status = 'expired' WHERE id = ?", (verif_id,))
+                return True
+        finally:
+            conn.close()
+
+def resolve_pending_verification(group_id, user_id, db_path=None):
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT id, bot_message_id, user_message_id 
+                    FROM bot_pending_verifications 
+                    WHERE group_id = ? AND user_id = ? AND status = 'pending'
+                """, (group_id, user_id))
+                rows = [dict(r) for r in cur.fetchall()]
+                conn.execute("""
+                    UPDATE bot_pending_verifications 
+                    SET status = 'verified' 
+                    WHERE group_id = ? AND user_id = ? AND status = 'pending'
+                """, (group_id, user_id))
+                return rows
+        finally:
+            conn.close()
+
+# --- STANDARD USER MANAGEMENT ---
 def get_user(telegram_id, db_path=None):
     conn = get_connection(db_path)
     try:
@@ -199,11 +367,19 @@ def get_stats(db_path=None):
         cur.execute("SELECT COUNT(*) as total_messages FROM bot_message_map")
         total_messages = cur.fetchone()['total_messages']
         
+        cur.execute("SELECT COUNT(*) as total_groups FROM bot_groups WHERE is_active = 1")
+        total_groups = cur.fetchone()['total_groups']
+
+        cur.execute("SELECT COUNT(*) as verified_humans FROM bot_verified_users")
+        verified_humans = cur.fetchone()['verified_humans']
+        
         return {
             "total_users": total_users,
             "registered_users": registered_users,
             "active_24h": active_24h,
-            "total_messages": total_messages
+            "total_messages": total_messages,
+            "total_groups": total_groups,
+            "verified_humans": verified_humans
         }
     finally:
         conn.close()
