@@ -299,12 +299,61 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             print(f"[{now_str}] [{event_type}] [{device}] [{target_path}]")
 
+    def send_response(self, code, message=None):
+        self.status_code = code
+        if not getattr(self, '_is_wsgi', False):
+            super().send_response(code, message)
+
+    def send_header(self, keyword, value):
+        if hasattr(self, 'response_headers'):
+            self.response_headers.append((str(keyword), str(value)))
+        if not getattr(self, '_is_wsgi', False):
+            super().send_header(keyword, value)
+
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Client-ID')
-        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        super().end_headers()
+        if not getattr(self, '_is_wsgi', False):
+            super().end_headers()
+
+    def serve_static(self, req_path):
+        clean_path = req_path.split('?')[0].split('#')[0].lstrip('/')
+        if not clean_path:
+            clean_path = 'index.html'
+
+        full_path = os.path.abspath(os.path.join(BASE_DIR, clean_path))
+        if not full_path.startswith(BASE_DIR):
+            self.send_json(403, {"error": "Taqiqlangan"})
+            return
+
+        if os.path.isdir(full_path):
+            full_path = os.path.join(full_path, 'index.html')
+
+        if not os.path.exists(full_path):
+            # Fallback for SPA routing to index.html
+            full_path = os.path.join(BASE_DIR, 'index.html')
+
+        if os.path.exists(full_path) and os.path.isfile(full_path):
+            mime_type, _ = mimetypes.guess_type(full_path)
+            mime_type = mime_type or 'application/octet-stream'
+            if mime_type.startswith('text/') or mime_type in ['application/javascript', 'application/json']:
+                mime_type += '; charset=utf-8'
+
+            file_size = os.path.getsize(full_path)
+            self.send_response(200)
+            self.send_header('Content-Type', mime_type)
+            self.send_header('Content-Length', str(file_size))
+            if clean_path in ['manifest.json', 'sw.js']:
+                self.send_header('Cache-Control', 'no-cache')
+            elif clean_path.endswith(('.png', '.jpg', '.jpeg', '.svg', '.webp', '.ico', '.woff2')):
+                self.send_header('Cache-Control', 'public, max-age=86400')
+            self.end_headers()
+
+            with open(full_path, 'rb') as f:
+                shutil.copyfileobj(f, self.wfile)
+        else:
+            self.send_json(404, {"error": "Sahifa topilmadi"})
 
     def do_OPTIONS(self):
         self.send_response(200)
@@ -496,9 +545,9 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(sitemap_xml.encode('utf-8'))
             return
 
-        # 7. Static files fallback
+        # 7. Static files (index.html, manifest.json, sw.js, etc.)
         self.log_event("VISIT")
-        super().do_GET()
+        self.serve_static(path)
 
     # --- POST DISPATCHER ---
     def do_POST(self):
@@ -839,6 +888,7 @@ def app(environ, start_response):
 
     # Create handler mock
     handler = ThreadedHTTPRequestHandler.__new__(ThreadedHTTPRequestHandler)
+    handler._is_wsgi = True
     handler.client_address = (environ.get('REMOTE_ADDR', '127.0.0.1'), int(environ.get('REMOTE_PORT', 0) or 0))
     handler.path = full_path
     handler.headers = headers
@@ -848,30 +898,7 @@ def app(environ, start_response):
     handler.request_version = "HTTP/1.1"
     handler.status_code = 200
     handler.response_headers = []
-    # Required by SimpleHTTPRequestHandler
     handler.directory = BASE_DIR
-    handler.server_version = "KenjayevBLOG/2.0"
-    handler.sys_version = ""
-    handler.error_message_format = "%(code)d %(message)s"
-    handler.error_content_type = "text/html; charset=utf-8"
-    # Mock server object
-    class _MockServer:
-        server_name = "kenjayev-blog.onrender.com"
-        server_port = PORT
-    handler.server = _MockServer()
-
-    def mock_send_response(code, message=None):
-        handler.status_code = code
-
-    def mock_send_header(keyword, value):
-        handler.response_headers.append((str(keyword), str(value)))
-
-    def mock_end_headers():
-        pass
-
-    handler.send_response = mock_send_response
-    handler.send_header = mock_send_header
-    handler.end_headers = mock_end_headers
 
     try:
         if method == 'GET':
