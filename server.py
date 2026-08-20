@@ -958,7 +958,8 @@ _bot_lock = threading.Lock()
 def start_bot_background():
     global _bot_started
     bot_token = os.environ.get("BOT_TOKEN", "").strip()
-    if not bot_token:
+    guard_token = os.environ.get("GUARD_BOT_TOKEN", "").strip()
+    if not bot_token and not guard_token:
         return
     with _bot_lock:
         if _bot_started:
@@ -966,11 +967,10 @@ def start_bot_background():
         _bot_started = True
         try:
             import bot
-            t = threading.Thread(target=bot.BotEngine().run_polling, daemon=True, name="TelegramBotPolling")
-            t.start()
-            print("🤖 [TELEGRAM BOT] Background Polling avtomatik ishga tushirildi.")
+            bot.run_all_bots()
+            print("🤖 [TELEGRAM BOTS] Multi-Bot Background Polling avtomatik ishga tushirildi.")
         except Exception as e:
-            print(f"⚠️ [TELEGRAM BOT] Background start xatosi: {e}")
+            print(f"⚠️ [TELEGRAM BOTS] Background start xatosi: {e}")
 
 # Automatically trigger background bot on startup
 start_bot_background()

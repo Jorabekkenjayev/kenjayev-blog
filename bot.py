@@ -42,6 +42,8 @@ logger = logging.getLogger("KenjayevBot")
 
 # --- ENVIRONMENT VARIABLES & CONFIG ---
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "").strip()
+GUARD_BOT_TOKEN = os.environ.get("GUARD_BOT_TOKEN", "").strip()
+
 ADMIN_CHAT_ID_RAW = os.environ.get("ADMIN_CHAT_ID", "").strip()
 try:
     ADMIN_CHAT_ID = int(ADMIN_CHAT_ID_RAW) if ADMIN_CHAT_ID_RAW else None
@@ -167,13 +169,6 @@ class TelegramClient:
 
 # --- VALIDATION ENGINE ---
 def validate_full_name(text):
-    """
-    Validates user full name:
-    - Min 3, max 100 characters.
-    - At least 2 words (first name and last name).
-    - Contains valid characters (Latin/Cyrillic letters, apostrophes, hyphens, spaces).
-    - No URLs, numbers, script tags, or spam repetitions.
-    """
     if not text or not isinstance(text, str):
         return None
     
@@ -181,11 +176,9 @@ def validate_full_name(text):
     if len(cleaned) < 3 or len(cleaned) > 100:
         return None
 
-    # Check for invalid characters like URLs, emails, symbols (@, #, $, %, ^, &, *, <, >, etc.)
     if re.search(r'(https?://|www\.|\.com|\.uz|@|[0-9]{3,}|[<>{}\[\]=_\+])', cleaned, re.IGNORECASE):
         return None
 
-    # Split into words
     words = [w.strip() for w in re.split(r'\s+', cleaned) if w.strip()]
     if len(words) < 2:
         return None
@@ -201,7 +194,6 @@ def validate_full_name(text):
 
 
 def check_rate_limit(user_id):
-    """Returns True if user is within rate limits, False if flooded."""
     now = time.time()
     with _rate_lock:
         if user_id not in _rate_limits:
@@ -217,7 +209,6 @@ def check_rate_limit(user_id):
 
 # --- UI BUILDERS ---
 def get_main_menu_keyboard():
-    """Generates the 3 core buttons required by specification."""
     return {
         "inline_keyboard": [
             [
@@ -249,16 +240,15 @@ def get_welcome_text():
     )
 
 
-# --- TELEGRAM BOT LOGIC & EVENT HANDLER ---
+# --- MAIN BOT ENGINE (Kenjayev Jo'rabek Bot) ---
 class BotEngine:
     def __init__(self, client=None):
-        self.client = client or TelegramClient()
+        self.client = client or TelegramClient(BOT_TOKEN)
         self._expiration_thread = None
         self._running = True
         self.start_expiration_worker()
 
     def start_expiration_worker(self):
-        """Background worker that continuously deletes expired unverified messages from groups."""
         if self._expiration_thread and self._expiration_thread.is_alive():
             return
 
@@ -273,19 +263,16 @@ class BotEngine:
                         user_msg_id = item["user_message_id"]
                         bot_msg_id = item["bot_message_id"]
 
-                        # Delete unverified user's message
                         try:
                             self.client.delete_message(group_id, user_msg_id)
                         except Exception as e:
                             logger.debug(f"User message delete xatosi: {e}")
 
-                        # Delete bot's warning message
                         try:
                             self.client.delete_message(group_id, bot_msg_id)
                         except Exception as e:
                             logger.debug(f"Bot warning delete xatosi: {e}")
 
-                        # Mark expired
                         bot_db.mark_verification_expired(v_id)
                 except Exception as e:
                     logger.debug(f"Expiration worker xatosi: {e}")
@@ -306,7 +293,6 @@ class BotEngine:
             logger.error(f"Update qayta ishlashda kutilmagan xatolik: {e}", exc_info=True)
 
     def process_my_chat_member(self, mcm):
-        """Handles bot being added/removed from groups."""
         chat = mcm.get("chat", {})
         chat_id = chat.get("id")
         chat_title = chat.get("title", "")
@@ -336,7 +322,7 @@ class BotEngine:
         if data == "anti_spam_info":
             self.client.answer_callback_query(cq_id)
             timeout = bot_db.get_setting("captcha_timeout", "60")
-            bot_uname = self.client.bot_username or "KenjayevBlogBot"
+            bot_uname = self.client.bot_username or "KenjayevJorabekBot"
             
             info_text = (
                 "🛡 <b>Guruhni 18+ spam va reklamalardan tozalash:</b>\n\n"
@@ -368,22 +354,18 @@ class BotEngine:
                 user_msg_id = int(parts[2])
                 group_id = int(parts[3])
 
-                # Check if clicker is the target user
                 if user_id != target_user_id:
                     self.client.answer_callback_query(cq_id, text="⚠️ Bu tugma siz uchun emas!", show_alert=True)
                     return
 
-                # Mark verified in DB
                 bot_db.verify_user(user_id)
                 self.client.answer_callback_query(cq_id, text="✅ Rahmat! Siz bot emasligingiz tasdiqlandi.")
 
-                # Delete bot prompt message immediately
                 try:
                     self.client.delete_message(group_id, bot_msg_id)
                 except Exception as e:
                     logger.debug(f"Bot prompt delete xatosi: {e}")
 
-                # Mark pending verifications resolved so user's message is preserved
                 bot_db.resolve_pending_verification(group_id, user_id)
                 return
 
@@ -411,23 +393,18 @@ class BotEngine:
         if not chat_id:
             return
 
-        # ==========================================
         # GROUP / SUPERGROUP MESSAGE PROCESSING
-        # ==========================================
         if chat_type in ["group", "supergroup"]:
             chat_title = chat.get("title", "Group")
             chat_username = chat.get("username")
             bot_db.upsert_group(chat_id, chat_title, chat_username, is_active=1)
 
-            # Skip service messages or messages from bots/channels
             if not user_id or from_user.get("is_bot") or message.get("sender_chat"):
                 return
 
-            # Skip if user is already verified
             if bot_db.is_user_verified(user_id):
                 return
 
-            # User is NOT verified -> Prompt Captcha & queue for deletion if timeout
             timeout_sec = int(bot_db.get_setting("captcha_timeout", "60"))
             user_name = html.escape(from_user.get("first_name") or "Foydalanuvchi", quote=False)
 
@@ -459,13 +436,10 @@ class BotEngine:
                 bot_db.add_pending_verification(chat_id, user_id, message_id, bot_prompt_id, expires_at)
             return
 
-        # ==========================================
         # PRIVATE CHAT (USER / ADMIN) PROCESSING
-        # ==========================================
         if not user_id:
             return
 
-        # Rate Limit Check
         if not check_rate_limit(user_id):
             self.client.send_message(
                 chat_id,
@@ -477,26 +451,24 @@ class BotEngine:
         first_name = from_user.get("first_name", "")
         last_name = from_user.get("last_name", "")
 
-        # --- ADMIN REPLY DISPATCHER ---
+        # ADMIN REPLY DISPATCHER
         if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and reply_to_msg:
             self.handle_admin_reply(message)
             return
 
-        # --- ADMIN COMMANDS ---
+        # ADMIN COMMANDS
         if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and text.startswith("/"):
             if self.handle_admin_commands(message):
                 return
 
-        # Fetch or create user record
         user, is_new = bot_db.upsert_user(user_id, username, first_name, last_name)
         bot_db.touch_user_activity(user_id)
 
-        # --- /START COMMAND FLOW ---
+        # /START COMMAND FLOW
         if text.strip() == "/start":
             self.handle_start_flow(user, chat_id, message_id)
             return
 
-        # --- USER STATE DISPATCHER ---
         user_state = user.get("state", "NEW_USER")
         is_registered = user.get("is_registered", 0)
 
@@ -504,7 +476,6 @@ class BotEngine:
             self.handle_name_input(user, message)
             return
 
-        # Registered user sending any message (text or media) -> Route to Admin
         self.handle_user_message_to_admin(user, message)
 
     def handle_start_flow(self, user, chat_id, message_id):
@@ -513,7 +484,6 @@ class BotEngine:
         full_name = user.get("full_name")
 
         if is_registered and full_name:
-            # Already registered user: Send Welcome message + buttons
             bot_db.set_user_state(user_id, "REGISTERED")
             self.client.send_message(
                 chat_id,
@@ -521,7 +491,6 @@ class BotEngine:
                 reply_markup=get_main_menu_keyboard()
             )
         else:
-            # New user onboarding: Ask for full name
             bot_db.set_user_state(user_id, "WAITING_FOR_NAME")
             ask_text = (
                 "Ism va familiyangizni kiriting:\n\n"
@@ -544,21 +513,17 @@ class BotEngine:
             self.client.send_message(chat_id, error_text)
             return
 
-        # 1. Place ❤️ reaction on user's message
         try:
             self.client.set_message_reaction(chat_id, message_id, emoji="❤️")
         except Exception as e:
             logger.debug(f"Reaction qo'yishda ogohlantirish: {e}")
 
-        # 2. Save user to database as REGISTERED & VERIFIED
         bot_db.set_user_full_name(user_id, valid_name)
         bot_db.verify_user(user_id)
         bot_db.log_action(user_id, "REGISTERED", f"Name: {valid_name}")
 
-        # 3. Notify Admin about the new user profile
         self.notify_admin_new_user(user, valid_name)
 
-        # 4. Send Welcome message to user with 2 main buttons
         self.client.send_message(
             chat_id,
             get_welcome_text(),
@@ -567,7 +532,6 @@ class BotEngine:
 
     def notify_admin_new_user(self, user, full_name):
         if not ADMIN_CHAT_ID:
-            logger.warning("ADMIN_CHAT_ID sozlanmagan. Yangi foydalanuvchi xabarnomasi yuborilmadi.")
             return
 
         user_id = user["telegram_id"]
@@ -608,7 +572,6 @@ class BotEngine:
             )
             return
 
-        # Format Notification Card for Admin
         admin_header = (
             "📩 <b>YANGI XABAR</b>\n\n"
             f"👤 <b>User:</b> {html.escape(user_name, quote=False)} ({profile_link})\n"
@@ -631,12 +594,10 @@ class BotEngine:
             )
             snippet = f"[Media: {caption_content[:50]}]"
 
-        # Save mapping for seamless Admin Reply
         if admin_msg_res and "message_id" in admin_msg_res:
             admin_message_id = admin_msg_res["message_id"]
             bot_db.save_message_mapping(admin_message_id, user_id, message_id, snippet)
 
-        # Confirm to user
         self.client.send_message(
             chat_id,
             "✅ <i>Xabaringiz Jo’rabekka yetkazildi. Tez orada javob olasiz!</i>"
@@ -660,7 +621,6 @@ class BotEngine:
 
         target_user_id = mapping["user_telegram_id"]
 
-        # Forward or Send reply to user
         reply_header = "✍️ <b>Jo’rabekdan javob:</b>\n\n"
         res = None
         if admin_text:
@@ -786,7 +746,6 @@ class BotEngine:
             sent_groups = 0
             fail_count = 0
 
-            # 1. Send to users
             for uid in all_ids:
                 try:
                     res = self.client.send_message(uid, broadcast_text)
@@ -798,7 +757,6 @@ class BotEngine:
                 except Exception:
                     fail_count += 1
 
-            # 2. Send to groups
             for g in all_groups:
                 try:
                     gid = g["group_id"]
@@ -823,29 +781,27 @@ class BotEngine:
         return False
 
     def setup_commands_menu(self):
-        """Sets standard menu commands in BotFather."""
         commands = [
             {"command": "start", "description": "Bosh sahifa / Menyu"}
         ]
         self.client.set_my_commands(commands)
 
     def run_polling(self):
-        """Long polling engine with automatic crash recovery."""
-        logger.info("🤖 Kenjayev Telegram Bot Long Polling rejimida ishga tushmoqda...")
+        logger.info(f"🤖 Main Bot Long Polling rejimida ishga tushmoqda...")
         if not self.client.token:
-            logger.error("❌ BOT_TOKEN topilmadi! Iltimos, .env yoki muhit o'zgaruvchilarini tekshiring.")
+            logger.error("❌ BOT_TOKEN topilmadi! Iltimos, .env ni tekshiring.")
             return
 
         bot_info = self.client.get_me()
         if not bot_info:
-            logger.error("❌ Telegram API bilan ulanish o'rnatilmadi. Token to'g'riligini tekshiring.")
+            logger.error("❌ Main Bot Telegram API bilan ulanish o'rnatilmadi.")
             return
 
-        logger.info(f"✅ Bot muvaffaqiyatli ulandi: @{bot_info.get('username')} ({bot_info.get('first_name')})")
+        logger.info(f"✅ Main Bot muvaffaqiyatli ulandi: @{bot_info.get('username')} ({bot_info.get('first_name')})")
         self.setup_commands_menu()
 
         offset = None
-        while True:
+        while self._running:
             try:
                 updates = self.client.get_updates(offset=offset, timeout=25)
                 if updates:
@@ -853,15 +809,226 @@ class BotEngine:
                         offset = update["update_id"] + 1
                         self.handle_update(update)
             except KeyboardInterrupt:
-                logger.info("🛑 Bot to'xtatildi.")
                 self._running = False
                 break
             except Exception as e:
-                logger.error(f"Polling davomida xatolik: {e}")
+                logger.error(f"Main Bot Polling xatosi: {e}")
                 time.sleep(3)
 
 
-# --- MAIN RUNNER ---
+# --- DEDICATED GUARD BOT ENGINE (@Botlarni_tekshiruvchi_Bot) ---
+class GuardBotEngine:
+    def __init__(self, client=None):
+        self.client = client or TelegramClient(GUARD_BOT_TOKEN)
+        self._running = True
+        self.bot_username = "Botlarni_tekshiruvchi_Bot"
+
+    def handle_update(self, update):
+        try:
+            if "message" in update:
+                self.process_message(update["message"])
+            elif "callback_query" in update:
+                self.process_callback_query(update["callback_query"])
+            elif "my_chat_member" in update:
+                self.process_my_chat_member(update["my_chat_member"])
+        except Exception as e:
+            logger.error(f"Guard Bot update xatosi: {e}", exc_info=True)
+
+    def process_my_chat_member(self, mcm):
+        chat = mcm.get("chat", {})
+        chat_id = chat.get("id")
+        chat_title = chat.get("title", "")
+        chat_username = chat.get("username")
+        new_status = mcm.get("new_chat_member", {}).get("status")
+
+        if chat_id and chat.get("type") in ["group", "supergroup"]:
+            is_active = 1 if new_status in ["administrator", "member"] else 0
+            bot_db.upsert_group(chat_id, chat_title, chat_username, is_active=is_active)
+            logger.info(f"Guard Bot guruh statusi: {chat_title} ({chat_id}) -> {new_status}")
+
+    def process_callback_query(self, cq):
+        cq_id = cq.get("id")
+        user_data = cq.get("from", {})
+        user_id = user_data.get("id")
+        data = cq.get("data", "")
+        message = cq.get("message", {})
+        bot_msg_id = message.get("message_id")
+
+        if not user_id:
+            return
+
+        if data.startswith("verify_human:"):
+            parts = data.split(":")
+            if len(parts) >= 4:
+                target_user_id = int(parts[1])
+                user_msg_id = int(parts[2])
+                group_id = int(parts[3])
+
+                if user_id != target_user_id:
+                    self.client.answer_callback_query(cq_id, text="⚠️ Bu tugma siz uchun emas!", show_alert=True)
+                    return
+
+                bot_db.verify_user(user_id)
+                self.client.answer_callback_query(cq_id, text="✅ Rahmat! Siz bot emasligingiz tasdiqlandi.")
+
+                try:
+                    self.client.delete_message(group_id, bot_msg_id)
+                except Exception as e:
+                    logger.debug(f"Guard prompt delete xatosi: {e}")
+
+                bot_db.resolve_pending_verification(group_id, user_id)
+                return
+
+    def process_message(self, message):
+        chat = message.get("chat", {})
+        chat_id = chat.get("id")
+        chat_type = chat.get("type", "private")
+        from_user = message.get("from", {})
+        user_id = from_user.get("id")
+        message_id = message.get("message_id")
+        text = message.get("text", "")
+
+        if not chat_id:
+            return
+
+        # GROUP MESSAGE HANDLING
+        if chat_type in ["group", "supergroup"]:
+            chat_title = chat.get("title", "Group")
+            chat_username = chat.get("username")
+            bot_db.upsert_group(chat_id, chat_title, chat_username, is_active=1)
+
+            if not user_id or from_user.get("is_bot") or message.get("sender_chat"):
+                return
+
+            if bot_db.is_user_verified(user_id):
+                return
+
+            timeout_sec = int(bot_db.get_setting("captcha_timeout", "60"))
+            user_name = html.escape(from_user.get("first_name") or "Foydalanuvchi", quote=False)
+
+            warning_text = (
+                f"⚠️ <a href=\"tg://user?id={user_id}\">{user_name}</a>, guruhda spam va 18+ reklamalarni oldini olish uchun "
+                f"pastdagi tugmani bosib <b>bot emasligingizni tasdiqlang</b>, aks holda xabaringiz <b>{timeout_sec} soniyada</b> o'chiriladi!"
+            )
+            captcha_kb = {
+                "inline_keyboard": [
+                    [
+                        {
+                            "text": "✅ Men bot emasman",
+                            "callback_data": f"verify_human:{user_id}:{message_id}:{chat_id}"
+                        }
+                    ]
+                ]
+            }
+
+            prompt_res = self.client.send_message(
+                chat_id,
+                warning_text,
+                reply_markup=captcha_kb,
+                reply_to_message_id=message_id
+            )
+
+            if prompt_res and "message_id" in prompt_res:
+                bot_prompt_id = prompt_res["message_id"]
+                expires_at = time.time() + timeout_sec
+                bot_db.add_pending_verification(chat_id, user_id, message_id, bot_prompt_id, expires_at)
+            return
+
+        # PRIVATE CHAT HANDLING
+        if not user_id:
+            return
+
+        # Admin commands for Guard Bot
+        if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and text.startswith("/set_timeout"):
+            parts = text.split()
+            if len(parts) >= 2 and parts[1].isdigit():
+                new_val = int(parts[1])
+                bot_db.set_setting("captcha_timeout", str(new_val))
+                self.client.send_message(chat_id, f"✅ <b>Tekshirish vaqti {new_val} soniyaga o'rnatildi!</b>")
+                return
+
+        timeout = bot_db.get_setting("captcha_timeout", "60")
+        bot_uname = self.client.bot_username or "Botlarni_tekshiruvchi_Bot"
+
+        welcome_guard = (
+            "🛡 <b>Assalomu alaykum! Men \"Tekshiruvchi\" — 18+ spam va reklamalarni tozalovchi botman.</b>\n\n"
+            "Meni guruhingizga qo'shib, <b>admin</b> huquqini bersangiz:\n"
+            "• Guruhga yozgan har bir yangi a'zodan bot emasligini tasdiqlash so'raladi.\n"
+            f"• Agar <b>{timeout} soniya</b> ichida tasdiqlamasa, uning xabari avtomatik o'chiriladi!\n"
+            "• Bir marta tasdiqlagan odam qayta bezovta qilinmaydi.\n\n"
+            "👇 Pastdagi tugma orqali meni guruhingizga admin sifatida qo'shing:"
+        )
+
+        kb = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "➕ Guruhga admin sifatida qo'shish",
+                        "url": f"https://t.me/{bot_uname}?startgroup=true&admin=delete_messages+restrict_members"
+                    }
+                ],
+                [
+                    {
+                        "text": "🌐 Kenjayev Blog (Mini App)",
+                        "web_app": {"url": WEB_APP_URL}
+                    }
+                ]
+            ]
+        }
+        self.client.send_message(chat_id, welcome_guard, reply_markup=kb)
+
+    def run_polling(self):
+        if not self.client.token:
+            return
+        bot_info = self.client.get_me()
+        if not bot_info:
+            logger.error("❌ Guard Bot Telegram API bilan ulanish o'rnatilmadi.")
+            return
+
+        logger.info(f"✅ Guard Bot muvaffaqiyatli ulandi: @{bot_info.get('username')} ({bot_info.get('first_name')})")
+
+        offset = None
+        while self._running:
+            try:
+                updates = self.client.get_updates(offset=offset, timeout=25)
+                if updates:
+                    for update in updates:
+                        offset = update["update_id"] + 1
+                        self.handle_update(update)
+            except KeyboardInterrupt:
+                self._running = False
+                break
+            except Exception as e:
+                logger.error(f"Guard Bot Polling xatosi: {e}")
+                time.sleep(3)
+
+
+# --- MULTI-BOT RUNNER ---
+def run_all_bots():
+    threads = []
+    
+    # 1. Start Main Bot
+    if BOT_TOKEN:
+        main_bot = BotEngine(TelegramClient(BOT_TOKEN))
+        t1 = threading.Thread(target=main_bot.run_polling, daemon=True, name="MainTelegramBot")
+        t1.start()
+        threads.append(t1)
+
+    # 2. Start Guard Bot
+    if GUARD_BOT_TOKEN:
+        guard_bot = GuardBotEngine(TelegramClient(GUARD_BOT_TOKEN))
+        t2 = threading.Thread(target=guard_bot.run_polling, daemon=True, name="GuardTelegramBot")
+        t2.start()
+        threads.append(t2)
+
+    logger.info(f"🚀 {len(threads)} ta Telegram Bot parallel ishga tushirildi.")
+    return threads
+
+
 if __name__ == "__main__":
-    bot = BotEngine()
-    bot.run_polling()
+    threads = run_all_bots()
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        logger.info("🛑 Barcha botlar to'xtatildi.")
