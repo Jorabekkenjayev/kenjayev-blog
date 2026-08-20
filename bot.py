@@ -1017,23 +1017,16 @@ class GuardBotEngine:
         # REGULAR USER WELCOME MESSAGE
         welcome_guard = (
             f"🛡 <b>Assalomu alaykum, {user_name}!</b>\n\n"
-            "<b>Kenjayev BLOG — \"Tekshiruvchi\"</b> botiga xush kelibsiz!\n\n"
-            "Men guruhlarni 18+ reklamalar, spam va keraksiz botlardan tozalovchi rasmiy botman.\n\n"
+            "Men <b>\"Tekshiruvchi\"</b> — guruhlarni 18+ reklamalar, spam va keraksiz botlardan tozalovchi botman.\n\n"
             "Meni guruhingizga qo'shib, <b>admin</b> huquqini bersangiz:\n"
             "• Guruhga yozgan har bir yangi a'zodan bot emasligini tasdiqlash so'raladi.\n"
             f"• Agar <b>{timeout} soniya</b> ichida tasdiqlamasa, uning xabari avtomatik o'chiriladi!\n"
             "• Bir marta tasdiqlagan odam qayta bezovta qilinmaydi.\n\n"
-            "Shuningdek, pastdagi tugma orqali <b>Kenjayev BLOG</b> saytiga kirishingiz mumkin:"
+            "👇 Pastdagi tugma orqali meni guruhingizga qo'shing:"
         )
 
         kb = {
             "inline_keyboard": [
-                [
-                    {
-                        "text": "🌐 Kenjayev BLOG (Saytga kirish)",
-                        "web_app": {"url": WEB_APP_URL}
-                    }
-                ],
                 [
                     {
                         "text": "➕ Guruhga admin sifatida qo'shish",
