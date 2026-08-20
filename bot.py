@@ -209,18 +209,13 @@ def check_rate_limit(user_id):
 
 # --- UI BUILDERS ---
 def get_main_menu_keyboard():
+    """Generates the 2 core buttons: Mini App and Write to Admin."""
     return {
         "inline_keyboard": [
             [
                 {
                     "text": "🌐 Saytga kirish",
                     "web_app": {"url": WEB_APP_URL}
-                }
-            ],
-            [
-                {
-                    "text": "🔞 18+ reklamani o'chirish",
-                    "callback_data": "anti_spam_info"
                 }
             ],
             [
