@@ -16,8 +16,26 @@ import mimetypes
 import shutil
 import io
 
-PORT = int(os.environ.get('PORT', 8080))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def load_env_file():
+    env_path = os.path.join(BASE_DIR, '.env')
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        k, v = k.strip(), v.strip()
+                        if k and k not in os.environ:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+load_env_file()
+
+PORT = int(os.environ.get('PORT', 8080))
 DATA_FILE = os.path.join(BASE_DIR, 'data.json')
 UPLOADS_DIR = os.path.join(BASE_DIR, 'uploads')
 BACKUP_DIR = os.path.join(BASE_DIR, 'backup')
@@ -830,6 +848,21 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json(500, {"error": f"Tiklash xatosi: {str(e)}"})
             return
 
+        # 9. Telegram Bot Webhook Endpoint (/api/telegram-webhook)
+        elif path == '/api/telegram-webhook':
+            try:
+                body = self.read_json_body()
+                if body:
+                    import bot
+                    bot_engine = bot.BotEngine()
+                    # Process asynchronously in thread to immediately return 200 OK to Telegram
+                    threading.Thread(target=bot_engine.handle_update, args=(body,), daemon=True).start()
+                self.send_json(200, {"ok": True})
+            except Exception as e:
+                print(f"⚠️ [TELEGRAM WEBHOOK ERROR]: {e}")
+                self.send_json(200, {"ok": False, "error": str(e)})
+            return
+
         else:
             self.send_json(404, {"error": "Endpoint topilmadi"})
 
@@ -919,12 +952,38 @@ def app(environ, start_response):
     start_response(status_str, handler.response_headers)
     return [wfile.getvalue()]
 
+_bot_started = False
+_bot_lock = threading.Lock()
+
+def start_bot_background():
+    global _bot_started
+    bot_token = os.environ.get("BOT_TOKEN", "").strip()
+    if not bot_token:
+        return
+    with _bot_lock:
+        if _bot_started:
+            return
+        _bot_started = True
+        try:
+            import bot
+            t = threading.Thread(target=bot.BotEngine().run_polling, daemon=True, name="TelegramBotPolling")
+            t.start()
+            print("🤖 [TELEGRAM BOT] Background Polling avtomatik ishga tushirildi.")
+        except Exception as e:
+            print(f"⚠️ [TELEGRAM BOT] Background start xatosi: {e}")
+
+# Automatically trigger background bot on startup
+start_bot_background()
+
 def main():
     os.chdir(BASE_DIR)
     local_ip = get_local_ip()
 
     # Run initial migrations
     migrate_base64_images()
+
+    # Start Telegram Bot in background if BOT_TOKEN is present
+    start_bot_background()
 
     print("\n" + "=" * 75)
     print("🚀 KENJAYEV BLOG — PROFESSIONAL PRODUCTION SERVER ISHGA TUSHDI!")

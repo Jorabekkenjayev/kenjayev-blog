@@ -29,6 +29,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kenjayev BLOG">
 
+    <!-- Telegram Mini App WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1472,9 +1475,25 @@
                 this.checkAdminSession();
                 this.fetchServerData();
                 this.registerPWA();
+                this.initTelegramMiniApp();
 
                 // Live Sync Polling every 3 seconds
                 setInterval(() => this.fetchServerData(true), 3000);
+            }
+
+            initTelegramMiniApp() {
+                try {
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        const tg = window.Telegram.WebApp;
+                        tg.ready();
+                        tg.expand();
+                        if (tg.setHeaderColor) {
+                            tg.setHeaderColor('#0f172a');
+                        }
+                    }
+                } catch (e) {
+                    console.debug('Telegram WebApp initialization info:', e);
+                }
             }
 
             getApiUrl(endpoint) {
