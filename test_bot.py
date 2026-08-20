@@ -292,6 +292,38 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         self.assertIsNotNone(user_bcast)
         self.assertIsNotNone(group_bcast)
 
+    def test_guard_bot_engine(self):
+        guard_client = MockTelegramClient()
+        guard_engine = bot.GuardBotEngine(guard_client)
+
+        # 1. Regular user /start on Guard Bot
+        guard_engine.handle_update({
+            "update_id": 50,
+            "message": {
+                "message_id": 801,
+                "chat": {"id": 554433, "type": "private"},
+                "from": {"id": 554433, "first_name": "Sardor"},
+                "text": "/start"
+            }
+        })
+        user_msg = guard_client.sent_messages[-1]
+        self.assertIn("Assalomu alaykum, Sardor!", user_msg["text"])
+        self.assertIn("Tekshiruvchi", user_msg["text"])
+
+        # 2. Admin /start on Guard Bot
+        guard_engine.handle_update({
+            "update_id": 51,
+            "message": {
+                "message_id": 802,
+                "chat": {"id": bot.ADMIN_CHAT_ID, "type": "private"},
+                "from": {"id": bot.ADMIN_CHAT_ID},
+                "text": "/start"
+            }
+        })
+        admin_msg = guard_client.sent_messages[-1]
+        self.assertIn("Assalomu alaykum, Jo’rabek!", admin_msg["text"])
+        self.assertIn("Tekshiruvchi", admin_msg["text"])
+
     def test_wsgi_webhook_endpoint(self):
         import server
         import io

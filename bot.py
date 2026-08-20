@@ -938,20 +938,86 @@ class GuardBotEngine:
         if not user_id:
             return
 
-        # Admin commands for Guard Bot
-        if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and text.startswith("/set_timeout"):
-            parts = text.split()
-            if len(parts) >= 2 and parts[1].isdigit():
-                new_val = int(parts[1])
-                bot_db.set_setting("captcha_timeout", str(new_val))
-                self.client.send_message(chat_id, f"✅ <b>Tekshirish vaqti {new_val} soniyaga o'rnatildi!</b>")
-                return
-
         timeout = bot_db.get_setting("captcha_timeout", "60")
         bot_uname = self.client.bot_username or "Botlarni_tekshiruvchi_Bot"
+        user_name = html.escape(from_user.get("first_name") or "Foydalanuvchi", quote=False)
 
+        # ADMIN PANEL COMMANDS
+        if ADMIN_CHAT_ID and chat_id == ADMIN_CHAT_ID and text.startswith("/"):
+            if text == "/start":
+                admin_panel_text = (
+                    "👑 <b>Assalomu alaykum, Jo’rabek!</b>\n\n"
+                    "Siz <b>\"Tekshiruvchi\" (@Botlarni_tekshiruvchi_Bot)</b> botining boshqaruv panelidasiz.\n\n"
+                    "<b>Mavjud buyruqlar:</b>\n"
+                    "📊 /stats — Guruhlar va anti-bot statistikasi\n"
+                    "🛡 /groups — Ulangan guruhlar ro'yxati\n"
+                    f"⏱ /set_timeout [soniya] — O'chirish vaqtini sozlash (Hozir: {timeout}s)\n"
+                    "📢 /broadcast [matn] — Barcha ulangan guruhlarga xabar yuborish"
+                )
+                self.client.send_message(chat_id, admin_panel_text)
+                return
+
+            elif text == "/stats":
+                stats = bot_db.get_stats()
+                stats_text = (
+                    "📊 <b>\"TEKSHIRUVCHI\" BOT STATISTIKASI</b>\n\n"
+                    f"🛡 <b>Ulangan guruhlar:</b> {stats['total_groups']} ta\n"
+                    f"👤 <b>Tasdiqlangan odamlar (Anti-bot):</b> {stats['verified_humans']} ta\n"
+                    f"⏱ <b>O'chirish vaqti:</b> {timeout} soniya"
+                )
+                self.client.send_message(chat_id, stats_text)
+                return
+
+            elif text == "/groups":
+                groups = bot_db.get_all_active_groups()
+                if not groups:
+                    self.client.send_message(chat_id, "ℹ️ Hozircha ulangan guruhlar mavjud emas.")
+                    return
+                lines = ["🛡 <b>ULANGAN GURUHLAR RO'YXATI:</b>\n"]
+                for idx, g in enumerate(groups, 1):
+                    uname = f"(@{g['username']})" if g.get('username') else ""
+                    lines.append(f"{idx}. <b>{html.escape(g['title'] or 'Group', quote=False)}</b> {uname} (ID: <code>{g['group_id']}</code>)")
+                self.client.send_message(chat_id, "\n".join(lines))
+                return
+
+            elif text.startswith("/set_timeout"):
+                parts = text.split()
+                if len(parts) >= 2 and parts[1].isdigit():
+                    new_val = int(parts[1])
+                    if 5 <= new_val <= 600:
+                        bot_db.set_setting("captcha_timeout", str(new_val))
+                        self.client.send_message(chat_id, f"✅ <b>Guruhdagi tekshirish vaqti {new_val} soniyaga o'rnatildi!</b>")
+                        return
+                self.client.send_message(chat_id, f"ℹ️ Hozirgi tekshirish vaqti: <b>{timeout} soniya</b>.\n\nO'zgartirish uchun: <code>/set_timeout 60</code>")
+                return
+
+            elif text.startswith("/broadcast"):
+                parts = text.split(maxsplit=1)
+                if len(parts) < 2 or not parts[1].strip():
+                    self.client.send_message(chat_id, "⚠️ <i>Xabar matnini kiriting. Masalan:</i>\n<code>/broadcast Guruhlar uchun e'lon!</code>")
+                    return
+                bcast_msg = parts[1].strip()
+                all_groups = bot_db.get_all_active_groups()
+                self.client.send_message(chat_id, f"📢 <i>{len(all_groups)} ta guruhga xabar yuborish boshlandi...</i>")
+                sent = 0
+                failed = 0
+                for g in all_groups:
+                    try:
+                        res = self.client.send_message(g["group_id"], bcast_msg)
+                        if res:
+                            sent += 1
+                        else:
+                            failed += 1
+                        time.sleep(0.05)
+                    except Exception:
+                        failed += 1
+                self.client.send_message(chat_id, f"✅ <b>Guruhlarga tarqatish yakunlandi!</b>\n\nYuborildi: <b>{sent}</b> ta\nYetib bormadi: <b>{failed}</b> ta")
+                return
+
+        # REGULAR USER WELCOME MESSAGE
         welcome_guard = (
-            "🛡 <b>Assalomu alaykum! Men \"Tekshiruvchi\" — 18+ spam va reklamalarni tozalovchi botman.</b>\n\n"
+            f"🛡 <b>Assalomu alaykum, {user_name}!</b>\n\n"
+            "Men <b>\"Tekshiruvchi\"</b> — guruhlarni 18+ reklamalar, spam va keraksiz botlardan tozalovchi botman.\n\n"
             "Meni guruhingizga qo'shib, <b>admin</b> huquqini bersangiz:\n"
             "• Guruhga yozgan har bir yangi a'zodan bot emasligini tasdiqlash so'raladi.\n"
             f"• Agar <b>{timeout} soniya</b> ichida tasdiqlamasa, uning xabari avtomatik o'chiriladi!\n"
