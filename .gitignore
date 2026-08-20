@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Environment secrets
+.env
+.env.local
+.env.*.local
+
+# Backups
+backup/
+.backup_pre_evolution/
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Scratch
+scratch_*.js
+*.log

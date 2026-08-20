@@ -1,0 +1,2717 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Kenjayev BLOG | Shaxsiy Fikrlar va G'oyalar</title>
+    
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Kenjayev BLOG — Shaxsiy fikrlar, tahliliy maqolalar, texnologiya va hayotiy g'oyalar platformasi.">
+    <meta name="keywords" content="Kenjayev, blog, maqolalar, shaxsiy fikrlar, texnologiya, dasturlash">
+    <meta name="author" content="Kenjayev">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:8080/">
+    <meta property="og:title" id="ogTitle" content="Kenjayev BLOG | Shaxsiy Fikrlar va G'oyalar">
+    <meta property="og:description" id="ogDesc" content="Muallif maqolalari, tahlillar va yangi g'oyalar bilan tanishing.">
+    <meta property="og:image" id="ogImage" content="/uploads/default-og.jpg">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="twTitle" content="Kenjayev BLOG">
+    <meta name="twitter:description" id="twDesc" content="Shaxsiy fikrlar va professional maqolalar.">
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kenjayev BLOG">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- JSON-LD Structured Data Container -->
+    <script type="application/ld+json" id="schemaOrgData">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "Kenjayev BLOG",
+      "description": "Shaxsiy fikrlar va g'oyalar platformasi"
+    }
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --surface-card: #181824;
+            --surface-elevated: #222233;
+            --surface-hover: #2a2a3e;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --accent-glow: rgba(99, 102, 241, 0.35);
+            --accent-subtle: rgba(99, 102, 241, 0.12);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2e2e42;
+            --border-subtle: #1e1e2d;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 24px var(--accent-glow);
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --surface-card: #ffffff;
+            --surface-elevated: #ffffff;
+            --surface-hover: #f1f5f9;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --accent-glow: rgba(79, 70, 229, 0.25);
+            --accent-subtle: rgba(79, 70, 229, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-subtle: #edf2f7;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Reading Progress Bar */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #a855f7);
+            z-index: 1001;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="light"] .header {
+            background: rgba(248, 250, 252, 0.88);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            gap: 16px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-name {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .logo-name .name-main {
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        [data-theme="light"] .logo-name .name-main {
+            background: linear-gradient(135deg, #0f172a 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+        }
+
+        .logo-name .name-sub {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.22em;
+            color: var(--accent);
+            text-transform: uppercase;
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        /* Search in Header */
+        .search-container {
+            flex: 1;
+            max-width: 380px;
+            position: relative;
+            margin: 0 8px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 9px 36px 9px 38px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+            background: var(--surface-elevated);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+            padding: 4px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: var(--transition-smooth);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 4px 14px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+            border-color: var(--text-muted);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: var(--radius-md);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8125rem;
+            border-radius: var(--radius-sm);
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--accent-subtle);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 40px 0 28px;
+            background: radial-gradient(circle at 50% 0%, var(--accent-subtle) 0%, transparent 70%);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 28px;
+            box-shadow: var(--shadow-sm);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            color: var(--text-primary);
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+            padding: 32px 0 80px;
+        }
+
+        /* Posts Grid */
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+            align-content: start;
+        }
+
+        /* Post Card */
+        .post-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+        }
+
+        .post-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 190px;
+            background: var(--surface-elevated);
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .post-card:hover .post-image {
+            transform: scale(1.04);
+        }
+
+        .post-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--text-muted);
+            background: linear-gradient(135deg, var(--surface-elevated), var(--surface-card));
+        }
+
+        .post-bookmark-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            z-index: 2;
+        }
+
+        .post-bookmark-btn.bookmarked {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Video Container (Responsive 16:9) */
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            background: #000000;
+            box-shadow: var(--shadow-md);
+        }
+
+        .video-container iframe,
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: var(--radius-md);
+            object-fit: contain;
+        }
+
+        /* Post Card Video Badge */
+        .post-video-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        }
+
+        .post-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .post-category {
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .post-reading-time {
+            color: var(--text-muted);
+        }
+
+        .post-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            color: var(--text-primary);
+        }
+
+        .post-excerpt {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .post-tag-chip {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: var(--surface-elevated);
+            color: var(--text-muted);
+        }
+
+        .post-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 14px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        .post-stats {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .post-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.2s;
+        }
+
+        .post-stat.liked {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            border-radius: var(--radius-sm);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-size: 13px;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .icon-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar-widget {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .widget-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Tags/Categories */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            padding: 6px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-full);
+            font-size: 0.8125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tag.active {
+            background: var(--accent);
+            color: #ffffff;
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Admin Form & Rich Toolbar */
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .form-group textarea {
+            min-height: 160px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+
+        /* Rich Text Toolbar */
+        .rich-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 6px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        }
+
+        .toolbar-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .toolbar-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--surface-elevated);
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--accent);
+            background: var(--accent-subtle);
+            color: var(--accent);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 760px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.96) translateY(10px);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-sm {
+            max-width: 440px;
+        }
+
+        .modal-lg {
+            max-width: 900px;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-close:hover {
+            background: var(--surface-hover);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Post Detail Article */
+        .post-detail-header {
+            margin-bottom: 20px;
+        }
+
+        .post-detail-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .post-detail-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .post-detail-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+        }
+
+        .post-detail-body {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 32px;
+        }
+
+        .post-detail-body p {
+            margin-bottom: 1.2em;
+        }
+
+        .post-detail-body h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 1.5em 0 0.6em;
+            color: var(--text-primary);
+        }
+
+        .post-detail-body h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 1.3em 0 0.5em;
+        }
+
+        .post-detail-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 12px 20px;
+            margin: 1.5em 0;
+            background: var(--accent-subtle);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .post-detail-body pre {
+            background: #0d1117;
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            margin: 1.5em 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            border: 1px solid var(--border);
+        }
+
+        .post-detail-body ul, .post-detail-body ol {
+            margin: 1em 0 1.5em 24px;
+        }
+
+        .post-detail-body li {
+            margin-bottom: 0.4em;
+        }
+
+        .post-detail-body a {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        /* Share & Interaction Bar */
+        .post-detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .action-btn:hover {
+            background: var(--surface-hover);
+            border-color: var(--accent);
+        }
+
+        .action-btn.liked {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        /* Related Articles */
+        .related-section {
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .related-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .related-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .related-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .related-card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.3;
+            color: var(--text-primary);
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent);
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 44px;
+            height: 44px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            cursor: pointer;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-md);
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            background: var(--accent);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
+            padding: 60px 20px;
+            text-align: center;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        /* Dashboard Tables */
+        .dash-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .dash-card {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .dash-val {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .dash-lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: 2;
+            }
+
+            .posts-grid {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .header-inner {
+                height: 60px;
+                padding: 0 4px;
+                gap: 8px;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+                min-width: 34px;
+                font-size: 0.95rem;
+            }
+
+            .logo .logo-name .name-main {
+                font-size: 0.95rem;
+            }
+
+            .logo .logo-name .name-sub {
+                font-size: 0.52rem;
+            }
+
+            .search-container {
+                display: none; /* Collapsed on mobile */
+            }
+
+            .hero {
+                padding: 24px 0 16px;
+            }
+
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+
+            .stats-bar {
+                padding: 12px 16px;
+                gap: 0;
+                justify-content: space-around;
+            }
+
+            .stat-value {
+                font-size: 1.3rem;
+            }
+
+            .modal {
+                align-self: flex-end;
+                border-radius: 20px 20px 0 0;
+                max-height: 92vh;
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .modal-header,
+            .modal-body {
+                padding: 16px;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+
+            .post-detail-title {
+                font-size: 1.35rem;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 16px; /* Prevents iOS auto zoom */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="reading-progress" id="readingProgress"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="#" class="logo" onclick="app.goHome(); return false;">
+                <div class="logo-icon">K</div>
+                <div class="logo-name">
+                    <span class="name-main">Kenjayev</span>
+                    <span class="name-sub">BLOG</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="globalSearch" class="search-input" placeholder="Maqolalarni qidirish..." oninput="app.handleSearch(this.value)">
+                <button class="search-clear" id="searchClear" onclick="app.clearSearch()">✕</button>
+            </div>
+
+            <div class="nav-actions" id="navActions">
+                <!-- Injected via JS depending on Admin status -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>Kenjayev BLOG</h1>
+            <p>Maqolalarni o'qing, ulashing va fikrlaringizni layk orqali bildiring.</p>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalPosts">0</div>
+                    <div class="stat-label">Postlar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalViews">0</div>
+                    <div class="stat-label">Ko'rishlar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="totalLikes">0</div>
+                    <div class="stat-label">Layklar</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container main-layout">
+        <!-- Posts Grid -->
+        <div class="posts-grid" id="postsGrid">
+            <!-- Dynamic Post Cards Rendered Here -->
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Categories -->
+            <div class="sidebar-widget">
+                <div class="widget-header">
+                    <div class="widget-title">Kategoriyalar</div>
+                </div>
+                <div class="tag-list" id="tagList">
+                    <span class="tag active" onclick="app.filterCategory('all')">Barchasi</span>
+                </div>
+            </div>
+
+            <!-- Admin Panel Widget -->
+            <div class="sidebar-widget" id="adminWidget">
+                <!-- Rendered dynamically -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- Post Detail Modal -->
+    <div class="modal-overlay" id="postModal" onclick="app.closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">Maqola mutolaasi</h2>
+                <button class="modal-close" onclick="app.closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content injected dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal-overlay" id="adminLoginModal" onclick="app.closeLoginModal(event)">
+        <div class="modal modal-sm" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">🔑 Admin Kirish</h2>
+                <button class="modal-close" onclick="app.closeLoginModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="app.handleAdminLogin(event)" class="admin-form">
+                    <div class="form-group">
+                        <label for="adminLogin">Login (Telefon raqam)</label>
+                        <input type="text" id="adminLogin" placeholder="+998 91 970 51 91" required autofocus autocomplete="username">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPassword">Parol</label>
+                        <input type="password" id="adminPassword" placeholder="Parol" required autocomplete="current-password">
+                    </div>
+                    <div id="loginError" style="display:none; color: var(--danger); font-size: 0.85rem;"></div>
+                    <button type="submit" class="btn btn-primary" id="loginSubmitBtn" style="width: 100%;">
+                        Kirish
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin CMS Dashboard Modal -->
+    <div class="modal-overlay" id="adminDashModal" onclick="app.closeDashModal(event)">
+        <div class="modal modal-lg" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title">📊 CMS Boshqaruv Paneli</h2>
+                <button class="modal-close" onclick="app.closeDashModal()">✕</button>
+            </div>
+            <div class="modal-body" id="dashModalBody">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteConfirmModal" onclick="app.closeDeleteModal(event)">
+        <div class="modal modal-sm" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--danger);">🗑️ Postni o'chirish</h2>
+                <button class="modal-close" onclick="app.closeDeleteModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; color: var(--text-secondary);" id="deleteConfirmText">
+                    Ushbu maqolani butunlay o'chirib tashlashni tasdiqlaysizmi?
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-ghost" style="flex:1;" onclick="app.closeDeleteModal()">Bekor qilish</button>
+                    <button class="btn btn-primary" style="flex:1; background: var(--danger);" id="confirmDeleteBtn" onclick="app.executeDelete()">O'chirish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Yuqoriga">
+        ▲
+    </button>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        class BlogApp {
+            constructor() {
+                this.posts = JSON.parse(localStorage.getItem('problog_posts')) || [];
+                this.likes = JSON.parse(localStorage.getItem('problog_likes')) || {};
+                this.bookmarks = JSON.parse(localStorage.getItem('kenjayev_bookmarks')) || [];
+                this.adminToken = localStorage.getItem('kenjayev_admin_token') || null;
+                this.isAdmin = !!this.adminToken;
+                
+                this.currentFilter = 'all';
+                this.searchQuery = '';
+                this.editingPostId = null;
+                this.postToDeleteId = null;
+                this.currentOpenPostId = null;
+                this.renderedPostIds = new Set();
+                
+                this.init();
+            }
+
+            init() {
+                this.loadTheme();
+                this.renderHeaderNav();
+                this.renderAdminWidget();
+                this.renderPosts();
+                this.renderCategories();
+                this.updateStats();
+                this.setupScrollEvents();
+                this.checkUrlPost();
+                this.checkAdminSession();
+                this.fetchServerData();
+                this.registerPWA();
+
+                // Live Sync Polling every 3 seconds
+                setInterval(() => this.fetchServerData(true), 3000);
+            }
+
+            getApiUrl(endpoint) {
+                if (window.location.protocol.startsWith('http')) {
+                    return endpoint;
+                }
+                return 'http://localhost:8080' + endpoint;
+            }
+
+            getAuthHeaders() {
+                const headers = { 'Content-Type': 'application/json' };
+                if (this.adminToken) {
+                    headers['Authorization'] = `Bearer ${this.adminToken}`;
+                }
+                return headers;
+            }
+
+            // --- DATA FETCHING & SYNC ---
+            fetchServerData(silent = false) {
+                fetch(this.getApiUrl('/api/data'))
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && Array.isArray(data.posts)) {
+                            this.posts = data.posts;
+                            localStorage.setItem('problog_posts', JSON.stringify(this.posts));
+                            this.renderPosts();
+                            this.renderCategories();
+                            this.updateStats();
+                            
+                            if (document.getElementById('postModal').classList.contains('active') && this.currentOpenPostId) {
+                                this.openPost(this.currentOpenPostId, false);
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        if (!silent) console.log('Server bilan ulanish kutilmoqda...');
+                    });
+            }
+
+            checkAdminSession() {
+                if (!this.adminToken) return;
+                fetch(this.getApiUrl('/api/admin/check-session'), {
+                    headers: this.getAuthHeaders()
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (!res.authenticated) {
+                        this.logoutAdmin(false);
+                    }
+                })
+                .catch(() => {});
+            }
+
+            // --- THEME ---
+            loadTheme() {
+                const theme = localStorage.getItem('problog_theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+                this.updateThemeIcon(theme);
+            }
+
+            toggleTheme() {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('problog_theme', next);
+                this.updateThemeIcon(next);
+            }
+
+            updateThemeIcon(theme) {
+                const themeIcon = document.getElementById('themeIcon');
+                if (themeIcon) themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+
+            // --- ADMIN AUTH ---
+            openLoginModal() {
+                document.getElementById('adminLoginModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+                setTimeout(() => {
+                    const el = document.getElementById('adminLogin');
+                    if (el) el.focus();
+                }, 100);
+            }
+
+            closeLoginModal(e) {
+                if (e && e.target !== e.currentTarget) return;
+                document.getElementById('adminLoginModal').classList.remove('active');
+                document.body.style.overflow = '';
+                const err = document.getElementById('loginError');
+                if (err) err.style.display = 'none';
+            }
+
+            handleAdminLogin(e) {
+                e.preventDefault();
+                const login = document.getElementById('adminLogin').value.trim();
+                const password = document.getElementById('adminPassword').value.trim();
+                const btn = document.getElementById('loginSubmitBtn');
+                const err = document.getElementById('loginError');
+
+                btn.disabled = true;
+                btn.textContent = 'Kirilmoqda...';
+                if (err) err.style.display = 'none';
+
+                fetch(this.getApiUrl('/api/admin/login'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ login, password })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    btn.disabled = false;
+                    btn.textContent = 'Kirish';
+                    if (res.status === 'success' && res.token) {
+                        this.adminToken = res.token;
+                        this.isAdmin = true;
+                        localStorage.setItem('kenjayev_admin_token', res.token);
+                        this.closeLoginModal();
+                        this.renderHeaderNav();
+                        this.renderAdminWidget();
+                        this.renderPosts();
+                        this.showToast('✅ Admin rejimiga muvaffaqiyatli kirdingiz!');
+                    } else {
+                        if (err) {
+                            err.textContent = res.error || 'Login yoki parol xato!';
+                            err.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(() => {
+                    btn.disabled = false;
+                    btn.textContent = 'Kirish';
+                    if (err) {
+                        err.textContent = 'Server bilan ulanishda xatolik!';
+                        err.style.display = 'block';
+                    }
+                });
+            }
+
+            logoutAdmin(notify = true) {
+                if (this.adminToken) {
+                    fetch(this.getApiUrl('/api/admin/logout'), {
+                        method: 'POST',
+                        headers: this.getAuthHeaders()
+                    }).catch(() => {});
+                }
+                this.adminToken = null;
+                this.isAdmin = false;
+                localStorage.removeItem('kenjayev_admin_token');
+                this.editingPostId = null;
+                this.renderHeaderNav();
+                this.renderAdminWidget();
+                this.renderPosts();
+                if (notify) this.showToast('ℹ️ Admin rejimidan chiqdingiz');
+            }
+
+            renderHeaderNav() {
+                const nav = document.getElementById('navActions');
+                const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+                const themeIconSymbol = theme === 'dark' ? '☀️' : '🌙';
+
+                if (this.isAdmin) {
+                    nav.innerHTML = `
+                        <span class="admin-badge">✦ Admin</span>
+                        <button class="btn btn-icon btn-ghost" onclick="app.toggleTheme()" title="Mavzu">
+                            <span id="themeIcon">${themeIconSymbol}</span>
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="app.openDashModal()" title="Boshqaruv Paneli">
+                            📊 Dashboard
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="app.focusAdminForm()">
+                            <span>✎</span> Yangi Post
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="app.logoutAdmin()" title="Chiqish">
+                            Chiqish
+                        </button>
+                    `;
+                } else {
+                    nav.innerHTML = `
+                        <button class="btn btn-icon btn-ghost" onclick="app.toggleTheme()" title="Mavzu">
+                            <span id="themeIcon">${themeIconSymbol}</span>
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="app.openLoginModal()">
+                            🔑 Admin Kirish
+                        </button>
+                    `;
+                }
+            }
+
+            // --- ADMIN WIDGET (EDITOR) ---
+            renderAdminWidget() {
+                const widget = document.getElementById('adminWidget');
+                if (this.isAdmin) {
+                    const isEditing = this.editingPostId !== null;
+                    widget.innerHTML = `
+                        <div class="widget-header">
+                            <div class="widget-title">${isEditing ? "Postni Tahrirlash" : "Yangi Post Yaratish"}</div>
+                            ${isEditing ? `<button class="btn btn-ghost btn-sm" onclick="app.cancelEdit()">Bekor qilish</button>` : ''}
+                        </div>
+                        <form class="admin-form" onsubmit="app.handlePostSubmit(event)">
+                            <div class="form-group">
+                                <label>Sarlavha</label>
+                                <input type="text" id="postTitle" placeholder="Maqola sarlavhasi..." required>
+                            </div>
+                            <div class="form-group">
+                                <label>Qisqacha mazmun (Subtitle/Excerpt)</label>
+                                <input type="text" id="postSubtitle" placeholder="Qisqacha annotatsiya...">
+                            </div>
+                            <div class="form-group">
+                                <label>Kategoriya</label>
+                                <input type="text" id="postCategory" placeholder="Masalan: Texnologiya, Fikrlar..." required list="existingCategoriesList">
+                                <datalist id="existingCategoriesList">
+                                    ${this.getUniqueCategories().map(cat => `<option value="${cat}">`).join('')}
+                                </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label>Teglar (vergul bilan)</label>
+                                <input type="text" id="postTags" placeholder="texnologiya, ai, kelajak">
+                            </div>
+                            <div class="form-group">
+                                <label>🖼️ Muqova Rasmi (qurilmadan tanlang yoki tashlang)</label>
+                                <div class="drop-zone" id="imageDropZone" onclick="document.getElementById('postImageFile').click()">
+                                    📷 <span id="dropZoneText">Galereya, kameradan tanlang yoki shu yerga tashlang</span>
+                                </div>
+                                <input type="file" id="postImageFile" accept="image/*" style="display:none" onchange="app.handleImageFile(this)">
+                                <div id="imagePreview" style="display:none;position:relative;margin-top:8px;">
+                                    <img id="imagePreviewImg" style="width:100%;border-radius:12px;max-height:200px;object-fit:cover;" />
+                                    <button type="button" onclick="app.clearImage()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;">✕</button>
+                                </div>
+                                <input type="hidden" id="postImage">
+                            </div>
+                            <div class="form-group">
+                                <label>🎥 Video (qurilmadan yuklang yoki YouTube/havola kiriting)</label>
+                                <div style="display:flex;flex-direction:column;gap:8px;">
+                                    <div class="drop-zone" id="videoDropZone" onclick="document.getElementById('postVideoFile').click()">
+                                        📹 <span id="videoDropText">Videoni tanlang (MP4, MOV, WebM) yoki shu yerga tashlang</span>
+                                    </div>
+                                    <input type="file" id="postVideoFile" accept="video/*" style="display:none" onchange="app.handleVideoFile(this)">
+                                    <div id="videoPreview" style="display:none;position:relative;margin-top:8px;">
+                                        <video id="videoPreviewEl" controls playsinline style="width:100%;border-radius:12px;max-height:220px;background:#000;"></video>
+                                        <button type="button" onclick="app.clearVideo()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;">✕</button>
+                                    </div>
+                                    <input type="text" id="postVideoUrl" placeholder="Yoki YouTube / Video havolasi (https://...)" oninput="app.handleVideoUrlInput(this.value)">
+                                    <input type="hidden" id="postVideo">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Maqola matni</label>
+                                <div class="rich-toolbar">
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('**', '**')" title="Qalin"><b>B</b></button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('*', '*')" title="Kursiv"><i>I</i></button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('## ', '')" title="Sarlavha 2">H2</button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('### ', '')" title="Sarlavha 3">H3</button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('> ', '')" title="Iqtibos">Quote</button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('- ', '')" title="Ro'yxat">• List</button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('1. ', '')" title="Raqamli ro'yxat">1. List</button>
+                                    <button type="button" class="toolbar-btn" onclick="app.insertFormat('\`', '\`')" title="Kod">Code</button>
+                                </div>
+                                <textarea id="postBody" placeholder="Maqolangizni yozing..." required style="border-radius: 0 0 var(--radius-sm) var(--radius-sm);"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="savePostBtn" style="width: 100%;">
+                                <span>${isEditing ? '💾 Saqlash' : '⬆ Postni Chop Etish'}</span>
+                            </button>
+                        </form>
+                    `;
+                    this.setupDragAndDrop();
+                } else {
+                    widget.innerHTML = `
+                        <div class="widget-title">Muallif Paneli</div>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 16px;">
+                            Maqolalar faqat muallif (Admin) tomonidan joylanadi va tahrirlanadi.
+                        </p>
+                        <button class="btn btn-ghost btn-sm" onclick="app.openLoginModal()" style="width: 100%;">
+                            🔑 Admin Sifatida Kirish
+                        </button>
+                    `;
+                }
+            }
+
+            setupDragAndDrop() {
+                // Image Drop Zone
+                const imgZone = document.getElementById('imageDropZone');
+                if (imgZone) {
+                    ['dragenter', 'dragover'].forEach(name => {
+                        imgZone.addEventListener(name, (e) => { e.preventDefault(); imgZone.classList.add('dragover'); });
+                    });
+                    ['dragleave', 'drop'].forEach(name => {
+                        imgZone.addEventListener(name, (e) => { e.preventDefault(); imgZone.classList.remove('dragover'); });
+                    });
+                    imgZone.addEventListener('drop', (e) => {
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            const input = document.getElementById('postImageFile');
+                            input.files = files;
+                            this.handleImageFile(input);
+                        }
+                    });
+                }
+
+                // Video Drop Zone
+                const vidZone = document.getElementById('videoDropZone');
+                if (vidZone) {
+                    ['dragenter', 'dragover'].forEach(name => {
+                        vidZone.addEventListener(name, (e) => { e.preventDefault(); vidZone.classList.add('dragover'); });
+                    });
+                    ['dragleave', 'drop'].forEach(name => {
+                        vidZone.addEventListener(name, (e) => { e.preventDefault(); vidZone.classList.remove('dragover'); });
+                    });
+                    vidZone.addEventListener('drop', (e) => {
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            const input = document.getElementById('postVideoFile');
+                            input.files = files;
+                            this.handleVideoFile(input);
+                        }
+                    });
+                }
+            }
+
+            handleImageFile(input) {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64 = e.target.result;
+                    document.getElementById('postImage').value = base64;
+                    const preview = document.getElementById('imagePreview');
+                    const img = document.getElementById('imagePreviewImg');
+                    if (preview && img) {
+                        img.src = base64;
+                        preview.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+
+            clearImage() {
+                document.getElementById('postImage').value = '';
+                const input = document.getElementById('postImageFile');
+                if (input) input.value = '';
+                const preview = document.getElementById('imagePreview');
+                if (preview) preview.style.display = 'none';
+            }
+
+            handleVideoFile(input) {
+                const file = input.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64 = e.target.result;
+                    document.getElementById('postVideo').value = base64;
+                    if (document.getElementById('postVideoUrl')) document.getElementById('postVideoUrl').value = '';
+                    const preview = document.getElementById('videoPreview');
+                    const videoEl = document.getElementById('videoPreviewEl');
+                    if (preview && videoEl) {
+                        videoEl.src = base64;
+                        preview.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+
+            clearVideo() {
+                document.getElementById('postVideo').value = '';
+                const urlInput = document.getElementById('postVideoUrl');
+                if (urlInput) urlInput.value = '';
+                const fileInput = document.getElementById('postVideoFile');
+                if (fileInput) fileInput.value = '';
+                const preview = document.getElementById('videoPreview');
+                const videoEl = document.getElementById('videoPreviewEl');
+                if (videoEl) {
+                    videoEl.pause();
+                    videoEl.removeAttribute('src');
+                    videoEl.load();
+                }
+                if (preview) preview.style.display = 'none';
+            }
+
+            handleVideoUrlInput(url) {
+                const trimmed = url.trim();
+                document.getElementById('postVideo').value = trimmed;
+                const preview = document.getElementById('videoPreview');
+                const videoEl = document.getElementById('videoPreviewEl');
+                if (!trimmed) {
+                    if (preview) preview.style.display = 'none';
+                    return;
+                }
+                if (trimmed.endsWith('.mp4') || trimmed.endsWith('.webm') || trimmed.startsWith('/uploads/')) {
+                    if (preview && videoEl) {
+                        videoEl.src = trimmed;
+                        preview.style.display = 'block';
+                    }
+                } else {
+                    if (preview) preview.style.display = 'none';
+                }
+            }
+
+            insertFormat(startTag, endTag) {
+                const textarea = document.getElementById('postBody');
+                if (!textarea) return;
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const sel = textarea.value.substring(start, end);
+                const replacement = startTag + (sel || 'matn') + endTag;
+                textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+                textarea.focus();
+                textarea.setSelectionRange(start + startTag.length, start + startTag.length + (sel.length || 4));
+            }
+
+            focusAdminForm() {
+                if (!this.isAdmin) {
+                    this.openLoginModal();
+                    return;
+                }
+                const widget = document.getElementById('adminWidget');
+                if (widget) {
+                    window.scrollTo({ top: widget.offsetTop - 90, behavior: 'smooth' });
+                    const titleInput = document.getElementById('postTitle');
+                    if (titleInput) titleInput.focus();
+                }
+            }
+
+            // --- POST CRUD ---
+            async handlePostSubmit(e) {
+                e.preventDefault();
+                if (!this.isAdmin) return;
+
+                const title = document.getElementById('postTitle').value.trim();
+                const subtitle = document.getElementById('postSubtitle').value.trim();
+                const category = document.getElementById('postCategory').value.trim();
+                const tagsRaw = document.getElementById('postTags').value.trim();
+                let image = document.getElementById('postImage').value.trim();
+                let video = document.getElementById('postVideo').value.trim() || (document.getElementById('postVideoUrl') ? document.getElementById('postVideoUrl').value.trim() : '');
+                const rawBody = document.getElementById('postBody').value.trim();
+
+                if (!title || !rawBody) return;
+
+                const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean) : [];
+                const btn = document.getElementById('savePostBtn');
+                btn.disabled = true;
+                btn.textContent = 'Yuklanmoqda...';
+
+                // If image is newly uploaded Base64, upload to server /api/upload
+                if (image && image.startsWith('data:image/')) {
+                    try {
+                        const upRes = await fetch(this.getApiUrl('/api/upload'), {
+                            method: 'POST',
+                            headers: this.getAuthHeaders(),
+                            body: JSON.stringify({ image })
+                        });
+                        const upData = await upRes.json();
+                        if (upData.status === 'success' && upData.url) {
+                            image = upData.url;
+                        }
+                    } catch (ue) {
+                        console.error('Image upload fallback to inline', ue);
+                    }
+                }
+
+                // If video is newly uploaded Base64, upload to server /api/upload
+                if (video && video.startsWith('data:video/')) {
+                    try {
+                        const vRes = await fetch(this.getApiUrl('/api/upload'), {
+                            method: 'POST',
+                            headers: this.getAuthHeaders(),
+                            body: JSON.stringify({ video })
+                        });
+                        const vData = await vRes.json();
+                        if (vData.status === 'success' && vData.url) {
+                            video = vData.url;
+                        }
+                    } catch (ve) {
+                        console.error('Video upload fallback to inline', ve);
+                    }
+                }
+
+                if (this.editingPostId !== null) {
+                    const postIndex = this.posts.findIndex(p => p.id === this.editingPostId);
+                    if (postIndex !== -1) {
+                        this.posts[postIndex].title = title;
+                        this.posts[postIndex].subtitle = subtitle;
+                        this.posts[postIndex].category = category;
+                        this.posts[postIndex].tags = tags;
+                        this.posts[postIndex].image = image;
+                        this.posts[postIndex].video = video;
+                        this.posts[postIndex].body = this.formatBody(rawBody);
+                        this.posts[postIndex].rawBody = rawBody;
+                        this.posts[postIndex].updated_at = new Date().toISOString();
+                        this.showToast('✅ Post yangilandi!');
+                    }
+                    this.editingPostId = null;
+                } else {
+                    const newPost = {
+                        id: Date.now(),
+                        title,
+                        subtitle,
+                        category,
+                        tags,
+                        image,
+                        video,
+                        body: this.formatBody(rawBody),
+                        rawBody,
+                        date: new Date().toISOString(),
+                        views: 0,
+                        likes: 0
+                    };
+                    this.posts.unshift(newPost);
+                    this.showToast('🚀 Yangi post muvaffaqiyatli chop etildi!');
+                }
+
+                this.savePostsToServer();
+                this.renderAdminWidget();
+                this.renderPosts();
+                this.renderCategories();
+                this.updateStats();
+            }
+
+            editPost(id, event) {
+                if (event) event.stopPropagation();
+                if (!this.isAdmin) return;
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+
+                this.editingPostId = id;
+                this.closeModal();
+                this.renderAdminWidget();
+
+                document.getElementById('postTitle').value = post.title || '';
+                document.getElementById('postSubtitle').value = post.subtitle || '';
+                document.getElementById('postCategory').value = post.category || '';
+                document.getElementById('postTags').value = (post.tags || []).join(', ');
+                document.getElementById('postImage').value = post.image || '';
+                document.getElementById('postVideo').value = post.video || '';
+                if (document.getElementById('postVideoUrl')) document.getElementById('postVideoUrl').value = post.video || '';
+                document.getElementById('postBody').value = post.rawBody || this.stripHtml(post.body);
+
+                if (post.image) {
+                    const preview = document.getElementById('imagePreview');
+                    const img = document.getElementById('imagePreviewImg');
+                    if (preview && img) {
+                        img.src = post.image;
+                        preview.style.display = 'block';
+                    }
+                }
+
+                if (post.video) {
+                    const preview = document.getElementById('videoPreview');
+                    const videoEl = document.getElementById('videoPreviewEl');
+                    if (preview && videoEl && (post.video.endsWith('.mp4') || post.video.endsWith('.webm') || post.video.startsWith('/uploads/'))) {
+                        videoEl.src = post.video;
+                        preview.style.display = 'block';
+                    }
+                }
+                this.focusAdminForm();
+            }
+
+            cancelEdit() {
+                this.editingPostId = null;
+                this.renderAdminWidget();
+            }
+
+            deletePost(id, event) {
+                if (event) event.stopPropagation();
+                if (!this.isAdmin) return;
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+
+                this.postToDeleteId = id;
+                const modal = document.getElementById('deleteConfirmModal');
+                const text = document.getElementById('deleteConfirmText');
+                if (text) text.textContent = `"${post.title}" maqolasini o'chirib tashlashni tasdiqlaysizmi?`;
+                if (modal) modal.classList.add('active');
+            }
+
+            closeDeleteModal(e) {
+                if (e && e.target !== e.currentTarget) return;
+                document.getElementById('deleteConfirmModal').classList.remove('active');
+                this.postToDeleteId = null;
+            }
+
+            executeDelete() {
+                if (!this.postToDeleteId || !this.isAdmin) return;
+                const id = this.postToDeleteId;
+                this.posts = this.posts.filter(p => p.id !== id);
+                delete this.likes[id];
+                this.bookmarks = this.bookmarks.filter(b => b !== id);
+                localStorage.setItem('kenjayev_bookmarks', JSON.stringify(this.bookmarks));
+
+                this.savePostsToServer();
+                this.closeDeleteModal();
+                this.closeModal();
+
+                if (this.editingPostId === id) this.editingPostId = null;
+                this.renderAdminWidget();
+                this.renderPosts();
+                this.renderCategories();
+                this.updateStats();
+                this.showToast('🗑️ Post o\'chirib tashlandi');
+            }
+
+            savePostsToServer() {
+                localStorage.setItem('problog_posts', JSON.stringify(this.posts));
+                fetch(this.getApiUrl('/api/save'), {
+                    method: 'POST',
+                    headers: this.getAuthHeaders(),
+                    body: JSON.stringify({
+                        posts: this.posts,
+                        categories: this.getUniqueCategories()
+                    })
+                }).catch(err => console.log('Serverga saqlashda xato', err));
+            }
+
+            // --- FORMATTING & SANITIZATION ---
+            formatVideoEmbed(videoUrl, poster = '') {
+                if (!videoUrl) return '';
+                const trimmed = videoUrl.trim();
+
+                // YouTube link match (standard, youtu.be, embed, shorts)
+                const ytMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+                if (ytMatch && ytMatch[1]) {
+                    const videoId = ytMatch[1];
+                    return `
+                        <div class="video-container">
+                            <iframe src="https://www.youtube-nocookie.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                        </div>
+                    `;
+                }
+
+                // Vimeo link match
+                const vimeoMatch = trimmed.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)/);
+                if (vimeoMatch && vimeoMatch[3]) {
+                    return `
+                        <div class="video-container">
+                            <iframe src="https://player.vimeo.com/video/${vimeoMatch[3]}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    `;
+                }
+
+                // Direct video file (local upload /uploads/... or remote mp4/webm/mov)
+                return `
+                    <div class="video-container">
+                        <video controls playsinline preload="metadata" poster="${poster || ''}">
+                            <source src="${trimmed}">
+                            Brauzeringiz videoni qo'llab-quvvatlamaydi.
+                        </video>
+                    </div>
+                `;
+            }
+
+            getYouTubeId(url) {
+                if (!url) return null;
+                const match = url.trim().match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+                return match ? match[1] : null;
+            }
+
+            formatBody(text) {
+                // Headings
+                let formatted = text
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^# (.*$)/gim, '<h2>$1</h2>')
+                    .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+                    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+                    .replace(/`([^`]+)`/gim, '<code>$1</code>')
+                    .replace(/(https?:\/\/[^\s<]+)/gim, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+
+                const paragraphs = formatted.split('\n\n').filter(p => p.trim());
+                return paragraphs.map(p => {
+                    if (p.startsWith('<h') || p.startsWith('<blockquote') || p.startsWith('<pre')) return p;
+                    return `<p>${p.replace(/\n/g, '<br>')}</p>`;
+                }).join('');
+            }
+
+            calculateReadingTime(text) {
+                const words = this.stripHtml(text).trim().split(/\s+/).length;
+                const minutes = Math.ceil(words / 180);
+                return `${minutes} daqiqa o'qish`;
+            }
+
+            // --- POST RENDERING & FILTERING ---
+            renderPosts() {
+                const grid = document.getElementById('postsGrid');
+                let filtered = this.posts;
+
+                // Category Filter
+                if (this.currentFilter === 'bookmarks') {
+                    filtered = filtered.filter(p => this.bookmarks.includes(p.id));
+                } else if (this.currentFilter !== 'all') {
+                    filtered = filtered.filter(p => p.category === this.currentFilter);
+                }
+
+                // Search Query Filter
+                if (this.searchQuery) {
+                    const q = this.searchQuery.toLowerCase();
+                    filtered = filtered.filter(p => {
+                        return (p.title && p.title.toLowerCase().includes(q)) ||
+                               (p.subtitle && p.subtitle.toLowerCase().includes(q)) ||
+                               (p.category && p.category.toLowerCase().includes(q)) ||
+                               (p.rawBody && p.rawBody.toLowerCase().includes(q)) ||
+                               (p.tags && p.tags.some(t => t.toLowerCase().includes(q)));
+                    });
+                }
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <h3>Maqolalar topilmadi</h3>
+                            <p>${this.searchQuery ? `"${this.searchQuery}" bo'yicha hech narsa topilmadi.` : (this.isAdmin ? "Birinchi maqolangizni joylash uchun formani to'ldiring." : "Hozircha maqolalar mavjud emas.")}</p>
+                            ${this.searchQuery ? `<button class="btn btn-ghost btn-sm" onclick="app.clearSearch()" style="margin-top:12px;">Qidiruvni tozalash</button>` : ''}
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = filtered.map((post, index) => {
+                    const date = new Date(post.date).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'short', day: 'numeric' });
+                    const isLiked = this.likes[post.id];
+                    const isBookmarked = this.bookmarks.includes(post.id);
+                    const readingTime = this.calculateReadingTime(post.rawBody || post.body || '');
+                    const ytId = this.getYouTubeId(post.video);
+                    const cardImage = post.image || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '');
+
+                    return `
+                        <article class="post-card" onclick="app.openPost(${post.id})">
+                            <div class="post-image-wrap">
+                                ${cardImage 
+                                    ? `<img src="${cardImage}" alt="${post.title}" class="post-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=\\'post-image-placeholder\\'>${post.video ? '🎬' : '📝'}</div>'">`
+                                    : `<div class="post-image-placeholder">${post.video ? '🎬' : '📝'}</div>`
+                                }
+                                ${post.video ? `
+                                    <div class="post-video-badge">
+                                        <span class="post-video-badge-icon">▶</span> Video
+                                    </div>
+                                ` : ''}
+                                <button class="post-bookmark-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="app.toggleBookmark(${post.id}, event)" title="${isBookmarked ? 'Saqlanganlardan o\'chirish' : 'Saqlab qo\'yish'}">
+                                    ${isBookmarked ? '★' : '☆'}
+                                </button>
+                            </div>
+                            <div class="post-content">
+                                <div class="post-meta">
+                                    <span class="post-category">${post.category}</span>
+                                    <span>•</span>
+                                    <span>${date}</span>
+                                    <span>•</span>
+                                    <span class="post-reading-time">⏱ ${readingTime}</span>
+                                </div>
+                                <h3 class="post-title">${post.title}</h3>
+                                <div class="post-excerpt">${post.subtitle || this.stripHtml(post.body).substring(0, 110) + '...'}</div>
+                                ${post.tags && post.tags.length > 0 ? `
+                                    <div class="post-tags">
+                                        ${post.tags.map(t => `<span class="post-tag-chip">#${t}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                                <div class="post-footer">
+                                    <div class="post-stats">
+                                        <span class="post-stat">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                            ${this.formatNumber(post.views || 0)}
+                                        </span>
+                                        <span class="post-stat ${isLiked ? 'liked' : ''}">
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                            ${this.formatNumber(post.likes || 0)}
+                                        </span>
+                                    </div>
+                                    ${this.isAdmin ? `
+                                        <div class="admin-controls">
+                                            <button class="icon-btn" onclick="app.editPost(${post.id}, event)" title="Tahrirlash">✏️</button>
+                                            <button class="icon-btn danger" onclick="app.deletePost(${post.id}, event)" title="O'chirish">🗑️</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            }
+
+            // --- CATEGORIES & SEARCH ---
+            getUniqueCategories() {
+                const cats = this.posts.map(p => p.category).filter(Boolean);
+                return [...new Set(cats)];
+            }
+
+            renderCategories() {
+                const tagList = document.getElementById('tagList');
+                if (!tagList) return;
+                const cats = this.getUniqueCategories();
+                tagList.innerHTML = `
+                    <span class="tag ${this.currentFilter === 'all' ? 'active' : ''}" onclick="app.filterCategory('all')">Barchasi</span>
+                    <span class="tag ${this.currentFilter === 'bookmarks' ? 'active' : ''}" onclick="app.filterCategory('bookmarks')">⭐ Saqlanganlar (${this.bookmarks.length})</span>
+                    ${cats.map(cat => `
+                        <span class="tag ${this.currentFilter === cat ? 'active' : ''}" onclick="app.filterCategory('${cat}')">${cat}</span>
+                    `).join('')}
+                `;
+            }
+
+            filterCategory(cat) {
+                this.currentFilter = cat;
+                this.renderCategories();
+                this.renderPosts();
+            }
+
+            handleSearch(val) {
+                this.searchQuery = val.trim();
+                const clearBtn = document.getElementById('searchClear');
+                if (clearBtn) clearBtn.style.display = this.searchQuery ? 'block' : 'none';
+                this.renderPosts();
+            }
+
+            clearSearch() {
+                const input = document.getElementById('globalSearch');
+                if (input) input.value = '';
+                this.handleSearch('');
+            }
+
+            // --- POST DETAIL & ARTICLE EXPERIENCE ---
+            openPost(id, triggerView = true) {
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+
+                this.currentOpenPostId = id;
+                const isLiked = this.likes[id];
+                const isBookmarked = this.bookmarks.includes(id);
+                const date = new Date(post.date).toLocaleDateString('uz-UZ', { year: 'numeric', month: 'long', day: 'numeric' });
+                const readingTime = this.calculateReadingTime(post.rawBody || post.body || '');
+
+                // Smart View Trigger
+                if (triggerView) {
+                    fetch(this.getApiUrl('/api/view'), {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ postId: id })
+                    })
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.status === 'success' && typeof res.views === 'number') {
+                            post.views = res.views;
+                            this.updateStats();
+                        }
+                    })
+                    .catch(() => {});
+                }
+
+                // Related Posts
+                const related = this.posts.filter(p => p.id !== id && (p.category === post.category || (p.tags && post.tags && p.tags.some(t => post.tags.includes(t))))).slice(0, 3);
+
+                // Update Dynamic SEO & Social tags
+                document.title = `${post.title} | Kenjayev BLOG`;
+                const ogTitle = document.getElementById('ogTitle');
+                const ogDesc = document.getElementById('ogDesc');
+                if (ogTitle) ogTitle.content = post.title;
+                if (ogDesc) ogDesc.content = post.subtitle || this.stripHtml(post.body).substring(0, 150);
+
+                const modalBody = document.getElementById('modalBody');
+                const mediaHtml = post.video 
+                    ? this.formatVideoEmbed(post.video, post.image)
+                    : (post.image ? `<img src="${post.image}" alt="${post.title}" class="post-detail-image" onerror="this.style.display='none'">` : '');
+
+                modalBody.innerHTML = `
+                    <div class="post-detail-header">
+                        <div class="post-meta" style="margin-bottom: 12px;">
+                            <span class="post-category">${post.category}</span>
+                            <span>•</span>
+                            <span>${date}</span>
+                            <span>•</span>
+                            <span>⏱ ${readingTime}</span>
+                        </div>
+                        <h1 class="post-detail-title">${post.title}</h1>
+                        <div class="post-detail-meta">
+                            <span>👁 ${this.formatNumber(post.views || 0)} ko'rish</span>
+                            <span>❤️ ${this.formatNumber(post.likes || 0)} layk</span>
+                        </div>
+                    </div>
+
+                    ${mediaHtml}
+
+                    <div class="post-detail-body">${post.body}</div>
+
+                    <div class="post-detail-actions">
+                        <button class="action-btn ${isLiked ? 'liked' : ''}" onclick="app.toggleLike(${id})">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            ${isLiked ? 'Layk bosilgan' : 'Layk bosish'}
+                        </button>
+                        <button class="action-btn" onclick="app.toggleBookmark(${id})">
+                            ${isBookmarked ? '★ Saqlangan' : '☆ Saqlash'}
+                        </button>
+                        <button class="action-btn" onclick="app.shareTelegram(${id})">
+                            ✈️ Telegram
+                        </button>
+                        <button class="action-btn" onclick="app.shareWhatsApp(${id})">
+                            💬 WhatsApp
+                        </button>
+                        <button class="action-btn" onclick="app.shareNative(${id})">
+                            🔗 Ulashish
+                        </button>
+                        <button class="action-btn" onclick="app.copyLink(${id})">
+                            📋 Nusxa
+                        </button>
+                        ${this.isAdmin ? `
+                            <button class="action-btn" onclick="app.editPost(${id})">✏️ Tahrirlash</button>
+                            <button class="action-btn" onclick="app.deletePost(${id})" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">🗑️ O'chirish</button>
+                        ` : ''}
+                    </div>
+
+                    ${related.length > 0 ? `
+                        <div class="related-section">
+                            <div class="related-title">O'xshash maqolalar</div>
+                            <div class="related-grid">
+                                ${related.map(rp => `
+                                    <div class="related-card" onclick="app.openPost(${rp.id})">
+                                        <div class="related-card-title">${rp.title}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+
+                document.getElementById('postModal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeModal(e) {
+                if (e && e.target !== e.currentTarget) return;
+                document.getElementById('postModal').classList.remove('active');
+                document.body.style.overflow = '';
+                this.currentOpenPostId = null;
+                document.title = "Kenjayev BLOG | Shaxsiy Fikrlar va G'oyalar";
+            }
+
+            // --- LIKES & BOOKMARKS ---
+            toggleLike(id) {
+                const alreadyLiked = !!this.likes[id];
+                const action = alreadyLiked ? 'remove' : 'add';
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+
+                // Optimistic UI update
+                if (alreadyLiked) {
+                    delete this.likes[id];
+                    post.likes = Math.max(0, (post.likes || 0) - 1);
+                    this.showToast('💔 Layk olib tashlandi');
+                } else {
+                    this.likes[id] = true;
+                    post.likes = (post.likes || 0) + 1;
+                    this.showToast('❤️ Layk bosildi!');
+                }
+                localStorage.setItem('problog_likes', JSON.stringify(this.likes));
+                this.renderPosts();
+                this.updateStats();
+
+                if (document.getElementById('postModal').classList.contains('active')) {
+                    this.openPost(id, false);
+                }
+
+                // Server Sync
+                fetch(this.getApiUrl('/api/like'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ postId: id, action })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success' && typeof res.likes === 'number') {
+                        post.likes = res.likes;
+                        this.renderPosts();
+                        this.updateStats();
+                        if (document.getElementById('postModal').classList.contains('active')) {
+                            this.openPost(id, false);
+                        }
+                    }
+                })
+                .catch(() => {});
+            }
+
+            toggleBookmark(id, event) {
+                if (event) event.stopPropagation();
+                const index = this.bookmarks.indexOf(id);
+                if (index === -1) {
+                    this.bookmarks.push(id);
+                    this.showToast('⭐ Maqola saqlanganlarga qo\'shildi!');
+                } else {
+                    this.bookmarks.splice(index, 1);
+                    this.showToast('ℹ️ Saqlanganlardan olib tashlandi');
+                }
+                localStorage.setItem('kenjayev_bookmarks', JSON.stringify(this.bookmarks));
+                this.renderCategories();
+                this.renderPosts();
+                if (document.getElementById('postModal').classList.contains('active') && this.currentOpenPostId === id) {
+                    this.openPost(id, false);
+                }
+            }
+
+            // --- SHARING ---
+            getPostShareUrl(id) {
+                return `${window.location.origin}/?post=${id}`;
+            }
+
+            shareTelegram(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+                const url = encodeURIComponent(this.getPostShareUrl(id));
+                const text = encodeURIComponent(`📌 ${post.title}\n\nKenjayev BLOG'da mutolaa qiling:`);
+                window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+            }
+
+            shareWhatsApp(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+                const text = encodeURIComponent(`📌 ${post.title}\n${this.getPostShareUrl(id)}`);
+                window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+            }
+
+            shareNative(id) {
+                const post = this.posts.find(p => p.id === id);
+                if (!post) return;
+                if (navigator.share) {
+                    navigator.share({
+                        title: post.title,
+                        text: post.subtitle || this.stripHtml(post.body).substring(0, 100),
+                        url: this.getPostShareUrl(id)
+                    }).catch(() => {});
+                } else {
+                    this.copyLink(id);
+                }
+            }
+
+            copyLink(id) {
+                const url = this.getPostShareUrl(id);
+                navigator.clipboard.writeText(url).then(() => {
+                    this.showToast('🔗 Havola nusxalandi!');
+                });
+            }
+
+            // --- CMS DASHBOARD MODAL ---
+            openDashModal() {
+                if (!this.isAdmin) return;
+                const modal = document.getElementById('adminDashModal');
+                const body = document.getElementById('dashModalBody');
+
+                const totalViews = this.posts.reduce((s, p) => s + (p.views || 0), 0);
+                const totalLikes = this.posts.reduce((s, p) => s + (p.likes || 0), 0);
+                const cats = this.getUniqueCategories();
+                const sortedByViews = [...this.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5);
+
+                body.innerHTML = `
+                    <div class="dash-grid">
+                        <div class="dash-card">
+                            <div class="dash-val">${this.posts.length}</div>
+                            <div class="dash-lbl">Jami Maqolalar</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="dash-val">${totalViews}</div>
+                            <div class="dash-lbl">Jami Ko'rishlar</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="dash-val">${totalLikes}</div>
+                            <div class="dash-lbl">Jami Layklar</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="dash-val">${cats.length}</div>
+                            <div class="dash-lbl">Kategoriyalar</div>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size:1rem;margin-bottom:12px;">🔥 Eng Ko'p O'qilgan Maqolalar (Top 5)</h3>
+                    <div style="background:var(--surface-elevated);border-radius:var(--radius-sm);padding:12px;margin-bottom:24px;">
+                        ${sortedByViews.map((p, idx) => `
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-subtle);">
+                                <span style="font-size:0.9rem;font-weight:600;">${idx + 1}. ${p.title}</span>
+                                <span style="font-size:0.85rem;color:var(--text-muted);">👁 ${p.views || 0} • ❤️ ${p.likes || 0}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <h3 style="font-size:1rem;margin-bottom:12px;">💾 Zaxira Nusxalari (Backups)</h3>
+                    <div style="display:flex;gap:10px;margin-bottom:16px;">
+                        <button class="btn btn-primary btn-sm" onclick="app.triggerBackup()">+ Yangi Zaxira Nusxa Yaratish</button>
+                    </div>
+                    <div id="backupListContainer" style="font-size:0.85rem;color:var(--text-secondary);">
+                        Zaxira nusxalari yuklanmoqda...
+                    </div>
+                `;
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                this.loadBackupsList();
+            }
+
+            closeDashModal(e) {
+                if (e && e.target !== e.currentTarget) return;
+                document.getElementById('adminDashModal').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            loadBackupsList() {
+                fetch(this.getApiUrl('/api/admin/backups'), { headers: this.getAuthHeaders() })
+                    .then(r => r.json())
+                    .then(res => {
+                        const container = document.getElementById('backupListContainer');
+                        if (!container) return;
+                        if (res.backups && res.backups.length > 0) {
+                            container.innerHTML = res.backups.map(b => `
+                                <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface-elevated);border-radius:6px;margin-bottom:6px;">
+                                    <span>📄 ${b.filename} (${(b.size/1024).toFixed(1)} KB) — <small>${b.created_at}</small></span>
+                                    <button class="btn btn-ghost btn-sm" onclick="app.restoreBackup('${b.filename}')">Tiklash</button>
+                                </div>
+                            `).join('');
+                        } else {
+                            container.innerHTML = "Hozircha qo'lda yaratilgan zaxira nusxalari yo'q.";
+                        }
+                    })
+                    .catch(() => {});
+            }
+
+            triggerBackup() {
+                fetch(this.getApiUrl('/api/admin/backup'), {
+                    method: 'POST',
+                    headers: this.getAuthHeaders()
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        this.showToast('✅ Zaxira nusxa yaratildi!');
+                        this.loadBackupsList();
+                    }
+                })
+                .catch(() => this.showToast('❌ Xatolik yuz berdi'));
+            }
+
+            restoreBackup(filename) {
+                if (!confirm(`"${filename}" dan ma'lumotlarni tiklashni tasdiqlaysizmi?`)) return;
+                fetch(this.getApiUrl('/api/admin/restore'), {
+                    method: 'POST',
+                    headers: this.getAuthHeaders(),
+                    body: JSON.stringify({ filename })
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'success') {
+                        this.showToast('✅ Ma\'lumotlar tiklandi!');
+                        this.fetchServerData();
+                        this.closeDashModal();
+                    }
+                })
+                .catch(() => this.showToast('❌ Tiklashda xatolik'));
+            }
+
+            // --- HELPERS ---
+            updateStats() {
+                const totalPosts = this.posts.length;
+                const totalViews = this.posts.reduce((s, p) => s + (p.views || 0), 0);
+                const totalLikes = this.posts.reduce((s, p) => s + (p.likes || 0), 0);
+
+                this.animateNumber('totalPosts', totalPosts);
+                this.animateNumber('totalViews', totalViews);
+                this.animateNumber('totalLikes', totalLikes);
+            }
+
+            animateNumber(id, target) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const current = parseInt(el.textContent.replace(/,/g, '')) || 0;
+                if (current === target) return;
+                const duration = 500;
+                const start = performance.now();
+                const step = (now) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const val = Math.floor(current + (target - current) * progress);
+                    el.textContent = this.formatNumber(val);
+                    if (progress < 1) requestAnimationFrame(step);
+                };
+                requestAnimationFrame(step);
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+                return num.toString();
+            }
+
+            stripHtml(html) {
+                const tmp = document.createElement('div');
+                tmp.innerHTML = html;
+                return tmp.textContent || tmp.innerText || '';
+            }
+
+            showToast(message) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.innerHTML = `<span>${message}</span>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3500);
+            }
+
+            setupScrollEvents() {
+                window.addEventListener('scroll', () => {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+                    const prog = document.getElementById('readingProgress');
+                    if (prog) prog.style.width = scrolled + '%';
+
+                    const backBtn = document.getElementById('backToTop');
+                    if (backBtn) {
+                        if (winScroll > 300) backBtn.classList.add('visible');
+                        else backBtn.classList.remove('visible');
+                    }
+                });
+            }
+
+            checkUrlPost() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const postId = urlParams.get('post');
+                if (postId) {
+                    const idNum = parseInt(postId);
+                    if (idNum) setTimeout(() => this.openPost(idNum, true), 300);
+                }
+            }
+
+            goHome() {
+                this.currentFilter = 'all';
+                this.clearSearch();
+                this.renderCategories();
+                this.renderPosts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            registerPWA() {
+                if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+                    navigator.serviceWorker.register('/sw.js').catch(() => {});
+                }
+            }
+        }
+
+        const app = new BlogApp();
+    </script>
+</body>
+</html>

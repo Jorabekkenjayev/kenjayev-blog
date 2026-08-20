@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: kenjayev-blog
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn server:app --bind 0.0.0.0: --workers 2 --threads 4 --timeout 60
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ADMIN_LOGIN
+        value: "+998919705191"
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: ADMIN_SALT
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
