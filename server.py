@@ -848,6 +848,17 @@ def app(environ, start_response):
     handler.request_version = "HTTP/1.1"
     handler.status_code = 200
     handler.response_headers = []
+    # Required by SimpleHTTPRequestHandler
+    handler.directory = BASE_DIR
+    handler.server_version = "KenjayevBLOG/2.0"
+    handler.sys_version = ""
+    handler.error_message_format = "%(code)d %(message)s"
+    handler.error_content_type = "text/html; charset=utf-8"
+    # Mock server object
+    class _MockServer:
+        server_name = "kenjayev-blog.onrender.com"
+        server_port = PORT
+    handler.server = _MockServer()
 
     def mock_send_response(code, message=None):
         handler.status_code = code
