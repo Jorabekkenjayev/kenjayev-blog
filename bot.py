@@ -1017,26 +1017,27 @@ class GuardBotEngine:
         # REGULAR USER WELCOME MESSAGE
         welcome_guard = (
             f"🛡 <b>Assalomu alaykum, {user_name}!</b>\n\n"
-            "Men <b>\"Tekshiruvchi\"</b> — guruhlarni 18+ reklamalar, spam va keraksiz botlardan tozalovchi botman.\n\n"
+            "<b>Kenjayev BLOG — \"Tekshiruvchi\"</b> botiga xush kelibsiz!\n\n"
+            "Men guruhlarni 18+ reklamalar, spam va keraksiz botlardan tozalovchi rasmiy botman.\n\n"
             "Meni guruhingizga qo'shib, <b>admin</b> huquqini bersangiz:\n"
             "• Guruhga yozgan har bir yangi a'zodan bot emasligini tasdiqlash so'raladi.\n"
             f"• Agar <b>{timeout} soniya</b> ichida tasdiqlamasa, uning xabari avtomatik o'chiriladi!\n"
             "• Bir marta tasdiqlagan odam qayta bezovta qilinmaydi.\n\n"
-            "👇 Pastdagi tugma orqali meni guruhingizga admin sifatida qo'shing:"
+            "Shuningdek, pastdagi tugma orqali <b>Kenjayev BLOG</b> saytiga kirishingiz mumkin:"
         )
 
         kb = {
             "inline_keyboard": [
                 [
                     {
-                        "text": "➕ Guruhga admin sifatida qo'shish",
-                        "url": f"https://t.me/{bot_uname}?startgroup=true&admin=delete_messages+restrict_members"
+                        "text": "🌐 Kenjayev BLOG (Saytga kirish)",
+                        "web_app": {"url": WEB_APP_URL}
                     }
                 ],
                 [
                     {
-                        "text": "🌐 Kenjayev Blog (Mini App)",
-                        "web_app": {"url": WEB_APP_URL}
+                        "text": "➕ Guruhga admin sifatida qo'shish",
+                        "url": f"https://t.me/{bot_uname}?startgroup=true&admin=delete_messages+restrict_members"
                     }
                 ]
             ]
