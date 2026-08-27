@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Puza Geometri — Interactive Quiz & Formula Engine</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  
+  <!-- App Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Top App Header -->
+  <header class="app-header glass-panel">
+    <div class="brand-section">
+      <span class="brand-icon">📐</span>
+      <div>
+        <h1 class="brand-title">Puza Geometri Engine</h1>
+        <span class="brand-badge">Burchaklar (Angles)</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="topic-selector-wrap">
+        <select id="topicSelect" aria-label="Mavzuni tanlang">
+          <option value="topic-1">1-Mavzu: Burchaklar (Test 01)</option>
+          <option value="topic-2">2-Mavzu: Burchaklar (Test 02)</option>
+          <option value="all">Barcha Mavzular (32 ta Savol)</option>
+        </select>
+      </div>
+
+      <button id="btnFormula" class="btn-header btn-formula-toggle" title="Formulalar va Qoidalar panelini ochish (F)">
+        <span>📖 Formulalar</span>
+      </button>
+
+      <button id="btnThemeToggle" class="btn-header" title="Mavzuni almashtirish">
+        🌙
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    
+    <!-- Live Stats Ribbon -->
+    <section class="stats-ribbon glass-panel" aria-label="Statistika paneli">
+      <div class="stat-item">
+        <span class="stat-label">Javob berildi</span>
+        <span id="statAnswered" class="stat-value">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">To'g'ri</span>
+        <span id="statCorrect" class="stat-value highlight-green">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Xato</span>
+        <span id="statIncorrect" class="stat-value highlight-red">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Aniqlik</span>
+        <span id="statAccuracy" class="stat-value highlight-cyan">0%</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Streak</span>
+        <span id="statStreak" class="stat-value highlight-amber">🔥 0</span>
+      </div>
+    </section>
+
+    <!-- Quiz Question Card -->
+    <article id="quizCard" class="quiz-card glass-panel card-anim-slide-in">
+      <div class="question-meta">
+        <span id="topicBadge" class="meta-topic-badge">1-Mavzu: Burchaklar</span>
+        <span id="questionProgress" class="meta-counter">Savol 1 / 16</span>
+      </div>
+
+      <div class="question-body">
+        <div class="question-text-wrap">
+          <div id="questionText">Savol yuklanmoqda...</div>
+        </div>
+
+        <div id="diagramContainer" class="diagram-container">
+          <!-- Geometric SVG Diagram is rendered here -->
+        </div>
+      </div>
+
+      <!-- Interactive Option Buttons -->
+      <div id="optionsContainer" class="options-grid" role="radiogroup" aria-label="Javob variantlari">
+        <!-- Shuffled Option buttons (A, B, C, D, E) injected here -->
+      </div>
+
+      <!-- Feedback Area -->
+      <div id="feedbackContainer" class="feedback-box" style="display: none;"></div>
+
+      <!-- Action Controls -->
+      <div class="quiz-actions">
+        <button id="btnSubmit" class="btn-primary" disabled>
+          <span>Javob berish</span>
+          <span>➜</span>
+        </button>
+        <button id="btnNext" class="btn-primary" style="display: none;">
+          <span>Yangi savol (Random)</span>
+          <span>🎲</span>
+        </button>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- Formula & Rules Modal -->
+  <div id="formulaModal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-card glass-panel">
+      <div class="modal-header">
+        <div>
+          <h2 id="formulaTitle">Qoida 1: Z-qoidasi</h2>
+          <span id="formulaCategory" class="meta-topic-badge">Parallel to'g'ri chiziqlar</span>
+        </div>
+        <button id="btnCloseModal" class="btn-close" aria-label="Modalni yopish">✕</button>
+      </div>
+
+      <div id="formulaDisplay" class="formula-display">
+        <!-- KaTeX Math Formula -->
+      </div>
+
+      <p id="formulaRuleText" style="line-height: 1.6; margin-bottom: 1rem; color: var(--text-main);"></p>
+
+      <div id="formulaSymbols">
+        <!-- Symbols Breakdown Table -->
+      </div>
+
+      <div class="modal-controls">
+        <button id="btnPrevFormula" class="btn-secondary">← Oldingi</button>
+        <button id="btnRandomFormula" class="btn-primary">🎲 Yangi formula</button>
+        <button id="btnNextFormula" class="btn-secondary">Keyingi →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Keyboard Hints -->
+  <footer class="app-footer">
+    <span class="keyboard-hint"><kbd>1</kbd>-<kbd>5</kbd> yoki <kbd>A</kbd>-<kbd>E</kbd> Variant tanlash</span>
+    <span class="keyboard-hint"><kbd>Enter</kbd> Javob berish / Yangi savol</span>
+    <span class="keyboard-hint"><kbd>F</kbd> Formulalar</span>
+    <span class="keyboard-hint"><kbd>Esc</kbd> Yopish</span>
+  </footer>
+
+  <!-- KaTeX Script -->
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+  <!-- Application Entry Point -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>

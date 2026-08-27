@@ -1,11 +1,419 @@
 {
-  "posts": [],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Matematika olamiga xush kelibsiz!",
+      "category": "Fikrlar",
+      "body": "<p>Matematika — tabiat qonunlarini ifodalovchi eng go'zal til. Ushbu platformada siz mavzular bo'yicha interaktiv quizlarni yechishingiz, formulalar bilan tanishishingiz va o'z bilimlaringizni sinab ko'rishingiz mumkin.</p>",
+      "date": "2026-08-27T20:00:00",
+      "views": 42,
+      "likes": 15
+    }
+  ],
   "likes": {},
   "views": {},
   "categories": [
     "Fikrlar",
-    "Texnologiya"
+    "Texnologiya",
+    "Matematika"
   ],
-  "updated_at": "2026-08-20T23:34:06.586874",
-  "version": 18
+  "quiz_sections": [
+    {
+      "id": "sec_algebra",
+      "title": "Algebra va Tenglamalar",
+      "description": "Kvadrat tenglamalar, logarifmlar, ko'rsatkichli ifodalar va tengsizliklar",
+      "icon": "🔢",
+      "color": "#10b981",
+      "order": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "sec_geometriya",
+      "title": "Geometriya va Planimetriya",
+      "description": "Burchaklar, Pifagor teoremasi, uchburchaklar va aylanalar",
+      "icon": "📐",
+      "color": "#3b82f6",
+      "order": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "sec_trigonometriya",
+      "title": "Trigonometriya",
+      "description": "Trigonometrik funksiyalar, asosiy ayniyatlar va ifodalarni soddalashtirish",
+      "icon": "📈",
+      "color": "#8b5cf6",
+      "order": 3,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "sec_analiz",
+      "title": "Matematik Analiz",
+      "description": "Funksiya limiti, hosilalar jadvali, aniq va noaniq integrallar",
+      "icon": "♾️",
+      "color": "#f59e0b",
+      "order": 4,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "sec_dtm",
+      "title": "DTM & Milliy Sertifikat",
+      "description": "Oliy o'quv yurtlariga kirish va milliy sertifikat standartidagi namunaviy testlar",
+      "icon": "🏆",
+      "color": "#ec4899",
+      "order": 5,
+      "created_at": "2026-08-27T20:00:00"
+    }
+  ],
+  "quizzes": [
+    {
+      "id": "q_alg_01",
+      "section_id": "sec_algebra",
+      "title": "$x^2 - 7x + 12 = 0$ kvadrat tenglamaning ildizlari yig'indisi va ko'paytmasini toping.",
+      "image": "",
+      "options": [
+        "$x_1 + x_2 = 7, \\quad x_1 \\cdot x_2 = 12$",
+        "$x_1 + x_2 = -7, \\quad x_1 \\cdot x_2 = 12$",
+        "$x_1 + x_2 = 12, \\quad x_1 \\cdot x_2 = 7$",
+        "$x_1 + x_2 = -12, \\quad x_1 \\cdot x_2 = -7$"
+      ],
+      "correct_option": 0,
+      "explanation": "Viyet teoremasiga ko'ra keltirilgan $x^2 + px + q = 0$ kvadrat tenglama uchun:\n$$x_1 + x_2 = -p = -(-7) = 7$$\n$$x_1 \\cdot x_2 = q = 12$$\nIldizlarning o'zi esa $x_1 = 3$ va $x_2 = 4$ bo'ladi.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_alg_02",
+      "section_id": "sec_algebra",
+      "title": "Ifodaning qiymatini hisoblang: $\\log_2(32) + \\log_3\\left(\\frac{1}{9}\\right) - \\lg(100)$",
+      "image": "",
+      "options": [
+        "$1$",
+        "$3$",
+        "$5$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "Har bir hadni alohida hisoblaymiz:\n1) $\\log_2(32) = \\log_2(2^5) = 5$\n2) $\\log_3\\left(\\frac{1}{9}\\right) = \\log_3(3^{-2}) = -2$\n3) $\\lg(100) = \\log_{10}(10^2) = 2$\n\nNatija: $5 + (-2) - 2 = 5 - 4 = 1$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_alg_03",
+      "section_id": "sec_algebra",
+      "title": "$2^{x+2} + 2^x = 40$ ko'rsatkichli tenglamani yeching.",
+      "image": "",
+      "options": [
+        "$x = 3$",
+        "$x = 2$",
+        "$x = 4$",
+        "$x = 5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2^x$ ni qavsdan tashqariga chiqaramiz:\n$$2^x (2^2 + 1) = 40$$\n$$2^x (4 + 1) = 40 \\implies 2^x \\cdot 5 = 40$$\n$$2^x = \\frac{40}{5} = 8$$\n$$2^x = 2^3 \\implies x = 3$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_alg_04",
+      "section_id": "sec_algebra",
+      "title": "Tengsizliklar sistemasini yeching: $\\begin{cases} 3x - 5 > 4 \\\\ 2x + 3 \\le 17 \\end{cases}$",
+      "image": "",
+      "options": [
+        "$(3; 7]$",
+        "$[3; 7)$",
+        "$(3; \\infty)$",
+        "$(-\\infty; 7]$"
+      ],
+      "correct_option": 0,
+      "explanation": "Har bir tengsizlikni alohida yechamiz:\n1) $3x > 9 \\implies x > 3$\n2) $2x \\le 14 \\implies x \\le 7$\nIkkala oraliqning kesishmasi: $x \\in (3; 7]$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_alg_05",
+      "section_id": "sec_algebra",
+      "title": "Cheksiz kamayuvchi geometrik progressiyada $b_1 = 12$ va maxraj $q = \\frac{1}{3}$ bo'lsa, uning barcha hadlari yig'indisi $S$ ni toping.",
+      "image": "",
+      "options": [
+        "$18$",
+        "$16$",
+        "$24$",
+        "$15$"
+      ],
+      "correct_option": 0,
+      "explanation": "Cheksiz kamayuvchi geometrik progressiya yig'indisi:\n$$S = \\frac{b_1}{1 - q} = \\frac{12}{1 - \\frac{1}{3}} = \\frac{12}{\\frac{2}{3}} = 12 \\cdot \\frac{3}{2} = 18$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_geom_01",
+      "section_id": "sec_geometriya",
+      "title": "To'g'ri burchakli uchburchakning katetlari $a = 6$ sm va $b = 8$ sm ga teng. Gipotenuzaga tushirilgan balandlik $h_c$ ni toping.",
+      "image": "",
+      "options": [
+        "$4.8$ sm",
+        "$5$ sm",
+        "$4$ sm",
+        "$6.4$ sm"
+      ],
+      "correct_option": 0,
+      "explanation": "Avval Pifagor teoremasi orqali gipotenuzani topamiz:\n$$c = \\sqrt{a^2 + b^2} = \\sqrt{6^2 + 8^2} = \\sqrt{36+64} = 10 \\text{ sm}$$\nUchburchak yuzi formulasi orqali:\n$$S = \\frac{1}{2} a b = \\frac{1}{2} c h_c$$\n$$a \\cdot b = c \\cdot h_c \\implies 6 \\cdot 8 = 10 \\cdot h_c$$\n$$h_c = \\frac{48}{10} = 4.8 \\text{ sm}$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_geom_02",
+      "section_id": "sec_geometriya",
+      "title": "Rombning diagonallari $d_1 = 12$ sm va $d_2 = 16$ sm bo'lsa, uning perimetri $P$ ni hisoblang.",
+      "image": "",
+      "options": [
+        "$40$ sm",
+        "$48$ sm",
+        "$32$ sm",
+        "$56$ sm"
+      ],
+      "correct_option": 0,
+      "explanation": "Rombning diagonallari to'g'ri burchak ostida kesishadi va kesishish nuqtasida teng ikkiga bo'linadi:\nKatetlar: $\\frac{d_1}{2} = 6$ sm, $\\frac{d_2}{2} = 8$ sm.\nRomb tomoni $a = \\sqrt{6^2 + 8^2} = 10$ sm.\nPerimetr: $P = 4a = 4 \\times 10 = 40$ sm.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_geom_03",
+      "section_id": "sec_geometriya",
+      "title": "Muntazam uchburchakning tomoni $a = 4\\sqrt{3}$ sm bo'lsa, unga tashqi chizilgan aylana radiusi $R$ ni toping.",
+      "image": "",
+      "options": [
+        "$4$ sm",
+        "$2\\sqrt{3}$ sm",
+        "$6$ sm",
+        "$3$ sm"
+      ],
+      "correct_option": 0,
+      "explanation": "Muntazam uchburchak uchun tashqi chizilgan aylana radiusi:\n$$R = \\frac{a}{\\sqrt{3}} = \\frac{4\\sqrt{3}}{\\sqrt{3}} = 4 \\text{ sm}$$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_geom_04",
+      "section_id": "sec_geometriya",
+      "title": "Trapetsiyaning asoslari $a = 8$ sm va $b = 14$ sm, balandligi $h = 6$ sm bo'lsa, uning yuzi $S$ ni hisoblang.",
+      "image": "",
+      "options": [
+        "$66 \\text{ sm}^2$",
+        "$72 \\text{ sm}^2$",
+        "$60 \\text{ sm}^2$",
+        "$84 \\text{ sm}^2$"
+      ],
+      "correct_option": 0,
+      "explanation": "Trapetsiya yuzi formulasi:\n$$S = \\frac{a + b}{2} \\cdot h = \\frac{8 + 14}{2} \\cdot 6 = 11 \\cdot 6 = 66 \\text{ sm}^2$$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_trig_01",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $\\frac{\\sin(2\\alpha)}{2\\cos(\\alpha)} + \\cos^2(\\alpha) + \\sin^2(\\alpha)$",
+      "image": "",
+      "options": [
+        "$\\sin(\\alpha) + 1$",
+        "$\\cos(\\alpha) + 1$",
+        "$2\\sin(\\alpha)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "Ikki karra burchak formulasi: $\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)$.\n1) $\\frac{2\\sin(\\alpha)\\cos(\\alpha)}{2\\cos(\\alpha)} = \\sin(\\alpha)$\n2) Asosiy ayniyat: $\\cos^2(\\alpha) + \\sin^2(\\alpha) = 1$\nNatija: $\\sin(\\alpha) + 1$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_trig_02",
+      "section_id": "sec_trigonometriya",
+      "title": "$\\cos(x) = \\frac{\\sqrt{3}}{2}$ tenglamaning $[0, \\pi]$ kesmadagi ildizini toping.",
+      "image": "",
+      "options": [
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{5\\pi}{6}$",
+        "$\\frac{\\pi}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}$ (ya'ni $30^\\circ$). $[0, \\pi]$ oraliqda yagona ildiz $x = \\frac{\\pi}{6}$ dir.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_trig_03",
+      "section_id": "sec_trigonometriya",
+      "title": "Agar $\\tan(\\alpha) = 2$ bo'lsa, $\\frac{2\\sin(\\alpha) + 3\\cos(\\alpha)}{4\\sin(\\alpha) - 5\\cos(\\alpha)}$ kasrning qiymatini toping.",
+      "image": "",
+      "options": [
+        "$\\frac{7}{3}$",
+        "$\\frac{5}{2}$",
+        "$2$",
+        "$\\frac{3}{7}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kasrning surat va maxrajini $\\cos(\\alpha)$ ga bo'lamiz:\n$$\\frac{2\\tan(\\alpha) + 3}{4\\tan(\\alpha) - 5} = \\frac{2(2) + 3}{4(2) - 5} = \\frac{4 + 3}{8 - 5} = \\frac{7}{3}$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_trig_04",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani hisoblang: $\\sin(75^\\circ) \\cdot \\cos(15^\\circ) - \\cos(75^\\circ) \\cdot \\sin(15^\\circ)$",
+      "image": "",
+      "options": [
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{1}{2}$",
+        "$1$",
+        "$\\frac{\\sqrt{2}}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Burchaklar ayirmasi sinusi formulasi:\n$$\\sin(\\alpha - \\beta) = \\sin\\alpha\\cos\\beta - \\cos\\alpha\\sin\\beta$$\n$$\\sin(75^\\circ - 15^\\circ) = \\sin(60^\\circ) = \\frac{\\sqrt{3}}{2}$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_analiz_01",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_{0}^{2} (3x^2 - 2x + 1) \\, dx$",
+      "image": "",
+      "options": [
+        "$6$",
+        "$8$",
+        "$10$",
+        "$4$"
+      ],
+      "correct_option": 0,
+      "explanation": "Boshlang'ich funksiyani topamiz:\n$$F(x) = \\int (3x^2 - 2x + 1) dx = x^3 - x^2 + x$$\nNyuton-Leybnis formulasi bo'yicha:\n$$F(2) - F(0) = (2^3 - 2^2 + 2) - 0 = (8 - 4 + 2) = 6$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_analiz_02",
+      "section_id": "sec_analiz",
+      "title": "$f(x) = x^3 - 3x^2 + 5$ funksiyaning $x = 2$ nuqtadagi hosilasi $f'(2)$ ni hisoblang.",
+      "image": "",
+      "options": [
+        "$0$",
+        "$3$",
+        "$-3$",
+        "$6$"
+      ],
+      "correct_option": 0,
+      "explanation": "Hosilani hisoblaymiz:\n$$f'(x) = (x^3)' - (3x^2)' + (5)' = 3x^2 - 6x$$\n$x = 2$ nuqtada:\n$$f'(2) = 3(2^2) - 6(2) = 3(4) - 12 = 12 - 12 = 0$$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_analiz_03",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 0} \\frac{\\sin(7x)}{x}$",
+      "image": "",
+      "options": [
+        "$7$",
+        "$1$",
+        "$0$",
+        "$\\infty$"
+      ],
+      "correct_option": 0,
+      "explanation": "Birinchi ajoyib limit formulasiga ko'ra $\\lim_{t \\to 0} \\frac{\\sin(t)}{t} = 1$.\n$$\\lim_{x \\to 0} \\frac{\\sin(7x)}{x} = \\lim_{x \\to 0} \\left( \\frac{\\sin(7x)}{7x} \\cdot 7 \\right) = 1 \\cdot 7 = 7$$.",
+      "difficulty": "oson",
+      "points": 1,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_analiz_04",
+      "section_id": "sec_analiz",
+      "title": "$y = x^2 - 4x + 3$ parabolaning uchi (ekstremum nuqtasi) koordinatalarini toping.",
+      "image": "",
+      "options": [
+        "$(2; -1)$",
+        "$(-2; 1)$",
+        "$(2; 1)$",
+        "$(0; 3)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Hosila orqali: $y' = 2x - 4 = 0 \\implies x_0 = 2$.\n$y_0 = 2^2 - 4(2) + 3 = 4 - 8 + 3 = -1$.\nParabola uchi koordinatalari: $(2; -1)$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_dtm_01",
+      "section_id": "sec_dtm",
+      "title": "Aritmetik progressiyada $a_1 = 3$ va ayirma $d = 4$ bo'lsa, dastlabki $10$ ta hadi yig'indisi $S_{10}$ ni toping.",
+      "image": "",
+      "options": [
+        "$210$",
+        "$240$",
+        "$190$",
+        "$180$"
+      ],
+      "correct_option": 0,
+      "explanation": "Aritmetik progressiya dastlabki $n$ ta hadi yig'indisi formulasi:\n$$S_n = \\frac{2a_1 + (n - 1)d}{2} \\cdot n$$\n$$S_{10} = \\frac{2(3) + (10 - 1) \\cdot 4}{2} \\cdot 10 = \\frac{6 + 36}{2} \\cdot 10 = \\frac{42}{2} \\cdot 10 = 21 \\cdot 10 = 210$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_dtm_02",
+      "section_id": "sec_dtm",
+      "title": "Agar $x + \\frac{1}{x} = 5$ bo'lsa, $x^2 + \\frac{1}{x^2}$ ning qiymatini toping.",
+      "image": "",
+      "options": [
+        "$23$",
+        "$25$",
+        "$27$",
+        "$21$"
+      ],
+      "correct_option": 0,
+      "explanation": "Tenglikning ikkala tomonini kvadratga ko'taramiz:\n$$\\left(x + \\frac{1}{x}\\right)^2 = 5^2$$\n$$x^2 + 2 \\cdot x \\cdot \\frac{1}{x} + \\frac{1}{x^2} = 25$$\n$$x^2 + 2 + \\frac{1}{x^2} = 25 \\implies x^2 + \\frac{1}{x^2} = 25 - 2 = 23$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    },
+    {
+      "id": "q_dtm_03",
+      "section_id": "sec_dtm",
+      "title": "Qavariq ko'pburchakning ichki burchaklari yig'indisi $1260^\\circ$ ga teng bo'lsa, uning tomonlari soni $n$ ni toping.",
+      "image": "",
+      "options": [
+        "$9$",
+        "$8$",
+        "$10$",
+        "$7$"
+      ],
+      "correct_option": 0,
+      "explanation": "Qavariq $n$-burchak ichki burchaklari yig'indisi formulasi: $180^\\circ(n - 2)$.\n$$180^\\circ(n - 2) = 1260^\\circ$$\n$$n - 2 = \\frac{1260}{180} = 7 \\implies n = 7 + 2 = 9$$.",
+      "difficulty": "orta",
+      "points": 2,
+      "created_at": "2026-08-27T20:00:00"
+    }
+  ],
+  "quiz_stats": {
+    "total_solved": 1,
+    "correct_count": 1
+  },
+  "settings": {
+    "site_name": "Kenjayev BLOG & Matematika Quiz",
+    "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
+  },
+  "updated_at": "2026-08-27T23:17:16.257960",
+  "version": 38
 }

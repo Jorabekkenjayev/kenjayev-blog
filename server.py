@@ -149,7 +149,10 @@ def load_data():
             initial = {
                 "posts": [],
                 "categories": ["Texnologiya", "Fikrlar", "Dasturlash", "Hayot"],
-                "settings": {"site_name": "Kenjayev BLOG", "tagline": "Shaxsiy Fikrlar va G'oyalar"},
+                "quiz_sections": [],
+                "quizzes": [],
+                "quiz_stats": {"total_solved": 0, "correct_count": 0},
+                "settings": {"site_name": "Kenjayev BLOG & Matematika Quiz", "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"},
                 "version": 1
             }
             save_data_internal(initial, create_backup=True)
@@ -160,10 +163,16 @@ def load_data():
                 if "categories" not in data:
                     cats = list({p.get("category") for p in data.get("posts", []) if p.get("category")})
                     data["categories"] = cats if cats else ["Fikrlar", "Texnologiya"]
+                if "quiz_sections" not in data:
+                    data["quiz_sections"] = []
+                if "quizzes" not in data:
+                    data["quizzes"] = []
+                if "quiz_stats" not in data:
+                    data["quiz_stats"] = {"total_solved": 0, "correct_count": 0}
                 return data
         except Exception as e:
             print(f"⚠️ [DATA] Xatolik yuz berdi data.json o'qishda: {e}. Zaxira tekshirilmoqda...")
-            return {"posts": [], "categories": ["Fikrlar"], "version": 1}
+            return {"posts": [], "categories": ["Fikrlar"], "quiz_sections": [], "quizzes": [], "quiz_stats": {"total_solved": 0, "correct_count": 0}, "version": 1}
 
 def save_data(data, create_backup=True):
     with data_lock:
@@ -444,10 +453,21 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
-        # 1. API: Get Blog Data
+        # 1. API: Get Blog & Quiz Data
         elif path == '/api/data':
             data = load_data()
             self.send_json(200, data)
+            return
+
+        # 1b. API: Get Quiz Sections & Questions
+        elif path == '/api/quizzes':
+            data = load_data()
+            self.send_json(200, {
+                "status": "success",
+                "sections": data.get("quiz_sections", []),
+                "quizzes": data.get("quizzes", []),
+                "stats": data.get("quiz_stats", {"total_solved": 0, "correct_count": 0})
+            })
             return
 
         # 2. API: Check Session Status
@@ -785,18 +805,25 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
 
             body = self.read_json_body()
-            if not isinstance(body, dict) or 'posts' not in body:
+            if not isinstance(body, dict):
                 self.send_json(400, {"status": "error", "error": "Noto'g'ri ma'lumot formati"})
                 return
 
-            # Sanitize HTML in all posts before saving
-            for post in body.get('posts', []):
-                if 'body' in post:
-                    post['body'] = sanitize_html(post['body'])
+            current_data = load_data()
+            if 'posts' in body and isinstance(body['posts'], list):
+                # Sanitize HTML in all posts before saving
+                for post in body.get('posts', []):
+                    if 'body' in post:
+                        post['body'] = sanitize_html(post['body'])
+                current_data['posts'] = body['posts']
+            if 'categories' in body and isinstance(body['categories'], list):
+                current_data['categories'] = body['categories']
+            if 'settings' in body and isinstance(body['settings'], dict):
+                current_data['settings'] = body['settings']
 
-            if save_data(body, create_backup=True):
+            if save_data(current_data, create_backup=True):
                 self.log_event("ADMIN_SAVE")
-                self.send_json(200, {"status": "success", "version": body.get("version")})
+                self.send_json(200, {"status": "success", "version": current_data.get("version")})
             else:
                 self.send_json(500, {"status": "error", "error": "Faylga saqlashda xatolik"})
             return
@@ -846,6 +873,244 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self.send_json(500, {"error": "Tiklashda xatolik"})
             except Exception as e:
                 self.send_json(500, {"error": f"Tiklash xatosi: {str(e)}"})
+            return
+
+        # 8b. PROTECTED: Manage Quiz Sections (/api/quizzes/section)
+        elif path == '/api/quizzes/section':
+            if not self.is_authenticated():
+                self.send_json(401, {"status": "error", "error": "Ruxsat berilmagan. Admin tizimiga kiring."})
+                return
+            body = self.read_json_body()
+            action = body.get('action', 'create')
+            section_data = body.get('section', {})
+            data = load_data()
+            if "quiz_sections" not in data:
+                data["quiz_sections"] = []
+
+            if action == 'create':
+                sec_id = section_data.get('id') or f"sec_{int(time.time())}_{secrets.token_hex(3)}"
+                new_sec = {
+                    "id": str(sec_id),
+                    "title": str(section_data.get('title', 'Yangi Bo\'lim')).strip(),
+                    "description": str(section_data.get('description', '')).strip(),
+                    "icon": str(section_data.get('icon', '📐')).strip() or '📐',
+                    "color": str(section_data.get('color', '#3b82f6')).strip() or '#3b82f6',
+                    "order": int(section_data.get('order', len(data["quiz_sections"]) + 1)),
+                    "created_at": datetime.now().isoformat()
+                }
+                data["quiz_sections"].append(new_sec)
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_SECTION_CREATED", new_sec["title"])
+                self.send_json(200, {"status": "success", "section": new_sec, "sections": data["quiz_sections"]})
+                return
+
+            elif action == 'update':
+                sec_id = str(section_data.get('id', ''))
+                found = False
+                for sec in data["quiz_sections"]:
+                    if str(sec.get('id')) == sec_id:
+                        found = True
+                        if 'title' in section_data:
+                            sec['title'] = str(section_data['title']).strip()
+                        if 'description' in section_data:
+                            sec['description'] = str(section_data['description']).strip()
+                        if 'icon' in section_data:
+                            sec['icon'] = str(section_data['icon']).strip()
+                        if 'color' in section_data:
+                            sec['color'] = str(section_data['color']).strip()
+                        if 'order' in section_data:
+                            sec['order'] = int(section_data['order'])
+                        sec['updated_at'] = datetime.now().isoformat()
+                        break
+                if not found:
+                    self.send_json(404, {"status": "error", "error": "Bo'lim topilmadi"})
+                    return
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_SECTION_UPDATED", sec_id)
+                self.send_json(200, {"status": "success", "sections": data["quiz_sections"]})
+                return
+
+            elif action == 'delete':
+                sec_id = str(section_data.get('id', ''))
+                initial_count = len(data["quiz_sections"])
+                data["quiz_sections"] = [s for s in data["quiz_sections"] if str(s.get('id')) != sec_id]
+                if len(data["quiz_sections"]) == initial_count:
+                    self.send_json(404, {"status": "error", "error": "Bo'lim topilmadi"})
+                    return
+                # Also clean up quizzes belonging to this section
+                if "quizzes" in data:
+                    data["quizzes"] = [q for q in data["quizzes"] if str(q.get('section_id')) != sec_id]
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_SECTION_DELETED", sec_id)
+                self.send_json(200, {"status": "success", "sections": data["quiz_sections"]})
+                return
+
+            else:
+                self.send_json(400, {"status": "error", "error": "Noto'g'ri action"})
+                return
+
+        # 8c. PROTECTED: Manage Quiz Questions (/api/quizzes/question)
+        elif path == '/api/quizzes/question':
+            if not self.is_authenticated():
+                self.send_json(401, {"status": "error", "error": "Ruxsat berilmagan. Admin tizimiga kiring."})
+                return
+            body = self.read_json_body()
+            action = body.get('action', 'create')
+            q_data = body.get('question', {})
+            data = load_data()
+            if "quizzes" not in data:
+                data["quizzes"] = []
+
+            if action == 'create':
+                q_id = q_data.get('id') or f"q_{int(time.time())}_{secrets.token_hex(4)}"
+                options = q_data.get('options', [])
+                if not isinstance(options, list) or len(options) < 2:
+                    self.send_json(400, {"status": "error", "error": "Kamida 2 ta variant bo'lishi shart"})
+                    return
+
+                try:
+                    correct_idx = int(q_data.get('correct_option', 0))
+                except (ValueError, TypeError):
+                    correct_idx = 0
+
+                new_question = {
+                    "id": str(q_id),
+                    "section_id": str(q_data.get('section_id', '')).strip(),
+                    "title": str(q_data.get('title', '')).strip(),
+                    "image": str(q_data.get('image', '')).strip(),
+                    "options": [str(opt).strip() for opt in options],
+                    "correct_option": correct_idx,
+                    "explanation": str(q_data.get('explanation', '')).strip(),
+                    "difficulty": str(q_data.get('difficulty', 'orta')).strip().lower(),
+                    "points": int(q_data.get('points', 1)),
+                    "created_at": datetime.now().isoformat()
+                }
+                data["quizzes"].append(new_question)
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_QUESTION_CREATED", new_question["id"])
+                self.send_json(200, {"status": "success", "question": new_question, "total": len(data["quizzes"])})
+                return
+
+            elif action == 'update':
+                q_id = str(q_data.get('id', ''))
+                found = False
+                for q in data["quizzes"]:
+                    if str(q.get('id')) == q_id:
+                        found = True
+                        if 'section_id' in q_data:
+                            q['section_id'] = str(q_data['section_id']).strip()
+                        if 'title' in q_data:
+                            q['title'] = str(q_data['title']).strip()
+                        if 'image' in q_data:
+                            q['image'] = str(q_data['image']).strip()
+                        if 'options' in q_data and isinstance(q_data['options'], list):
+                            q['options'] = [str(opt).strip() for opt in q_data['options']]
+                        if 'correct_option' in q_data:
+                            try:
+                                q['correct_option'] = int(q_data['correct_option'])
+                            except (ValueError, TypeError):
+                                pass
+                        if 'explanation' in q_data:
+                            q['explanation'] = str(q_data['explanation']).strip()
+                        if 'difficulty' in q_data:
+                            q['difficulty'] = str(q_data['difficulty']).strip().lower()
+                        if 'points' in q_data:
+                            try:
+                                q['points'] = int(q_data['points'])
+                            except (ValueError, TypeError):
+                                pass
+                        q['updated_at'] = datetime.now().isoformat()
+                        break
+                if not found:
+                    self.send_json(404, {"status": "error", "error": "Savol topilmadi"})
+                    return
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_QUESTION_UPDATED", q_id)
+                self.send_json(200, {"status": "success", "quizzes": data["quizzes"]})
+                return
+
+            elif action == 'delete':
+                q_id = str(q_data.get('id', ''))
+                initial_count = len(data["quizzes"])
+                data["quizzes"] = [q for q in data["quizzes"] if str(q.get('id')) != q_id]
+                if len(data["quizzes"]) == initial_count:
+                    self.send_json(404, {"status": "error", "error": "Savol topilmadi"})
+                    return
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_QUESTION_DELETED", q_id)
+                self.send_json(200, {"status": "success", "quizzes": data["quizzes"]})
+                return
+
+            else:
+                self.send_json(400, {"status": "error", "error": "Noto'g'ri action"})
+                return
+
+        # 8d. PROTECTED: Bulk Import Questions (/api/quizzes/bulk-import)
+        elif path == '/api/quizzes/bulk-import':
+            if not self.is_authenticated():
+                self.send_json(401, {"status": "error", "error": "Ruxsat berilmagan. Admin tizimiga kiring."})
+                return
+            body = self.read_json_body()
+            section_id = str(body.get('section_id', '')).strip()
+            raw_questions = body.get('questions', [])
+            if not isinstance(raw_questions, list) or not raw_questions:
+                self.send_json(400, {"status": "error", "error": "Savollar ro'yxati topilmadi"})
+                return
+
+            data = load_data()
+            if "quizzes" not in data:
+                data["quizzes"] = []
+
+            added = 0
+            for idx, q_raw in enumerate(raw_questions):
+                if not isinstance(q_raw, dict):
+                    continue
+                q_title = str(q_raw.get('title') or q_raw.get('question') or '').strip()
+                if not q_title:
+                    continue
+                options = q_raw.get('options', [])
+                if not isinstance(options, list) or len(options) < 2:
+                    continue
+                q_id = q_raw.get('id') or f"q_bulk_{int(time.time())}_{idx}_{secrets.token_hex(3)}"
+                try:
+                    correct_idx = int(q_raw.get('correct_option', 0))
+                except (ValueError, TypeError):
+                    correct_idx = 0
+
+                item = {
+                    "id": str(q_id),
+                    "section_id": section_id or str(q_raw.get('section_id', '')),
+                    "title": q_title,
+                    "image": str(q_raw.get('image', '')).strip(),
+                    "options": [str(opt).strip() for opt in options],
+                    "correct_option": correct_idx,
+                    "explanation": str(q_raw.get('explanation', '')).strip(),
+                    "difficulty": str(q_raw.get('difficulty', 'orta')).strip().lower(),
+                    "points": int(q_raw.get('points', 1)),
+                    "created_at": datetime.now().isoformat()
+                }
+                data["quizzes"].append(item)
+                added += 1
+
+            if added > 0:
+                save_data(data, create_backup=True)
+                self.log_event("QUIZ_BULK_IMPORTED", f"Added {added} questions")
+                self.send_json(200, {"status": "success", "added_count": added, "total": len(data["quizzes"])})
+            else:
+                self.send_json(400, {"status": "error", "error": "Birorta ham to'g'ri savol formati topilmadi"})
+            return
+
+        # 8e. Public / User Quiz Result Tracking (/api/quiz/stat)
+        elif path == '/api/quiz/stat':
+            body = self.read_json_body()
+            data = load_data()
+            if "quiz_stats" not in data:
+                data["quiz_stats"] = {"total_solved": 0, "correct_count": 0}
+            data["quiz_stats"]["total_solved"] = data["quiz_stats"].get("total_solved", 0) + 1
+            if body.get("correct"):
+                data["quiz_stats"]["correct_count"] = data["quiz_stats"].get("correct_count", 0) + 1
+            save_data(data, create_backup=False)
+            self.send_json(200, {"status": "success", "stats": data["quiz_stats"]})
             return
 
         # 9. Telegram Bot Webhook Endpoint (/api/telegram-webhook)

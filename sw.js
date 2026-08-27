@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kenjayev-blog-v1';
+const CACHE_NAME = 'kenjayev-math-quiz-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -20,6 +20,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('Purging old cache:', key);
             return caches.delete(key);
           }
         })
@@ -53,7 +54,23 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for images and static assets
+  // Network-first for HTML pages (so updates appear immediately)
+  if (url.pathname === '/' || url.pathname === '/index.html' || (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'))) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request).then(cached => cached || caches.match('/index.html')))
+    );
+    return;
+  }
+
+  // Cache-first for images and fonts
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) {
@@ -65,11 +82,6 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => {
-        // Fallback for HTML navigation if offline
-        if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
-          return caches.match('/index.html');
-        }
       });
     })
   );
