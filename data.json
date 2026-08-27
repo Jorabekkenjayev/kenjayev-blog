@@ -1,15 +1,5 @@
 {
-  "posts": [
-    {
-      "id": 1,
-      "title": "Matematika olamiga xush kelibsiz!",
-      "category": "Fikrlar",
-      "body": "<p>Matematika — tabiat qonunlarini ifodalovchi eng go'zal til. Ushbu platformada siz mavzular bo'yicha interaktiv quizlarni yechishingiz, formulalar bilan tanishishingiz va o'z bilimlaringizni sinab ko'rishingiz mumkin.</p>",
-      "date": "2026-08-27T20:00:00",
-      "views": 42,
-      "likes": 15
-    }
-  ],
+  "posts": [],
   "likes": {},
   "views": {},
   "categories": [
@@ -414,6 +404,6 @@
     "site_name": "Kenjayev BLOG & Matematika Quiz",
     "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
   },
-  "updated_at": "2026-08-27T23:17:16.257960",
-  "version": 38
+  "updated_at": "2026-08-27T23:37:48.074098",
+  "version": 46
 }

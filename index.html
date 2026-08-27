@@ -999,19 +999,65 @@
             resize: vertical;
         }
 
-        /* Option Input Rows in Admin Modal */
-        .option-edit-row {
+        /* Option Input Rows & Builder in Admin Modal */
+        .option-builder-row, .option-edit-row {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: var(--surface-card);
+            padding: 8px 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
         }
 
-        .option-radio-btn {
+        .builder-badge {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--accent);
+            min-width: 22px;
+            text-align: center;
+        }
+
+        .option-builder-row input[type="radio"], .option-radio-btn {
             accent-color: var(--emerald);
             width: 20px;
             height: 20px;
             cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .option-builder-row .q-option-val {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        /* KaTeX Math Overflow Fix for Mobile */
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            max-width: 100%;
+            padding: 4px 0;
+            margin: 0.8em 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .katex {
+            max-width: 100%;
+            white-space: normal;
+        }
+
+        .latex-preview-box {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            min-height: 48px;
+            margin-top: 6px;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Toast Notifications */
@@ -1118,36 +1164,423 @@
             overflow: hidden;
         }
 
-        /* Responsive adjustments */
+        /* Comprehensive Mobile & Tablet Responsiveness */
         @media (max-width: 768px) {
+            body {
+                padding-bottom: 74px !important;
+            }
+
+            .container {
+                padding: 0 12px !important;
+            }
+
+            /* Header on Mobile */
             .header-inner {
-                height: 60px;
+                height: 54px !important;
+                padding: 0 12px !important;
             }
-            .nav-tabs {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                border-radius: 0;
-                justify-content: space-around;
-                z-index: 1500;
-                border-top: 1px solid var(--border);
-                background: rgba(16, 20, 36, 0.95);
-                backdrop-filter: blur(12px);
-                padding: 6px 12px;
+
+            .logo {
+                gap: 8px !important;
             }
+
+            .logo-icon {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 1.1rem !important;
+                border-radius: 8px !important;
+            }
+
+            .name-main {
+                font-size: 0.95rem !important;
+            }
+
+            .name-sub {
+                font-size: 0.58rem !important;
+            }
+
             .search-container {
-                display: none;
+                display: none !important;
             }
+
+            .header-actions {
+                gap: 6px !important;
+            }
+
+            .btn-icon {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.9rem !important;
+            }
+
+            #adminHeaderSlot .btn {
+                padding: 5px 8px !important;
+                font-size: 0.74rem !important;
+                gap: 4px !important;
+            }
+
+            /* Fixed Bottom Navigation Tabs */
+            .nav-tabs {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                height: 60px !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                justify-content: space-around !important;
+                align-items: center !important;
+                z-index: 2000 !important;
+                border-top: 1px solid var(--border) !important;
+                background: var(--surface-card) !important;
+                backdrop-filter: blur(16px) !important;
+                -webkit-backdrop-filter: blur(16px) !important;
+                padding: 4px 6px !important;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35) !important;
+            }
+
+            .nav-tab-btn {
+                flex: 1 !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 2px !important;
+                padding: 4px 2px !important;
+                font-size: 0.65rem !important;
+                font-weight: 700 !important;
+                border-radius: 8px !important;
+                border: none !important;
+                text-align: center !important;
+            }
+
+            .nav-tab-btn span:first-child {
+                font-size: 1.15rem !important;
+                line-height: 1 !important;
+            }
+
+            /* Hero on Mobile */
+            .hero {
+                padding: 16px 0 12px !important;
+            }
+
+            .hero-wrap {
+                gap: 12px !important;
+            }
+
+            .hero-badge {
+                font-size: 0.72rem !important;
+                padding: 4px 10px !important;
+                margin-bottom: 6px !important;
+            }
+
             .hero-title {
-                font-size: 1.6rem;
+                font-size: 1.35rem !important;
+                line-height: 1.25 !important;
+                margin-bottom: 4px !important;
+                letter-spacing: -0.3px !important;
             }
+
+            .hero-desc {
+                font-size: 0.82rem !important;
+                line-height: 1.4 !important;
+            }
+
+            .hero-stats {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                width: 100% !important;
+                gap: 8px !important;
+                margin-top: 8px !important;
+            }
+
+            .stat-card {
+                padding: 8px 10px !important;
+                min-width: unset !important;
+                border-radius: 10px !important;
+            }
+
+            .stat-val {
+                font-size: 1.15rem !important;
+            }
+
+            .stat-lbl {
+                font-size: 0.62rem !important;
+            }
+
+            .hero-action-bar {
+                display: grid !important;
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+                width: 100% !important;
+                margin-top: 12px !important;
+            }
+
+            .hero-action-bar .btn {
+                width: 100% !important;
+                padding: 8px 4px !important;
+                font-size: 0.76rem !important;
+                justify-content: center !important;
+            }
+
+            /* App Views */
+            .app-view {
+                padding: 14px 0 32px !important;
+            }
+
+            .section-header-bar {
+                margin-bottom: 12px !important;
+                gap: 8px !important;
+            }
+
+            .view-heading {
+                font-size: 1.15rem !important;
+            }
+
+            /* Sections Grid */
+            .sections-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+                margin-bottom: 20px !important;
+            }
+
+            .section-card {
+                padding: 16px !important;
+                border-radius: 14px !important;
+            }
+
+            .section-title {
+                font-size: 1.08rem !important;
+                margin-bottom: 4px !important;
+            }
+
+            .section-desc {
+                font-size: 0.82rem !important;
+                min-height: unset !important;
+                margin-bottom: 12px !important;
+            }
+
+            .section-meta-row {
+                font-size: 0.74rem !important;
+                padding-top: 8px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .section-actions {
+                gap: 6px !important;
+            }
+
+            .section-actions .btn {
+                padding: 8px 6px !important;
+                font-size: 0.78rem !important;
+            }
+
+            /* Quiz Player on Mobile */
+            .quiz-player-wrap {
+                width: 100% !important;
+            }
+
+            .quiz-header-bar {
+                gap: 6px !important;
+                margin-bottom: 10px !important;
+            }
+
+            .quiz-header-bar .btn {
+                font-size: 0.75rem !important;
+                padding: 6px 10px !important;
+            }
+
             .quiz-card {
-                padding: 20px;
+                padding: 16px !important;
+                border-radius: 16px !important;
+                margin-bottom: 14px !important;
             }
+
+            .quiz-card-meta {
+                margin-bottom: 10px !important;
+                gap: 6px !important;
+            }
+
+            .quiz-meta-tag {
+                font-size: 0.72rem !important;
+                padding: 3px 8px !important;
+            }
+
+            .quiz-question-text {
+                font-size: 1rem !important;
+                line-height: 1.5 !important;
+                margin-bottom: 14px !important;
+            }
+
             .option-btn {
-                padding: 12px 14px;
-                font-size: 0.95rem;
+                padding: 10px 12px !important;
+                font-size: 0.88rem !important;
+                gap: 10px !important;
+                border-radius: 10px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .option-key {
+                width: 28px !important;
+                height: 28px !important;
+                font-size: 0.8rem !important;
+                min-width: 28px !important;
+            }
+
+            .option-text {
+                font-size: 0.88rem !important;
+                line-height: 1.4 !important;
+                overflow-x: auto !important;
+                max-width: calc(100% - 38px) !important;
+            }
+
+            .feedback-banner {
+                padding: 12px !important;
+                border-radius: 12px !important;
+                margin-top: 12px !important;
+            }
+
+            .feedback-title {
+                font-size: 0.92rem !important;
+            }
+
+            .solution-box {
+                padding: 10px 12px !important;
+                margin-top: 8px !important;
+                border-radius: 8px !important;
+            }
+
+            .solution-heading {
+                font-size: 0.78rem !important;
+            }
+
+            .solution-text {
+                font-size: 0.84rem !important;
+            }
+
+            .quiz-nav-row {
+                margin-top: 14px !important;
+                gap: 8px !important;
+            }
+
+            .quiz-nav-row .btn {
+                padding: 9px 12px !important;
+                font-size: 0.84rem !important;
+            }
+
+            /* Exam Results on Mobile */
+            .results-card {
+                padding: 20px 14px !important;
+                border-radius: 16px !important;
+            }
+
+            .results-title {
+                font-size: 1.25rem !important;
+            }
+
+            .results-score {
+                font-size: 2rem !important;
+            }
+
+            /* Stats on Mobile */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+
+            .glass-panel {
+                padding: 12px !important;
+                border-radius: 12px !important;
+            }
+
+            /* Modals on Mobile */
+            .modal-overlay {
+                padding: 0 !important;
+                align-items: flex-end !important;
+            }
+
+            .modal {
+                width: 100% !important;
+                max-width: 100% !important;
+                max-height: 88vh !important;
+                border-radius: 20px 20px 0 0 !important;
+                padding: 16px 14px !important;
+                margin: 0 !important;
+            }
+
+            .modal-header {
+                margin-bottom: 10px !important;
+                padding-bottom: 8px !important;
+            }
+
+            .modal-title {
+                font-size: 1.05rem !important;
+            }
+
+            .math-toolbar {
+                display: flex !important;
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                gap: 4px !important;
+                padding: 6px 2px !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .math-tool-btn {
+                padding: 5px 8px !important;
+                font-size: 0.76rem !important;
+                flex-shrink: 0 !important;
+            }
+
+            .option-builder-row {
+                padding: 6px 8px !important;
+                gap: 6px !important;
+                margin-bottom: 6px !important;
+            }
+
+            .option-builder-row .q-option-val {
+                padding: 6px 8px !important;
+                font-size: 0.84rem !important;
+            }
+
+            .modal-footer {
+                padding-top: 10px !important;
+                gap: 6px !important;
+            }
+
+            .modal-footer .btn {
+                flex: 1 !important;
+                padding: 8px 10px !important;
+                font-size: 0.82rem !important;
+            }
+
+            /* Posts Grid on Mobile */
+            .posts-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .post-card {
+                padding: 16px !important;
+            }
+
+            .post-card-title {
+                font-size: 1.05rem !important;
+            }
+
+            /* Formula Category Buttons on Mobile */
+            .formula-cats-bar {
+                display: flex !important;
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                gap: 6px !important;
+                padding-bottom: 6px !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .formula-cats-bar .btn {
+                flex-shrink: 0 !important;
+                font-size: 0.78rem !important;
+                padding: 6px 10px !important;
             }
         }
     </style>
@@ -1534,7 +1967,7 @@
                             <button type="button" class="btn btn-sm btn-secondary" onclick="mathApp.addOptionInput()">➕ Variant qo'shish</button>
                         </div>
 
-                        <div id="qOptionsList">
+                        <div id="qOptionsContainer">
                             <!-- Options rows rendered here -->
                         </div>
                     </div>
