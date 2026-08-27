@@ -1194,7 +1194,9 @@
                     🌙
                 </button>
                 <div id="adminHeaderSlot">
-                    <!-- Injected dynamically based on Admin Auth -->
+                    <button class="btn btn-sm btn-secondary" onclick="mathApp.openLoginModal()">
+                        🔑 Kirish
+                    </button>
                 </div>
             </div>
         </div>
@@ -1709,1346 +1711,1389 @@
 
     <!-- Main Mathematics Quiz Application Script -->
     <script>
-        class MathQuizApp {
-            constructor() {
-                this.sections = [];
-                this.quizzes = [];
-                this.posts = [];
-                this.isAdmin = false;
-                this.adminToken = localStorage.getItem('kenjayev_admin_token') || null;
-                
-                // Player State
-                this.activeSectionId = 'all';
-                this.playerQueue = [];
-                this.currentQuestionIndex = 0;
-                this.selectedOptionIndex = null;
-                this.isAnswerSubmitted = false;
-                this.playerMode = 'practice'; // 'practice' or 'exam'
-                this.examAnswers = {};
-                this.examTimerInterval = null;
-                this.examSecondsElapsed = 0;
+class MathQuizApp {
+    constructor() {
+        this.sections = [];
+        this.quizzes = [];
+        this.posts = [];
+        this.isAdmin = false;
+        this.adminToken = localStorage.getItem('kenjayev_admin_token') || null;
+        
+        // Player State
+        this.activeSectionId = 'all';
+        this.playerQueue = [];
+        this.currentQuestionIndex = 0;
+        this.selectedRenderedIndex = null;
+        this.isAnswerSubmitted = false;
+        this.playerMode = 'practice'; // 'practice' or 'exam'
+        this.examSessionCorrect = 0;
+        this.examSessionTotal = 0;
+        this.examTimerInterval = null;
+        this.examSecondsElapsed = 0;
 
-                // User Local Stats
-                this.userStats = JSON.parse(localStorage.getItem('math_user_stats')) || {
-                    solved: 0,
-                    correct: 0,
-                    streak: 0,
-                    history: []
-                };
+        // User Local Stats
+        try {
+            this.userStats = JSON.parse(localStorage.getItem('math_user_stats')) || {
+                solved: 0,
+                correct: 0,
+                streak: 0
+            };
+        } catch (e) {
+            this.userStats = { solved: 0, correct: 0, streak: 0 };
+        }
 
-                this.init();
-            }
+        this.init();
+    }
 
-            init() {
-                this.loadTheme();
-                this.checkAdminStatus();
-                this.fetchData();
-                this.setupKeyboardShortcuts();
-                this.renderUserStats();
-            }
+    init() {
+        this.loadTheme();
+        this.checkAdminStatus();
+        this.fetchData();
+        this.setupKeyboardShortcuts();
+        this.renderUserStats();
+    }
 
-            getApiUrl(endpoint) {
-                if (window.location.protocol.startsWith('http')) return endpoint;
-                return 'http://localhost:8080' + endpoint;
-            }
+    getApiUrl(endpoint) {
+        if (window.location && window.location.protocol && window.location.protocol.startsWith('http')) return endpoint;
+        return 'http://localhost:8080' + endpoint;
+    }
 
-            getAuthHeaders() {
-                const headers = { 'Content-Type': 'application/json' };
-                if (this.adminToken) headers['Authorization'] = `Bearer ${this.adminToken}`;
-                return headers;
-            }
+    getAuthHeaders() {
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.adminToken) headers['Authorization'] = `Bearer ${this.adminToken}`;
+        return headers;
+    }
 
-            fetchData() {
-                fetch(this.getApiUrl('/api/data'))
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data) {
-                            this.sections = data.quiz_sections || [];
-                            this.quizzes = data.quizzes || [];
-                            this.posts = data.posts || [];
-                            this.renderSections();
-                            this.renderPosts();
-                            this.updateHeroStats();
-                        }
-                    })
-                    .catch(err => {
-                        console.warn('Data fetch error, using local fallback:', err);
-                    });
-            }
-
-            renderMath(element) {
-                if (!element) return;
-                if (window.renderMathInElement) {
-                    try {
-                        window.renderMathInElement(element, {
-                            delimiters: [
-                                { left: '$$', right: '$$', display: true },
-                                { left: '$', right: '$', display: false },
-                                { left: '\\(', right: '\\)', display: false },
-                                { left: '\\[', right: '\\]', display: true }
-                            ],
-                            throwOnError: false,
-                            errorColor: '#ef4444'
-                        });
-                    } catch (e) {
-                        console.warn('Math render warning:', e);
-                    }
-                } else {
-                    setTimeout(() => this.renderMath(element), 150);
-                }
-            }
-
-            // --- NAVIGATION & TABS ---
-            switchTab(tabId) {
-                document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
-                document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
-
-                if (tabId === 'quizzes') {
-                    document.getElementById('viewQuizzes').classList.add('active');
-                    document.getElementById('tabBtnQuizzes').classList.add('active');
+    fetchData() {
+        fetch(this.getApiUrl('/api/data'))
+            .then(res => res.json())
+            .then(data => {
+                if (data) {
+                    this.sections = data.quiz_sections || [];
+                    this.quizzes = data.quizzes || [];
+                    this.posts = data.posts || [];
                     this.renderSections();
-                } else if (tabId === 'stats') {
-                    document.getElementById('viewStats').classList.add('active');
-                    document.getElementById('tabBtnStats').classList.add('active');
-                    this.renderUserStats();
-                } else if (tabId === 'blog') {
-                    document.getElementById('viewBlog').classList.add('active');
-                    document.getElementById('tabBtnBlog').classList.add('active');
                     this.renderPosts();
-                } else if (tabId === 'player') {
-                    document.getElementById('viewPlayer').classList.add('active');
+                    this.updateHeroStats();
                 }
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            })
+            .catch(err => {
+                console.warn('Data fetch error, using local fallback:', err);
+            });
+    }
 
-            // --- ADMIN AUTH & STATUS ---
-            checkAdminStatus() {
-                if (!this.adminToken) {
-                    this.isAdmin = false;
-                    this.renderAdminUI();
-                    return;
-                }
-                fetch(this.getApiUrl('/api/admin/check-session'), { headers: this.getAuthHeaders() })
-                    .then(r => r.json())
-                    .then(res => {
-                        this.isAdmin = !!res.authenticated;
-                        if (!this.isAdmin) this.logoutAdmin(false);
-                        this.renderAdminUI();
-                    })
-                    .catch(() => {
-                        this.renderAdminUI();
-                    });
-            }
-
-            renderAdminUI() {
-                const slot = document.getElementById('adminHeaderSlot');
-                const heroAddSec = document.getElementById('btnHeroAddSection');
-                const heroAddQ = document.getElementById('btnHeroAddQuestion');
-                const secBar = document.getElementById('adminSectionsBar');
-                const blogBar = document.getElementById('adminBlogBar');
-
-                if (this.isAdmin) {
-                    slot.innerHTML = `
-                        <button class="btn btn-sm btn-primary" onclick="mathApp.openManageQuestionsModal()">
-                            👑 Admin Panel
-                        </button>
-                        <button class="btn btn-sm btn-secondary" onclick="mathApp.logoutAdmin()">
-                            🚪 Chiqish
-                        </button>
-                    `;
-                    if (heroAddSec) heroAddSec.style.display = 'inline-flex';
-                    if (heroAddQ) heroAddQ.style.display = 'inline-flex';
-                    if (secBar) secBar.style.display = 'flex';
-                    if (blogBar) blogBar.style.display = 'flex';
-                } else {
-                    slot.innerHTML = `
-                        <button class="btn btn-sm btn-secondary" onclick="mathApp.openLoginModal()">
-                            🔑 Kirish
-                        </button>
-                    `;
-                    if (heroAddSec) heroAddSec.style.display = 'none';
-                    if (heroAddQ) heroAddQ.style.display = 'none';
-                    if (secBar) secBar.style.display = 'none';
-                    if (blogBar) blogBar.style.display = 'none';
-                }
-                this.renderSections();
-            }
-
-            openLoginModal() {
-                document.getElementById('adminLoginModal').classList.add('active');
-            }
-
-            handleAdminLogin(e) {
-                e.preventDefault();
-                const login = document.getElementById('adminLoginInput').value.trim();
-                const password = document.getElementById('adminPasswordInput').value.trim();
-                const btn = document.getElementById('btnLoginSubmit');
-                const err = document.getElementById('adminLoginError');
-
-                btn.disabled = true;
-                btn.textContent = 'Kirilmoqda...';
-                if (err) err.style.display = 'none';
-
-                fetch(this.getApiUrl('/api/admin/login'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ login, password })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    btn.disabled = false;
-                    btn.textContent = 'Kirish';
-                    if (res.status === 'success' && res.token) {
-                        this.adminToken = res.token;
-                        this.isAdmin = true;
-                        localStorage.setItem('kenjayev_admin_token', res.token);
-                        this.closeModalById('adminLoginModal');
-                        this.renderAdminUI();
-                        this.showToast('✅ Admin rejimiga muvaffaqiyatli kirdingiz!');
-                    } else {
-                        if (err) {
-                            err.textContent = res.error || 'Login yoki parol noto'g'ri!';
-                            err.style.display = 'block';
-                        }
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Kirish';
-                    if (err) {
-                        err.textContent = 'Server bilan ulanishda xato!';
-                        err.style.display = 'block';
-                    }
+    renderMath(element) {
+        if (!element) return;
+        if (window.renderMathInElement) {
+            try {
+                window.renderMathInElement(element, {
+                    delimiters: [
+                        { left: '$$', right: '$$', display: true },
+                        { left: '$', right: '$', display: false },
+                        { left: '\(', right: '\)', display: false },
+                        { left: '\[', right: '\]', display: true }
+                    ],
+                    throwOnError: false,
+                    errorColor: '#ef4444'
                 });
+            } catch (e) {
+                console.warn('Math render warning:', e);
             }
+        } else {
+            setTimeout(() => this.renderMath(element), 150);
+        }
+    }
 
-            logoutAdmin(notify = true) {
-                if (this.adminToken) {
-                    fetch(this.getApiUrl('/api/admin/logout'), {
-                        method: 'POST',
-                        headers: this.getAuthHeaders()
-                    }).catch(() => {});
-                }
-                this.adminToken = null;
-                this.isAdmin = false;
-                localStorage.removeItem('kenjayev_admin_token');
+    // --- NAVIGATION & TABS ---
+    switchTab(tabId) {
+        document.querySelectorAll('.app-view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.nav-tab-btn').forEach(b => b.classList.remove('active'));
+
+        if (tabId === 'quizzes') {
+            const v = document.getElementById('viewQuizzes');
+            const b = document.getElementById('tabBtnQuizzes');
+            if (v) v.classList.add('active');
+            if (b) b.classList.add('active');
+            this.renderSections();
+        } else if (tabId === 'stats') {
+            const v = document.getElementById('viewStats');
+            const b = document.getElementById('tabBtnStats');
+            if (v) v.classList.add('active');
+            if (b) b.classList.add('active');
+            this.renderUserStats();
+        } else if (tabId === 'blog') {
+            const v = document.getElementById('viewBlog');
+            const b = document.getElementById('tabBtnBlog');
+            if (v) v.classList.add('active');
+            if (b) b.classList.add('active');
+            this.renderPosts();
+        } else if (tabId === 'player') {
+            const v = document.getElementById('viewPlayer');
+            if (v) v.classList.add('active');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- ADMIN AUTH & STATUS ---
+    checkAdminStatus() {
+        if (!this.adminToken) {
+            this.isAdmin = false;
+            this.renderAdminUI();
+            return;
+        }
+        fetch(this.getApiUrl('/api/admin/check-session'), { headers: this.getAuthHeaders() })
+            .then(r => r.json())
+            .then(res => {
+                this.isAdmin = !!(res && res.authenticated);
+                if (!this.isAdmin) this.logoutAdmin(false);
                 this.renderAdminUI();
-                if (notify) this.showToast('ℹ️ Admin rejimidan chiqdingiz');
-            }
+            })
+            .catch(() => {
+                this.renderAdminUI();
+            });
+    }
 
-            // --- SECTIONS RENDERING ---
-            renderSections() {
-                const container = document.getElementById('sectionsGridContainer');
-                if (!container) return;
+    renderAdminUI() {
+        const slot = document.getElementById('adminHeaderSlot');
+        const heroAddSec = document.getElementById('btnHeroAddSection');
+        const heroAddQ = document.getElementById('btnHeroAddQuestion');
+        const secBar = document.getElementById('adminSectionsBar');
+        const blogBar = document.getElementById('adminBlogBar');
 
-                if (!this.sections || this.sections.length === 0) {
-                    container.innerHTML = `
-                        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-                            Hozircha birorta ham bo'lim yaratilmagan.
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = this.sections.map(sec => {
-                    const qCount = this.quizzes.filter(q => q.section_id === sec.id).length;
-                    const adminBtns = this.isAdmin ? `
-                        <div class="section-admin-actions">
-                            <button class="btn btn-sm btn-secondary" title="Savol qo'shish" onclick="event.stopPropagation(); mathApp.openQuestionModal('${sec.id}')">➕</button>
-                            <button class="btn btn-sm btn-secondary" title="Tahrirlash" onclick="event.stopPropagation(); mathApp.editSection('${sec.id}')">✏️</button>
-                            <button class="btn btn-sm btn-danger" title="O'chirish" onclick="event.stopPropagation(); mathApp.deleteSection('${sec.id}')">🗑</button>
-                        </div>
-                    ` : '';
-
-                    return `
-                        <div class="section-card" onclick="mathApp.startSectionPractice('${sec.id}')">
-                            ${adminBtns}
-                            <div class="section-card-top">
-                                <div class="section-icon-badge" style="border-color: ${sec.color || '#3b82f6'}; color: ${sec.color || '#3b82f6'};">
-                                    ${sec.icon || '📐'}
-                                </div>
-                                <span class="section-count-badge">${qCount} ta savol</span>
-                            </div>
-
-                            <h3 class="section-title">${sec.title}</h3>
-                            <p class="section-desc">${sec.description || 'Matematika bo'yicha qiziqarli testlar'}</p>
-
-                            <div class="section-meta-row">
-                                <span>🎯 Interaktiv Mashq</span>
-                                <span>⏱ Imtihon Testi</span>
-                            </div>
-
-                            <div class="section-actions" onclick="event.stopPropagation()">
-                                <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
-                                    <span>Mashq qilish</span>
-                                </button>
-                                <button class="btn btn-secondary" style="flex:1;" onclick="mathApp.startSectionExam('${sec.id}')">
-                                    <span>Test (Imtihon)</span>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            // --- QUIZ PLAYER ENGINE ---
-            startSectionPractice(secId) {
-                this.activeSectionId = secId;
-                this.playerMode = 'practice';
-                const list = this.quizzes.filter(q => q.section_id === secId);
-                if (list.length === 0) {
-                    this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
-                    return;
-                }
-                this.playerQueue = this.shuffleArray([...list]);
-                this.currentQuestionIndex = 0;
-                this.switchTab('player');
-                this.renderCurrentQuestion();
-            }
-
-            startSectionExam(secId) {
-                this.activeSectionId = secId;
-                this.playerMode = 'exam';
-                const list = this.quizzes.filter(q => q.section_id === secId);
-                if (list.length === 0) {
-                    this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
-                    return;
-                }
-                this.playerQueue = this.shuffleArray([...list]);
-                this.currentQuestionIndex = 0;
-                this.examSessionCorrect = 0;
-                this.examSessionTotal = this.playerQueue.length;
-                this.startExamTimer();
-                this.switchTab('player');
-                this.renderCurrentQuestion();
-            }
-
-            startRandomPractice() {
-                if (this.quizzes.length === 0) {
-                    this.showToast("⚠️ Savollar bazasi bo'sh!");
-                    return;
-                }
-                this.activeSectionId = 'all';
-                this.playerMode = 'practice';
-                this.playerQueue = this.shuffleArray([...this.quizzes]);
-                this.currentQuestionIndex = 0;
-                this.switchTab('player');
-                this.renderCurrentQuestion();
-            }
-
-            startTimedExam() {
-                if (this.quizzes.length === 0) {
-                    this.showToast("⚠️ Savollar bazasi bo'sh!");
-                    return;
-                }
-                this.activeSectionId = 'all';
-                this.playerMode = 'exam';
-                this.playerQueue = this.shuffleArray([...this.quizzes]).slice(0, 15);
-                this.currentQuestionIndex = 0;
-                this.examSessionCorrect = 0;
-                this.examSessionTotal = this.playerQueue.length;
-                this.startExamTimer();
-                this.switchTab('player');
-                this.renderCurrentQuestion();
-            }
-
-            renderCurrentQuestion() {
-                const q = this.playerQueue[this.currentQuestionIndex];
-                if (!q) return;
-
-                document.getElementById('quizCardBox').style.display = 'block';
-                document.getElementById('examResultsBox').style.display = 'none';
-
-                // Section Badge & Meta
-                const sec = this.sections.find(s => s.id === q.section_id);
-                document.getElementById('playerSectionName').textContent = sec ? sec.title : 'Matematika';
-                document.getElementById('playerQuestionCounter').textContent = `Savol ${this.currentQuestionIndex + 1} / ${this.playerQueue.length}`;
-                
-                const diffLabels = { 'oson': 'Oson (1 ball)', 'orta': 'O\'rta (2 ball)', 'qiyin': 'Qiyin (3 ball)', 'olimpiada': 'Olimpiada (5 ball)' };
-                document.getElementById('playerDifficultyBadge').textContent = diffLabels[q.difficulty] || 'O\'rta';
-                
-                const modeBadge = document.getElementById('playerModeBadge');
-                modeBadge.textContent = this.playerMode === 'exam' ? '⏱ Imtihon Rejimi' : '🎯 Mashq Rejimi';
-
-                // Question Text (KaTeX)
-                const qTextEl = document.getElementById('playerQuestionText');
-                qTextEl.innerHTML = q.title || '';
-                this.renderMath(qTextEl);
-
-                // Image
-                const imgBox = document.getElementById('playerImageBox');
-                const imgEl = document.getElementById('playerImage');
-                if (q.image) {
-                    imgEl.src = q.image;
-                    imgBox.style.display = 'block';
-                } else {
-                    imgBox.style.display = 'none';
-                }
-
-                // Options with smart shuffling and mapping
-                this.selectedRenderedIndex = null;
-                this.isAnswerSubmitted = false;
-                const optionsContainer = document.getElementById('playerOptionsContainer');
-                const alphabet = ['A', 'B', 'C', 'D', 'E', 'F'];
-
-                const rawOptions = q.options || [];
-                const mappedOptions = rawOptions.map((text, origIdx) => ({ text, origIdx }));
-                if (!q._shuffledOptions) {
-                    q._shuffledOptions = this.shuffleArray([...mappedOptions]);
-                }
-                this.currentRenderedOptions = q._shuffledOptions;
-
-                optionsContainer.innerHTML = this.currentRenderedOptions.map((optObj, renderedIdx) => `
-                    <button class="option-btn" id="optionBtn_${renderedIdx}" onclick="mathApp.selectOption(${renderedIdx})">
-                        <span class="option-key">${alphabet[renderedIdx] || (renderedIdx + 1)}</span>
-                        <span class="option-text">${optObj.text}</span>
+        if (slot) {
+            if (this.isAdmin) {
+                slot.innerHTML = `
+                    <button class="btn btn-sm btn-primary" onclick="mathApp.openManageQuestionsModal()">
+                        👑 Admin Panel
                     </button>
-                `).join('');
-
-                this.renderMath(optionsContainer);
-
-                // Hide Feedback
-                const fbBox = document.getElementById('playerFeedbackBox');
-                fbBox.style.display = 'none';
-                fbBox.innerHTML = '';
-
-                // Controls
-                document.getElementById('btnPlayerSubmit').style.display = 'inline-flex';
-                document.getElementById('btnPlayerSubmit').disabled = true;
-                document.getElementById('btnPlayerNext').style.display = 'none';
-                document.getElementById('btnPlayerPrev').disabled = this.currentQuestionIndex === 0;
-            }
-
-            selectOption(renderedIdx) {
-                if (this.isAnswerSubmitted) return;
-                this.selectedRenderedIndex = renderedIdx;
-                
-                this.currentRenderedOptions.forEach((_, i) => {
-                    const btn = document.getElementById(`optionBtn_${i}`);
-                    if (btn) {
-                        btn.classList.toggle('selected', i === renderedIdx);
-                    }
-                });
-
-                document.getElementById('btnPlayerSubmit').disabled = false;
-            }
-
-            submitAnswer() {
-                if (this.selectedRenderedIndex === null || this.isAnswerSubmitted) return;
-                this.isAnswerSubmitted = true;
-
-                const q = this.playerQueue[this.currentQuestionIndex];
-                const chosenItem = this.currentRenderedOptions[this.selectedRenderedIndex];
-                const isCorrect = chosenItem && chosenItem.origIdx === q.correct_option;
-
-                // Update Lifetime Stats
-                this.recordUserAnswer(isCorrect, q);
-
-                // Update Exam Session stats
-                if (this.playerMode === 'exam') {
-                    if (isCorrect) this.examSessionCorrect = (this.examSessionCorrect || 0) + 1;
-                }
-
-                // Highlight buttons
-                const chosenBtn = document.getElementById(`optionBtn_${this.selectedRenderedIndex}`);
-                
-                // Find rendered index of correct option
-                const correctRenderedIdx = this.currentRenderedOptions.findIndex(o => o.origIdx === q.correct_option);
-                const correctBtn = document.getElementById(`optionBtn_${correctRenderedIdx}`);
-
-                if (isCorrect) {
-                    if (chosenBtn) chosenBtn.classList.add('correct');
-                } else {
-                    if (chosenBtn) chosenBtn.classList.add('incorrect');
-                    if (correctBtn) correctBtn.classList.add('correct');
-                }
-
-                // Show Feedback in Practice Mode
-                if (this.playerMode === 'practice') {
-                    const fbBox = document.getElementById('playerFeedbackBox');
-                    fbBox.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
-                    
-                    let solutionHtml = '';
-                    if (q.explanation) {
-                        solutionHtml = `
-                            <div class="solution-box">
-                                <div class="solution-heading">💡 Bosqichma-bosqich Yechim:</div>
-                                <div class="solution-text">${q.explanation}</div>
-                            </div>
-                        `;
-                    }
-
-                    fbBox.innerHTML = `
-                        <div class="feedback-title">
-                            ${isCorrect ? '🎉 To\'g\'ri javob! Barakalla!' : '❌ Sizning javobingiz xato!'}
-                        </div>
-                        <div>${isCorrect ? 'Siz to\'g\'ri variantni tanladingiz.' : 'To\'g\'ri javob yashil rangda belgilandi.'}</div>
-                        ${solutionHtml}
-                    `;
-                    fbBox.style.display = 'block';
-                    this.renderMath(fbBox);
-                }
-
-                document.getElementById('btnPlayerSubmit').style.display = 'none';
-                document.getElementById('btnPlayerNext').style.display = 'inline-flex';
-            }
-
-            nextQuestion() {
-                if (this.currentQuestionIndex < this.playerQueue.length - 1) {
-                    this.currentQuestionIndex++;
-                    this.renderCurrentQuestion();
-                } else {
-                    // Completed
-                    if (this.playerMode === 'exam') {
-                        this.finishExam();
-                    } else {
-                        this.showToast('🎉 Ushbu to\'plamdagi barcha savollarni yakunladingiz!');
-                        this.switchTab('quizzes');
-                    }
-                }
-            }
-
-            prevQuestion() {
-                if (this.currentQuestionIndex > 0) {
-                    this.currentQuestionIndex--;
-                    this.renderCurrentQuestion();
-                }
-            }
-
-            exitPlayer() {
-                if (this.examTimerInterval) clearInterval(this.examTimerInterval);
-                this.switchTab('quizzes');
-            }
-
-            startExamTimer() {
-                if (this.examTimerInterval) clearInterval(this.examTimerInterval);
-                this.examSecondsElapsed = 0;
-                const timerBadge = document.getElementById('playerTimerBadge');
-                timerBadge.style.display = 'inline-flex';
-
-                this.examTimerInterval = setInterval(() => {
-                    this.examSecondsElapsed++;
-                    const mins = String(Math.floor(this.examSecondsElapsed / 60)).padStart(2, '0');
-                    const secs = String(this.examSecondsElapsed % 60).padStart(2, '0');
-                    timerBadge.textContent = `⏱ ${mins}:${secs}`;
-                }, 1000);
-            }
-
-            finishExam() {
-                if (this.examTimerInterval) clearInterval(this.examTimerInterval);
-                document.getElementById('quizCardBox').style.display = 'none';
-                document.getElementById('examResultsBox').style.display = 'block';
-
-                const total = this.examSessionTotal || this.playerQueue.length || 1;
-                const correctCount = this.examSessionCorrect || 0;
-                const percent = Math.round((correctCount / total) * 100);
-
-                document.getElementById('examScoreDisplay').textContent = `${correctCount} / ${total}`;
-                document.getElementById('examPercentDisplay').textContent = `${percent}% Aniqlik`;
-            }
-
-            restartExam() {
-                if (this.activeSectionId === 'all') {
-                    this.startTimedExam();
-                } else {
-                    this.startSectionExam(this.activeSectionId);
-                }
-            }
-
-            // --- IMAGE ZOOM ---
-            zoomImage(src) {
-                if (!src) return;
-                const modal = document.getElementById('imageZoomModal');
-                const img = document.getElementById('zoomedImageDisplay');
-                if (img && modal) {
-                    img.src = src;
-                    modal.classList.add('active');
-                }
-            }
-
-            // --- BULK IMPORT QUESTIONS (ADMIN) ---
-            openBulkImportModal() {
-                const select = document.getElementById('bulkSectionSelect');
-                select.innerHTML = '<option value="">Har bir savolning o\'z bo\'limi (section_id)</option>' + this.sections.map(s => `
-                    <option value="${s.id}">${s.title}</option>
-                `).join('');
-                document.getElementById('bulkJsonInput').value = '';
-                document.getElementById('bulkImportError').style.display = 'none';
-                document.getElementById('bulkImportModal').classList.add('active');
-            }
-
-            copyBulkTemplate() {
-                const sample = [
-                    {
-                        "section_id": "sec_algebra",
-                        "title": "$x^2 - 5x + 6 = 0$ tenglamaning ildizlarini toping.",
-                        "options": ["$x_1 = 2, x_2 = 3$", "$x_1 = -2, x_2 = -3$", "$x_1 = 1, x_2 = 6$", "$x_1 = -1, x_2 = 5$"],
-                        "correct_option": 0,
-                        "explanation": "Viyet teoremasiga ko'ra $x_1+x_2=5$ va $x_1 x_2=6$, shuning uchun ildizlar $2$ va $3$.",
-                        "difficulty": "oson",
-                        "points": 1
-                    },
-                    {
-                        "section_id": "sec_geometriya",
-                        "title": "Doiraning radiusi $R = 5$ sm bo'lsa, uning yuzi $S$ ni toping.",
-                        "options": ["$25\\pi \\text{ sm}^2$", "$10\\pi \\text{ sm}^2$", "$50\\pi \\text{ sm}^2$", "$100\\pi \\text{ sm}^2$"],
-                        "correct_option": 0,
-                        "explanation": "Doira yuzi: $S = \\pi R^2 = \\pi (5^2) = 25\\pi \\text{ sm}^2$.",
-                        "difficulty": "oson",
-                        "points": 1
-                    }
-                ];
-                document.getElementById('bulkJsonInput').value = JSON.stringify(sample, null, 2);
-                this.showToast('📋 Shablon matn maydoniga joylandi');
-            }
-
-            handleBulkImport() {
-                const raw = document.getElementById('bulkJsonInput').value.trim();
-                const targetSec = document.getElementById('bulkSectionSelect').value;
-                const err = document.getElementById('bulkImportError');
-                const btn = document.getElementById('btnSubmitBulkImport');
-
-                if (!raw) {
-                    err.textContent = 'Iltimos, JSON formatdagi savollarni kiriting!';
-                    err.style.display = 'block';
-                    return;
-                }
-
-                let questions = [];
-                try {
-                    questions = JSON.parse(raw);
-                    if (!Array.isArray(questions)) throw new Error('Ma\'lumot massiv (array) bo\'lishi kerak');
-                } catch (e) {
-                    err.textContent = `JSON formati xato: ${e.message}`;
-                    err.style.display = 'block';
-                    return;
-                }
-
-                if (targetSec) {
-                    questions.forEach(q => q.section_id = targetSec);
-                }
-
-                btn.disabled = true;
-                btn.textContent = 'Yuklanmoqda...';
-                err.style.display = 'none';
-
-                fetch(this.getApiUrl('/api/quizzes/bulk-import'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ section_id: targetSec, questions })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    btn.disabled = false;
-                    btn.textContent = '🚀 Yuklash va Saqlash';
-                    if (res.status === 'success') {
-                        this.fetchData();
-                        this.closeModalById('bulkImportModal');
-                        this.showToast(`🎉 ${res.added_count} ta yangi savol muvaffaqiyatli qo'shildi!`);
-                    } else {
-                        err.textContent = res.error || 'Yuklashda xatolik yuz berdi';
-                        err.style.display = 'block';
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
-                    btn.textContent = '🚀 Yuklash va Saqlash';
-                    err.textContent = 'Server bilan ulanishda xato!';
-                    err.style.display = 'block';
-                });
-            }
-
-            // --- LOCAL STATS TRACKING ---
-            recordUserAnswer(isCorrect, question) {
-                this.userStats.solved++;
-                if (isCorrect) {
-                    this.userStats.correct++;
-                    this.userStats.streak++;
-                } else {
-                    this.userStats.streak = 0;
-                }
-                localStorage.setItem('math_user_stats', JSON.stringify(this.userStats));
-                this.updateHeroStats();
-
-                // Send background stat ping
-                fetch(this.getApiUrl('/api/quiz/stat'), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ correct: isCorrect, section_id: question.section_id })
-                }).catch(() => {});
-            }
-
-            updateHeroStats() {
-                document.getElementById('statSectionsCount').textContent = this.sections.length;
-                document.getElementById('statQuestionsCount').textContent = this.quizzes.length;
-                document.getElementById('statUserSolved').textContent = this.userStats.solved;
-                document.getElementById('statStreak').textContent = `🔥 ${this.userStats.streak}`;
-            }
-
-            renderUserStats() {
-                document.getElementById('userSolvedTotal').textContent = this.userStats.solved;
-                document.getElementById('userCorrectTotal').textContent = this.userStats.correct;
-                const acc = this.userStats.solved > 0 ? Math.round((this.userStats.correct / this.userStats.solved) * 100) : 0;
-                document.getElementById('userAccuracyTotal').textContent = `${acc}%`;
-
-                let rank = 'Boshlang\'ich';
-                if (this.userStats.solved >= 10) rank = 'Havaskor';
-                if (this.userStats.solved >= 30) rank = 'Usta';
-                if (this.userStats.solved >= 50) rank = 'Grossmeyster';
-                document.getElementById('userRankBadge').textContent = rank;
-            }
-
-            // --- ADMIN SECTION CRUD ---
-            openSectionModal(secId = null) {
-                document.getElementById('sectionModal').classList.add('active');
-                document.getElementById('editSectionId').value = secId || '';
-                if (secId) {
-                    const s = this.sections.find(x => x.id === secId);
-                    if (s) {
-                        document.getElementById('sectionModalTitle').textContent = '✏️ Bo'limni Tahrirlash';
-                        document.getElementById('sectionTitleInput').value = s.title;
-                        document.getElementById('sectionDescInput').value = s.description || '';
-                        document.getElementById('sectionIconInput').value = s.icon || '📐';
-                        document.getElementById('sectionColorInput').value = s.color || '#3b82f6';
-                    }
-                } else {
-                    document.getElementById('sectionModalTitle').textContent = '➕ Yangi Bo'lim Yaratish';
-                    document.getElementById('sectionTitleInput').value = '';
-                    document.getElementById('sectionDescInput').value = '';
-                    document.getElementById('sectionIconInput').value = '📐';
-                    document.getElementById('sectionColorInput').value = '#3b82f6';
-                }
-            }
-
-            editSection(secId) {
-                this.openSectionModal(secId);
-            }
-
-            saveSection(e) {
-                e.preventDefault();
-                const secId = document.getElementById('editSectionId').value;
-                const title = document.getElementById('sectionTitleInput').value.trim();
-                const description = document.getElementById('sectionDescInput').value.trim();
-                const icon = document.getElementById('sectionIconInput').value.trim() || '📐';
-                const color = document.getElementById('sectionColorInput').value.trim() || '#3b82f6';
-
-                const action = secId ? 'update' : 'create';
-                const section = { id: secId, title, description, icon, color };
-
-                fetch(this.getApiUrl('/api/quizzes/section'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ action, section })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        this.sections = res.sections;
-                        this.renderSections();
-                        this.closeModalById('sectionModal');
-                        this.showToast('✅ Bo'lim muvaffaqiyatli saqlandi!');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => this.showToast('❌ Server bilan ulanishda xatolik'));
-            }
-
-            deleteSection(secId) {
-                if (!confirm('Ushbu bo'limni va unga tegishli barcha savollarni o'chirishga ishonchingiz komilmi?')) return;
-
-                fetch(this.getApiUrl('/api/quizzes/section'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ action: 'delete', section: { id: secId } })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        this.sections = res.sections;
-                        this.quizzes = this.quizzes.filter(q => q.section_id !== secId);
-                        this.renderSections();
-                        this.updateHeroStats();
-                        this.showToast('🗑 Bo'lim o'chirildi');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => this.showToast('❌ O'chirishda xatolik'));
-            }
-
-            // --- ADMIN QUESTION CRUD & LIVE LATEX PREVIEW ---
-            openQuestionModal(defaultSectionId = null, qId = null) {
-                const secSelect = document.getElementById('qSectionSelect');
-                secSelect.innerHTML = this.sections.map(s => `
-                    <option value="${s.id}" ${s.id === defaultSectionId ? 'selected' : ''}>${s.icon || ''} ${s.title}</option>
-                `).join('');
-
-                document.getElementById('questionModal').classList.add('active');
-                document.getElementById('editQuestionId').value = qId || '';
-
-                if (qId) {
-                    const q = this.quizzes.find(x => x.id === qId);
-                    if (q) {
-                        document.getElementById('questionModalTitle').textContent = '✏️ Savolni Tahrirlash (LaTeX)';
-                        secSelect.value = q.section_id;
-                        document.getElementById('qTitleInput').value = q.title || '';
-                        document.getElementById('qImageUrlInput').value = q.image || '';
-                        document.getElementById('qExplanationInput').value = q.explanation || '';
-                        document.getElementById('qDifficultySelect').value = q.difficulty || 'orta';
-                        this.renderOptionInputs(q.options, q.correct_option);
-                    }
-                } else {
-                    document.getElementById('questionModalTitle').textContent = '➕ Yangi Savol Qo'shish (LaTeX)';
-                    document.getElementById('qTitleInput').value = '';
-                    document.getElementById('qImageUrlInput').value = '';
-                    document.getElementById('qExplanationInput').value = '';
-                    this.renderOptionInputs(['', '', '', ''], 0);
-                }
-
-                this.updateLivePreview();
-                this.updateExplanationPreview();
-            }
-
-            renderOptionInputs(options = ['', '', '', ''], correctIdx = 0) {
-                const container = document.getElementById('qOptionsList');
-                const alphabet = ['A', 'B', 'C', 'D', 'E', 'F'];
-                
-                container.innerHTML = options.map((opt, i) => `
-                    <div class="option-edit-row">
-                        <input type="radio" name="qCorrectRadio" value="${i}" class="option-radio-btn" ${i === correctIdx ? 'checked' : ''} title="To'g'ri javob">
-                        <span style="font-weight: 700; width: 22px;">${alphabet[i] || (i + 1)})</span>
-                        <input type="text" class="form-control q-option-val" value="${opt}" placeholder="Variant matni ($LaTeX$)" required oninput="mathApp.updateLivePreview()">
-                        ${options.length > 2 ? `<button type="button" class="btn btn-sm btn-danger" onclick="mathApp.removeOptionInput(${i})">✕</button>` : ''}
-                    </div>
-                `).join('');
-            }
-
-            addOptionInput() {
-                const current = this.getCurrentOptionValues();
-                current.push('');
-                this.renderOptionInputs(current, this.getCurrentCorrectOptionIndex());
-            }
-
-            removeOptionInput(idx) {
-                const current = this.getCurrentOptionValues();
-                if (current.length <= 2) return;
-                current.splice(idx, 1);
-                this.renderOptionInputs(current, 0);
-            }
-
-            getCurrentOptionValues() {
-                return Array.from(document.querySelectorAll('.q-option-val')).map(el => el.value);
-            }
-
-            getCurrentCorrectOptionIndex() {
-                const checked = document.querySelector('input[name="qCorrectRadio"]:checked');
-                return checked ? parseInt(checked.value) : 0;
-            }
-
-            insertMath(latexCode) {
-                const textarea = document.getElementById('qTitleInput');
-                if (!textarea) return;
-                const start = textarea.selectionStart;
-                const end = textarea.selectionEnd;
-                const text = textarea.value;
-                const insert = `$${latexCode}$`;
-                textarea.value = text.substring(0, start) + insert + text.substring(end);
-                textarea.focus();
-                textarea.selectionStart = textarea.selectionEnd = start + insert.length;
-                this.updateLivePreview();
-            }
-
-            updateLivePreview() {
-                const titleVal = document.getElementById('qTitleInput').value.trim();
-                const previewEl = document.getElementById('qTitlePreview');
-                if (titleVal) {
-                    previewEl.innerHTML = titleVal;
-                    this.renderMath(previewEl);
-                } else {
-                    previewEl.innerHTML = '<span style="color:var(--text-muted);">Savol prevyusi bu yerda chiqadi...</span>';
-                }
-            }
-
-            updateExplanationPreview() {
-                const expVal = document.getElementById('qExplanationInput').value.trim();
-                const previewEl = document.getElementById('qExplanationPreview');
-                if (expVal) {
-                    previewEl.style.display = 'block';
-                    previewEl.innerHTML = expVal;
-                    this.renderMath(previewEl);
-                } else {
-                    previewEl.style.display = 'none';
-                }
-            }
-
-            handleImageUpload(input) {
-                if (!input.files || !input.files[0]) return;
-                const file = input.files[0];
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const base64 = e.target.result;
-                    fetch(this.getApiUrl('/api/upload'), {
-                        method: 'POST',
-                        headers: this.getAuthHeaders(),
-                        body: JSON.stringify({ image: base64 })
-                    })
-                    .then(r => r.json())
-                    .then(res => {
-                        if (res.status === 'success' && res.url) {
-                            document.getElementById('qImageUrlInput').value = res.url;
-                            this.updateImagePreview(res.url);
-                            this.showToast('✅ Rasm muvaffaqiyatli yuklandi!');
-                        } else {
-                            this.showToast('❌ Rasmni yuklashda xato!');
-                        }
-                    })
-                    .catch(() => this.showToast('❌ Rasmni yuklashda xato!'));
-                };
-                reader.readAsDataURL(file);
-            }
-
-            updateImagePreview(url) {
-                const box = document.getElementById('qImagePreviewBox');
-                const img = document.getElementById('qImagePreview');
-                if (url) {
-                    img.src = url;
-                    box.style.display = 'block';
-                } else {
-                    box.style.display = 'none';
-                }
-            }
-
-            clearImageInput() {
-                document.getElementById('qImageUrlInput').value = '';
-                document.getElementById('qImageFileInput').value = '';
-                this.updateImagePreview('');
-            }
-
-            saveQuestion(e) {
-                e.preventDefault();
-                const qId = document.getElementById('editQuestionId').value;
-                const section_id = document.getElementById('qSectionSelect').value;
-                const title = document.getElementById('qTitleInput').value.trim();
-                const image = document.getElementById('qImageUrlInput').value.trim();
-                const options = this.getCurrentOptionValues();
-                const correct_option = this.getCurrentCorrectOptionIndex();
-                const explanation = document.getElementById('qExplanationInput').value.trim();
-                const difficulty = document.getElementById('qDifficultySelect').value;
-
-                const action = qId ? 'update' : 'create';
-                const question = { id: qId, section_id, title, image, options, correct_option, explanation, difficulty };
-
-                fetch(this.getApiUrl('/api/quizzes/question'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ action, question })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        if (action === 'create') {
-                            this.quizzes.push(res.question);
-                        } else {
-                            this.quizzes = res.quizzes;
-                        }
-                        this.renderSections();
-                        this.updateHeroStats();
-                        this.closeModalById('questionModal');
-                        this.showToast('✅ Savol muvaffaqiyatli saqlandi!');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => this.showToast('❌ Server bilan ulanishda xato'));
-            }
-
-            // --- ADMIN MANAGE QUESTIONS TABLE ---
-            openManageQuestionsModal() {
-                const select = document.getElementById('manageFilterSection');
-                select.innerHTML = '<option value="all">Barcha bo'limlar</option>' + this.sections.map(s => `
-                    <option value="${s.id}">${s.title}</option>
-                `).join('');
-                document.getElementById('manageQuestionsModal').classList.add('active');
-                this.renderManageQuestionsTable();
-            }
-
-            renderManageQuestionsTable() {
-                const tbody = document.getElementById('manageQuestionsTbody');
-                const filterSec = document.getElementById('manageFilterSection').value;
-                const query = document.getElementById('manageSearchInput').value.toLowerCase().trim();
-
-                let list = this.quizzes;
-                if (filterSec !== 'all') {
-                    list = list.filter(q => q.section_id === filterSec);
-                }
-                if (query) {
-                    list = list.filter(q => (q.title && q.title.toLowerCase().includes(query)));
-                }
-
-                if (list.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 24px;">Savollar topilmadi</td></tr>';
-                    return;
-                }
-
-                const alphabet = ['A', 'B', 'C', 'D', 'E'];
-                tbody.innerHTML = list.map((q, i) => {
-                    const sec = this.sections.find(s => s.id === q.section_id);
-                    return `
-                        <tr>
-                            <td>${i + 1}</td>
-                            <td><span class="quiz-topic-tag">${sec ? sec.title : '-'}</span></td>
-                            <td style="max-width: 320px; font-weight: 600;">${q.title}</td>
-                            <td>${(q.options || []).length} ta</td>
-                            <td><b style="color:#34d399;">${alphabet[q.correct_option] || 'A'}</b></td>
-                            <td>
-                                <button class="btn btn-sm btn-secondary" onclick="mathApp.editQuestionFromTable('${q.id}')">✏️</button>
-                                <button class="btn btn-sm btn-danger" onclick="mathApp.deleteQuestion('${q.id}')">🗑</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                this.renderMath(tbody);
-            }
-
-            editQuestionFromTable(qId) {
-                this.closeModalById('manageQuestionsModal');
-                this.openQuestionModal(null, qId);
-            }
-
-            deleteQuestion(qId) {
-                if (!confirm('Ushbu savolni o'chirishga ishonchingiz komilmi?')) return;
-
-                fetch(this.getApiUrl('/api/quizzes/question'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ action: 'delete', question: { id: qId } })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        this.quizzes = this.quizzes.filter(q => q.id !== qId);
-                        this.renderManageQuestionsTable();
-                        this.renderSections();
-                        this.updateHeroStats();
-                        this.showToast('🗑 Savol o'chirildi');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => this.showToast('❌ O'chirishda xato'));
-            }
-
-            // --- FORMULAS REFERENCE SHEET ---
-            openFormulasModal() {
-                document.getElementById('formulasModal').classList.add('active');
-                this.showFormulaCategory('algebra');
-            }
-
-            showFormulaCategory(cat) {
-                ['algebra', 'geometriya', 'trigonometriya', 'analiz'].forEach(c => {
-                    const btn = document.getElementById(`btnFormCat_${c}`);
-                    if (btn) {
-                        btn.className = (c === cat) ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary';
-                    }
-                });
-
-                const container = document.getElementById('formulaCardsContainer');
-                const formulaData = {
-                    algebra: [
-                        { name: 'Kvadrat Tenglama Ildizlari', formula: '$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$', desc: '$D = b^2 - 4ac > 0$ bo\'lganda 2 ta haqiqiy ildiz mavjud.' },
-                        { name: 'Viyet Teoremasi', formula: '$$x_1 + x_2 = -\\frac{b}{a}, \\quad x_1 x_2 = \\frac{c}{a}$$', desc: 'Keltirilgan $x^2 + px + q = 0$ tenglama uchun: $x_1+x_2=-p, x_1x_2=q$.' },
-                        { name: 'Qisqa Ko\'paytirish Formulalari', formula: '$$(a \\pm b)^2 = a^2 \\pm 2ab + b^2$$\n$$a^2 - b^2 = (a-b)(a+b)$$\n$$a^3 \\pm b^3 = (a \\pm b)(a^2 \\mp ab + b^2)$$', desc: 'Eng muhim algebrik ayniyatlar to\'plami.' },
-                        { name: 'Logarifm Asosiy Xossalari', formula: '$$\\log_a(xy) = \\log_a(x) + \\log_a(y)$$\n$$\\log_a\\left(\\frac{x}{y}\\right) = \\log_a(x) - \\log_a(y)$$\n$$\\log_a(x^p) = p \\log_a(x)$$', desc: 'Asos $a > 0, a \\neq 1$ va $x,y > 0$ bo\'lganda.' },
-                        { name: 'Aritmetik Progressiya', formula: '$$a_n = a_1 + (n-1)d$$\n$$S_n = \\frac{a_1 + a_n}{2} \\cdot n = \\frac{2a_1 + (n-1)d}{2} \\cdot n$$', desc: 'Dastlabki $n$ ta hadi va ularning yig\'indisi.' },
-                        { name: 'Geometrik Progressiya', formula: '$$b_n = b_1 \\cdot q^{n-1}$$\n$$S_n = \\frac{b_1(q^n - 1)}{q - 1} \\quad (q \\neq 1)$$', desc: 'Cheksiz kamayuvchi bo\'lsa: $S = \\frac{b_1}{1 - q}$.' }
-                    ],
-                    geometriya: [
-                        { name: 'Pifagor Teoremasi', formula: '$$c^2 = a^2 + b^2 \\implies c = \\sqrt{a^2 + b^2}$$', desc: 'To\'g\'ri burchakli uchburchak gipotenuzasini topish.' },
-                        { name: 'Geron Formulasi (Yuza)', formula: '$$S = \\sqrt{p(p-a)(p-b)(p-c)}, \\quad p = \\frac{a+b+c}{2}$$', desc: 'Uch tomoni ma\'lum ixtiyoriy uchburchak yuzasi.' },
-                        { name: 'Sinuslar Teoremasi', formula: '$$\\frac{a}{\\sin \\alpha} = \\frac{b}{\\sin \\beta} = \\frac{c}{\\sin \\gamma} = 2R$$', desc: 'Tashqi chizilgan aylana radiusi $R$.' },
-                        { name: 'Kosinuslar Teoremasi', formula: '$$c^2 = a^2 + b^2 - 2ab \\cos \\gamma$$', desc: 'Ikki tomon va burchak orqali uchinchi tomonni topish.' },
-                        { name: 'Doira va Aylana', formula: '$$C = 2\\pi R, \\quad S = \\pi R^2$$\n$$S_{\\text{sektor}} = \\frac{\\pi R^2 \\alpha}{360^\\circ}$$', desc: 'Aylana uzunligi, doira va sektor yuzasi.' },
-                        { name: 'Trapetsiya Yuzasi', formula: '$$S = \\frac{a + b}{2} \\cdot h = m \\cdot h$$', desc: 'Asoslari $a, b$ va o\'rta chizig\'i $m = \\frac{a+b}{2}$.' }
-                    ],
-                    trigonometriya: [
-                        { name: 'Asosiy Trigonometrik Ayniyatlar', formula: '$$\\sin^2(x) + \\cos^2(x) = 1$$\n$$1 + \\tan^2(x) = \\frac{1}{\\cos^2(x)}$$', desc: 'Barcha aniqlanish sohasidagi burchaklar uchun.' },
-                        { name: 'Ikki Karra Burchak Formulalari', formula: '$$\\sin(2x) = 2\\sin(x)\\cos(x)$$\n$$\\cos(2x) = \\cos^2(x) - \\sin^2(x) = 2\\cos^2(x) - 1$$', desc: 'Argumentni ikki barobar qisqartirish/kengaytirish.' },
-                        { name: 'Keltirish Formulalari', formula: '$$\\sin\\left(\\frac{\\pi}{2} - x\\right) = \\cos(x), \\quad \\cos\\left(\\frac{\\pi}{2} - x\\right) = \\sin(x)$$\n$$\\sin(\\pi - x) = \\sin(x), \\quad \\cos(\\pi - x) = -\\cos(x)$$', desc: 'To\'ldiruvchi va qo\'shni burchaklar munosabati.' },
-                        { name: 'Qo\'shish Formulalari', formula: '$$\\sin(x \\pm y) = \\sin x \\cos y \\pm \\cos x \\sin y$$\n$$\\cos(x \\pm y) = \\cos x \\cos y \\mp \\sin x \\sin y$$', desc: 'Burchaklar yig\'indisi va ayirmasi trigonometriyasi.' }
-                    ],
-                    analiz: [
-                        { name: 'Ajoyib Limitlar', formula: '$$\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1, \\quad \\lim_{x \\to \\infty} \\left(1 + \\frac{1}{x}\\right)^x = e$$', desc: 'Trigonometrik va ko\'rsatkichli limitlar asosi.' },
-                        { name: 'Nyuton-Leybnis Formulasi', formula: '$$\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)$$', desc: 'Aniq integralni hisoblashning fundamental teoremasi.' },
-                        { name: 'Elementar Funksiyalar Hosilalari', formula: '$$(x^n)\' = n x^{n-1}, \\quad (\\sin x)\' = \\cos x$$\n$$(\\cos x)\' = -\\sin x, \\quad (e^x)\' = e^x, \\quad (\\ln x)\' = \\frac{1}{x}$$', desc: 'Asosiy hosilalar jadvali.' },
-                        { name: 'Bo\'laklab Integrallash', formula: '$$\\int u \\, dv = u v - \\int v \\, du$$', desc: 'Ko\'paytma ko\'rinishidagi ifodalarni integrallash.' }
-                    ]
-                };
-
-                const list = formulaData[cat] || [];
-                container.innerHTML = list.map(item => `
-                    <div class="glass-panel" style="padding: 18px;">
-                        <h4 style="font-size: 1.05rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px;">${item.name}</h4>
-                        <div style="font-size: 1.15rem; margin-bottom: 8px;">${item.formula}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-secondary);">${item.desc}</div>
-                    </div>
-                `).join('');
-
-                this.renderMath(container);
-            }
-
-            // --- BLOG POSTS (TAB 4) ---
-            renderPosts() {
-                const container = document.getElementById('blogPostsContainer');
-                if (!container) return;
-
-                if (!this.posts || this.posts.length === 0) {
-                    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">Maqolalar mavjud emas</div>';
-                    return;
-                }
-
-                container.innerHTML = this.posts.map(p => {
-                    const adminPostBtns = this.isAdmin ? `
-                        <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;">
-                            <button class="btn btn-sm btn-secondary" onclick="mathApp.openPostEditModal(${p.id})">✏️ Tahrirlash</button>
-                            <button class="btn btn-sm btn-danger" onclick="mathApp.deletePost(${p.id})">🗑 O'chirish</button>
-                        </div>
-                    ` : '';
-
-                    return `
-                        <div class="post-card">
-                            <div>
-                                <span class="quiz-topic-tag" style="margin-bottom: 8px; display:inline-block;">${p.category || 'Fikrlar'}</span>
-                                <h3 class="post-card-title">${p.title}</h3>
-                                <div class="post-card-body">${p.body}</div>
-                            </div>
-                            <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 10px; margin-top: 12px;">
-                                <span>👁 ${p.views || 0} ko'rildi</span>
-                                <span>❤️ ${p.likes || 0} layk</span>
-                            </div>
-                            ${adminPostBtns}
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            // --- BLOG POST CRUD (ADMIN) ---
-            openPostCreateModal() {
-                document.getElementById('postModalTitle').textContent = '➕ Yangi Maqola Yaratish';
-                document.getElementById('postIdInput').value = '';
-                document.getElementById('postTitleInput').value = '';
-                document.getElementById('postCategoryInput').value = 'Matematika';
-                document.getElementById('postBodyInput').value = '';
-                document.getElementById('postModal').classList.add('active');
-            }
-
-            openPostEditModal(postId) {
-                const p = this.posts.find(item => item.id == postId);
-                if (!p) return;
-                document.getElementById('postModalTitle').textContent = '✏️ Maqolani Tahrirlash';
-                document.getElementById('postIdInput').value = p.id;
-                document.getElementById('postTitleInput').value = p.title || '';
-                document.getElementById('postCategoryInput').value = p.category || 'Matematika';
-                document.getElementById('postBodyInput').value = p.body || '';
-                document.getElementById('postModal').classList.add('active');
-            }
-
-            savePost(e) {
-                e.preventDefault();
-                const pId = document.getElementById('postIdInput').value;
-                const title = document.getElementById('postTitleInput').value.trim();
-                const category = document.getElementById('postCategoryInput').value;
-                const body = document.getElementById('postBodyInput').value.trim();
-                const btn = document.getElementById('btnSavePost');
-
-                btn.disabled = true;
-                btn.textContent = 'Saqlanmoqda...';
-
-                let updatedPosts = [...this.posts];
-                if (pId) {
-                    const idx = updatedPosts.findIndex(p => p.id == pId);
-                    if (idx !== -1) {
-                        updatedPosts[idx].title = title;
-                        updatedPosts[idx].category = category;
-                        updatedPosts[idx].body = body;
-                    }
-                } else {
-                    const newPost = {
-                        id: Date.now(),
-                        title,
-                        category,
-                        body,
-                        date: new Date().toISOString(),
-                        views: 0,
-                        likes: 0
-                    };
-                    updatedPosts.unshift(newPost);
-                }
-
-                fetch(this.getApiUrl('/api/save'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ posts: updatedPosts })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    btn.disabled = false;
-                    btn.textContent = 'Saqlash';
-                    if (res.status === 'success') {
-                        this.posts = updatedPosts;
-                        this.renderPosts();
-                        this.closeModalById('postModal');
-                        this.showToast('✅ Maqola muvaffaqiyatli saqlandi!');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => {
-                    btn.disabled = false;
-                    btn.textContent = 'Saqlash';
-                    this.showToast('❌ Serverga saqlashda xato!');
-                });
-            }
-
-            deletePost(postId) {
-                if (!confirm('Ushbu maqolani o\'chirishga ishonchingiz komilmi?')) return;
-                const updatedPosts = this.posts.filter(p => p.id != postId);
-
-                fetch(this.getApiUrl('/api/save'), {
-                    method: 'POST',
-                    headers: this.getAuthHeaders(),
-                    body: JSON.stringify({ posts: updatedPosts })
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'success') {
-                        this.posts = updatedPosts;
-                        this.renderPosts();
-                        this.showToast('🗑 Maqola o\'chirildi');
-                    } else {
-                        this.showToast(`❌ Xato: ${res.error}`);
-                    }
-                })
-                .catch(() => this.showToast('❌ O\'chirishda xato'));
-            }
-
-            // --- UTILITIES & HELPERS ---
-            shuffleArray(arr) {
-                const copy = [...arr];
-                for (let i = copy.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [copy[i], copy[j]] = [copy[j], copy[i]];
-                }
-                return copy;
-            }
-
-            loadTheme() {
-                const theme = localStorage.getItem('kenjayev_theme') || 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
-                this.updateThemeIcon(theme);
-            }
-
-            toggleTheme() {
-                const current = document.documentElement.getAttribute('data-theme');
-                const next = current === 'dark' ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', next);
-                localStorage.setItem('kenjayev_theme', next);
-                this.updateThemeIcon(next);
-            }
-
-            updateThemeIcon(theme) {
-                const btn = document.getElementById('themeToggleBtn');
-                if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-            }
-
-            showToast(msg) {
-                const container = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = 'toast';
-                toast.innerHTML = msg;
-                container.appendChild(toast);
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateY(10px)';
-                    toast.style.transition = 'all 0.3s ease';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
-
-            closeModal(e) {
-                if (e.target.classList.contains('modal-overlay')) {
-                    e.target.classList.remove('active');
-                }
-            }
-
-            closeModalById(id) {
-                const m = document.getElementById(id);
-                if (m) m.classList.remove('active');
-            }
-
-            setupKeyboardShortcuts() {
-                document.addEventListener('keydown', (e) => {
-                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-                    
-                    // 1-5 keys for option selection in quiz player
-                    if (['1', '2', '3', '4', '5'].includes(e.key)) {
-                        const idx = parseInt(e.key) - 1;
-                        this.selectOption(idx);
-                    }
-                    if (['a', 'b', 'c', 'd', 'e'].includes(e.key.toLowerCase())) {
-                        const idx = e.key.toLowerCase().charCodeAt(0) - 97;
-                        this.selectOption(idx);
-                    }
-                    // Enter key to submit / next
-                    if (e.key === 'Enter') {
-                        if (!this.isAnswerSubmitted && this.selectedRenderedIndex !== null) {
-                            this.submitAnswer();
-                        } else if (this.isAnswerSubmitted) {
-                            this.nextQuestion();
-                        }
-                    }
-                    // Escape key closes modals
-                    if (e.key === 'Escape') {
-                        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
-                    }
-                });
-            }
-
-            handleSearch(query) {
-                const q = query.toLowerCase().trim();
-                const clearBtn = document.getElementById('searchClear');
-                if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
-
-                if (!q) {
-                    this.renderSections();
-                    return;
-                }
-
-                // Filter sections or start quiz with matching questions
-                const filteredQuizzes = this.quizzes.filter(item => 
-                    (item.title && item.title.toLowerCase().includes(q)) ||
-                    (item.explanation && item.explanation.toLowerCase().includes(q))
-                );
-
-                if (filteredQuizzes.length > 0) {
-                    this.playerQueue = filteredQuizzes;
-                    this.currentQuestionIndex = 0;
-                    this.playerMode = 'practice';
-                    this.switchTab('player');
-                    this.renderCurrentQuestion();
-                }
-            }
-
-            clearSearch() {
-                const input = document.getElementById('globalSearch');
-                if (input) input.value = '';
-                this.handleSearch('');
+                    <button class="btn btn-sm btn-secondary" onclick="mathApp.logoutAdmin()">
+                        🚪 Chiqish
+                    </button>
+                `;
+            } else {
+                slot.innerHTML = `
+                    <button class="btn btn-sm btn-secondary" onclick="mathApp.openLoginModal()">
+                        🔑 Kirish
+                    </button>
+                `;
             }
         }
 
-        // Initialize Application
-        const mathApp = new MathQuizApp();
+        if (heroAddSec) heroAddSec.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (heroAddQ) heroAddQ.style.display = this.isAdmin ? 'inline-flex' : 'none';
+        if (secBar) secBar.style.display = this.isAdmin ? 'flex' : 'none';
+        if (blogBar) blogBar.style.display = this.isAdmin ? 'flex' : 'none';
+
+        this.renderSections();
+    }
+
+    openLoginModal() {
+        const m = document.getElementById('adminLoginModal');
+        if (m) m.classList.add('active');
+    }
+
+    handleAdminLogin(e) {
+        if (e) e.preventDefault();
+        const login = (document.getElementById('adminLoginInput').value || '').trim();
+        const password = (document.getElementById('adminPasswordInput').value || '').trim();
+        const btn = document.getElementById('btnLoginSubmit');
+        const err = document.getElementById('adminLoginError');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Kirilmoqda...';
+        }
+        if (err) err.style.display = 'none';
+
+        fetch(this.getApiUrl('/api/admin/login'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ login, password })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Kirish';
+            }
+            if (res.status === 'success' && res.token) {
+                this.adminToken = res.token;
+                this.isAdmin = true;
+                localStorage.setItem('kenjayev_admin_token', res.token);
+                this.closeModalById('adminLoginModal');
+                this.renderAdminUI();
+                this.showToast("✅ Admin rejimiga muvaffaqiyatli kirdingiz!");
+            } else {
+                if (err) {
+                    err.textContent = res.error || "Login yoki parol noto'g'ri!";
+                    err.style.display = 'block';
+                }
+            }
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Kirish';
+            }
+            if (err) {
+                err.textContent = "Server bilan ulanishda xatolik!";
+                err.style.display = 'block';
+            }
+        });
+    }
+
+    logoutAdmin(notify = true) {
+        if (this.adminToken) {
+            fetch(this.getApiUrl('/api/admin/logout'), {
+                method: 'POST',
+                headers: this.getAuthHeaders()
+            }).catch(() => {});
+        }
+        this.adminToken = null;
+        this.isAdmin = false;
+        localStorage.removeItem('kenjayev_admin_token');
+        this.renderAdminUI();
+        if (notify) this.showToast("ℹ️ Admin rejimidan chiqdingiz");
+    }
+
+    // --- SECTIONS RENDERING ---
+    renderSections() {
+        const container = document.getElementById('sectionsGridContainer');
+        if (!container) return;
+
+        if (!this.sections || this.sections.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    Hozircha birorta ham bo'lim yaratilmagan.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = this.sections.map(sec => {
+            const qCount = this.quizzes.filter(q => q.section_id === sec.id).length;
+            const adminBtns = this.isAdmin ? `
+                <div class="section-admin-actions">
+                    <button class="btn btn-sm btn-secondary" title="Savol qo'shish" onclick="event.stopPropagation(); mathApp.openQuestionModal('${sec.id}')">➕</button>
+                    <button class="btn btn-sm btn-secondary" title="Tahrirlash" onclick="event.stopPropagation(); mathApp.openSectionModal('${sec.id}')">✏️</button>
+                    <button class="btn btn-sm btn-danger" title="O'chirish" onclick="event.stopPropagation(); mathApp.deleteSection('${sec.id}')">🗑</button>
+                </div>
+            ` : '';
+
+            return `
+                <div class="section-card" onclick="mathApp.startSectionPractice('${sec.id}')">
+                    ${adminBtns}
+                    <div class="section-card-top">
+                        <div class="section-icon-badge" style="border-color: ${sec.color || '#3b82f6'}; color: ${sec.color || '#3b82f6'};">
+                            ${sec.icon || '📐'}
+                        </div>
+                        <span class="section-count-badge">${qCount} ta savol</span>
+                    </div>
+
+                    <h3 class="section-title">${sec.title}</h3>
+                    <p class="section-desc">${sec.description || "Matematika bo'yicha interaktiv testlar"}</p>
+
+                    <div class="section-meta-row">
+                        <span>🎯 Interaktiv Mashq</span>
+                        <span>⏱ Imtihon Testi</span>
+                    </div>
+
+                    <div class="section-actions" onclick="event.stopPropagation()">
+                        <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
+                            <span>Mashq qilish</span>
+                        </button>
+                        <button class="btn btn-secondary" style="flex:1;" onclick="mathApp.startSectionExam('${sec.id}')">
+                            <span>Test (Imtihon)</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // --- QUIZ PLAYER ENGINE ---
+    startSectionPractice(secId) {
+        this.activeSectionId = secId;
+        this.playerMode = 'practice';
+        const list = this.quizzes.filter(q => q.section_id === secId);
+        if (list.length === 0) {
+            this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
+            return;
+        }
+        this.playerQueue = this.shuffleArray([...list]);
+        this.currentQuestionIndex = 0;
+        this.switchTab('player');
+        this.renderCurrentQuestion();
+    }
+
+    startSectionExam(secId) {
+        this.activeSectionId = secId;
+        this.playerMode = 'exam';
+        const list = this.quizzes.filter(q => q.section_id === secId);
+        if (list.length === 0) {
+            this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
+            return;
+        }
+        this.playerQueue = this.shuffleArray([...list]);
+        this.currentQuestionIndex = 0;
+        this.examSessionCorrect = 0;
+        this.examSessionTotal = this.playerQueue.length;
+        this.startExamTimer();
+        this.switchTab('player');
+        this.renderCurrentQuestion();
+    }
+
+    startRandomPractice() {
+        if (this.quizzes.length === 0) {
+            this.showToast("⚠️ Savollar bazasi bo'sh!");
+            return;
+        }
+        this.activeSectionId = 'all';
+        this.playerMode = 'practice';
+        this.playerQueue = this.shuffleArray([...this.quizzes]);
+        this.currentQuestionIndex = 0;
+        this.switchTab('player');
+        this.renderCurrentQuestion();
+    }
+
+    startTimedExam() {
+        if (this.quizzes.length === 0) {
+            this.showToast("⚠️ Savollar bazasi bo'sh!");
+            return;
+        }
+        this.activeSectionId = 'all';
+        this.playerMode = 'exam';
+        this.playerQueue = this.shuffleArray([...this.quizzes]).slice(0, 15);
+        this.currentQuestionIndex = 0;
+        this.examSessionCorrect = 0;
+        this.examSessionTotal = this.playerQueue.length;
+        this.startExamTimer();
+        this.switchTab('player');
+        this.renderCurrentQuestion();
+    }
+
+    renderCurrentQuestion() {
+        const q = this.playerQueue[this.currentQuestionIndex];
+        if (!q) return;
+
+        document.getElementById('quizCardBox').style.display = 'block';
+        document.getElementById('examResultsBox').style.display = 'none';
+
+        // Section Badge & Meta
+        const sec = this.sections.find(s => s.id === q.section_id);
+        document.getElementById('playerSectionName').textContent = sec ? sec.title : 'Matematika';
+        document.getElementById('playerQuestionCounter').textContent = `Savol ${this.currentQuestionIndex + 1} / ${this.playerQueue.length}`;
+        
+        const diffLabels = { 'oson': 'Oson (1 ball)', 'orta': "O'rta (2 ball)", 'qiyin': 'Qiyin (3 ball)', 'olimpiada': 'Olimpiada (5 ball)' };
+        document.getElementById('playerDifficultyBadge').textContent = diffLabels[q.difficulty] || "O'rta";
+        
+        const modeBadge = document.getElementById('playerModeBadge');
+        modeBadge.textContent = this.playerMode === 'exam' ? '⏱ Imtihon Rejimi' : '🎯 Mashq Rejimi';
+
+        // Question Text (KaTeX)
+        const qTextEl = document.getElementById('playerQuestionText');
+        qTextEl.innerHTML = q.title || '';
+        this.renderMath(qTextEl);
+
+        // Image
+        const imgBox = document.getElementById('playerImageBox');
+        const imgEl = document.getElementById('playerImage');
+        if (q.image) {
+            imgEl.src = q.image;
+            imgBox.style.display = 'block';
+        } else {
+            imgBox.style.display = 'none';
+        }
+
+        // Options with smart shuffling and mapping
+        this.selectedRenderedIndex = null;
+        this.isAnswerSubmitted = false;
+        const optionsContainer = document.getElementById('playerOptionsContainer');
+        const alphabet = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+        const rawOptions = q.options || [];
+        const mappedOptions = rawOptions.map((text, origIdx) => ({ text, origIdx }));
+        if (!q._shuffledOptions) {
+            q._shuffledOptions = this.shuffleArray([...mappedOptions]);
+        }
+        this.currentRenderedOptions = q._shuffledOptions;
+
+        optionsContainer.innerHTML = this.currentRenderedOptions.map((optObj, renderedIdx) => `
+            <button class="option-btn" id="optionBtn_${renderedIdx}" onclick="mathApp.selectOption(${renderedIdx})">
+                <span class="option-key">${alphabet[renderedIdx] || (renderedIdx + 1)}</span>
+                <span class="option-text">${optObj.text}</span>
+            </button>
+        `).join('');
+
+        this.renderMath(optionsContainer);
+
+        // Hide Feedback
+        const fbBox = document.getElementById('playerFeedbackBox');
+        fbBox.style.display = 'none';
+        fbBox.innerHTML = '';
+
+        // Controls
+        document.getElementById('btnPlayerSubmit').style.display = 'inline-flex';
+        document.getElementById('btnPlayerSubmit').disabled = true;
+        document.getElementById('btnPlayerNext').style.display = 'none';
+        document.getElementById('btnPlayerPrev').disabled = this.currentQuestionIndex === 0;
+    }
+
+    selectOption(renderedIdx) {
+        if (this.isAnswerSubmitted) return;
+        this.selectedRenderedIndex = renderedIdx;
+        
+        this.currentRenderedOptions.forEach((_, i) => {
+            const btn = document.getElementById(`optionBtn_${i}`);
+            if (btn) {
+                btn.classList.toggle('selected', i === renderedIdx);
+            }
+        });
+
+        document.getElementById('btnPlayerSubmit').disabled = false;
+    }
+
+    submitAnswer() {
+        if (this.selectedRenderedIndex === null || this.isAnswerSubmitted) return;
+        this.isAnswerSubmitted = true;
+
+        const q = this.playerQueue[this.currentQuestionIndex];
+        const chosenItem = this.currentRenderedOptions[this.selectedRenderedIndex];
+        const isCorrect = chosenItem && chosenItem.origIdx === q.correct_option;
+
+        // Update Lifetime Stats
+        this.recordUserAnswer(isCorrect, q);
+
+        // Update Exam Session stats
+        if (this.playerMode === 'exam') {
+            if (isCorrect) this.examSessionCorrect = (this.examSessionCorrect || 0) + 1;
+        }
+
+        // Highlight buttons
+        const chosenBtn = document.getElementById(`optionBtn_${this.selectedRenderedIndex}`);
+        
+        // Find rendered index of correct option
+        const correctRenderedIdx = this.currentRenderedOptions.findIndex(o => o.origIdx === q.correct_option);
+        const correctBtn = document.getElementById(`optionBtn_${correctRenderedIdx}`);
+
+        if (isCorrect) {
+            if (chosenBtn) chosenBtn.classList.add('correct');
+        } else {
+            if (chosenBtn) chosenBtn.classList.add('incorrect');
+            if (correctBtn) correctBtn.classList.add('correct');
+        }
+
+        // Show Feedback in Practice Mode
+        if (this.playerMode === 'practice') {
+            const fbBox = document.getElementById('playerFeedbackBox');
+            fbBox.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
+            
+            let solutionHtml = '';
+            if (q.explanation) {
+                solutionHtml = `
+                    <div class="solution-box">
+                        <div class="solution-heading">💡 Bosqichma-bosqich Yechim:</div>
+                        <div class="solution-text">${q.explanation}</div>
+                    </div>
+                `;
+            }
+
+            fbBox.innerHTML = `
+                <div class="feedback-title">
+                    ${isCorrect ? "🎉 To'g'ri javob! Barakalla!" : "❌ Sizning javobingiz xato!"}
+                </div>
+                <div>${isCorrect ? "Siz to'g'ri variantni tanladingiz." : "To'g'ri javob yashil rangda belgilandi."}</div>
+                ${solutionHtml}
+            `;
+            fbBox.style.display = 'block';
+            this.renderMath(fbBox);
+        }
+
+        document.getElementById('btnPlayerSubmit').style.display = 'none';
+        document.getElementById('btnPlayerNext').style.display = 'inline-flex';
+    }
+
+    nextQuestion() {
+        if (this.currentQuestionIndex < this.playerQueue.length - 1) {
+            this.currentQuestionIndex++;
+            this.renderCurrentQuestion();
+        } else {
+            // Completed
+            if (this.playerMode === 'exam') {
+                this.finishExam();
+            } else {
+                this.showToast("🎉 Ushbu to'plamdagi barcha savollarni yakunladingiz!");
+                this.switchTab('quizzes');
+            }
+        }
+    }
+
+    prevQuestion() {
+        if (this.currentQuestionIndex > 0) {
+            this.currentQuestionIndex--;
+            this.renderCurrentQuestion();
+        }
+    }
+
+    exitPlayer() {
+        if (this.examTimerInterval) clearInterval(this.examTimerInterval);
+        this.switchTab('quizzes');
+    }
+
+    startExamTimer() {
+        if (this.examTimerInterval) clearInterval(this.examTimerInterval);
+        this.examSecondsElapsed = 0;
+        const timerBadge = document.getElementById('playerTimerBadge');
+        timerBadge.style.display = 'inline-flex';
+
+        this.examTimerInterval = setInterval(() => {
+            this.examSecondsElapsed++;
+            const mins = String(Math.floor(this.examSecondsElapsed / 60)).padStart(2, '0');
+            const secs = String(this.examSecondsElapsed % 60).padStart(2, '0');
+            timerBadge.textContent = `⏱ ${mins}:${secs}`;
+        }, 1000);
+    }
+
+    finishExam() {
+        if (this.examTimerInterval) clearInterval(this.examTimerInterval);
+        document.getElementById('quizCardBox').style.display = 'none';
+        document.getElementById('examResultsBox').style.display = 'block';
+
+        const total = this.examSessionTotal || this.playerQueue.length || 1;
+        const correctCount = this.examSessionCorrect || 0;
+        const percent = Math.round((correctCount / total) * 100);
+
+        document.getElementById('examScoreDisplay').textContent = `${correctCount} / ${total}`;
+        document.getElementById('examPercentDisplay').textContent = `${percent}% Aniqlik`;
+    }
+
+    restartExam() {
+        if (this.activeSectionId === 'all') {
+            this.startTimedExam();
+        } else {
+            this.startSectionExam(this.activeSectionId);
+        }
+    }
+
+    // --- IMAGE ZOOM ---
+    zoomImage(src) {
+        if (!src) return;
+        const modal = document.getElementById('imageZoomModal');
+        const img = document.getElementById('zoomedImageDisplay');
+        if (img && modal) {
+            img.src = src;
+            modal.classList.add('active');
+        }
+    }
+
+    // --- BULK IMPORT QUESTIONS (ADMIN) ---
+    openBulkImportModal() {
+        const select = document.getElementById('bulkSectionSelect');
+        select.innerHTML = '<option value="">Har bir savolning o\'z bo\'limi (section_id)</option>' + this.sections.map(s => `
+            <option value="${s.id}">${s.title}</option>
+        `).join('');
+        document.getElementById('bulkJsonInput').value = '';
+        document.getElementById('bulkImportError').style.display = 'none';
+        document.getElementById('bulkImportModal').classList.add('active');
+    }
+
+    copyBulkTemplate() {
+        const sample = [
+            {
+                "section_id": "sec_algebra",
+                "title": "$x^2 - 5x + 6 = 0$ tenglamaning ildizlarini toping.",
+                "options": ["$x_1 = 2, x_2 = 3$", "$x_1 = -2, x_2 = -3$", "$x_1 = 1, x_2 = 6$", "$x_1 = -1, x_2 = 5$"],
+                "correct_option": 0,
+                "explanation": "Viyet teoremasiga ko'ra $x_1+x_2=5$ va $x_1 x_2=6$, shuning uchun ildizlar $2$ va $3$.",
+                "difficulty": "oson",
+                "points": 1
+            },
+            {
+                "section_id": "sec_geometriya",
+                "title": "Doiraning radiusi $R = 5$ sm bo'lsa, uning yuzi $S$ ni toping.",
+                "options": ["$25\pi \text{ sm}^2$", "$10\pi \text{ sm}^2$", "$50\pi \text{ sm}^2$", "$100\pi \text{ sm}^2$"],
+                "correct_option": 0,
+                "explanation": "Doira yuzi: $S = \pi R^2 = \pi (5^2) = 25\pi \text{ sm}^2$.",
+                "difficulty": "oson",
+                "points": 1
+            }
+        ];
+        document.getElementById('bulkJsonInput').value = JSON.stringify(sample, null, 2);
+        this.showToast("📋 Shablon matn maydoniga joylandi");
+    }
+
+    handleBulkImport() {
+        const raw = document.getElementById('bulkJsonInput').value.trim();
+        const targetSec = document.getElementById('bulkSectionSelect').value;
+        const err = document.getElementById('bulkImportError');
+        const btn = document.getElementById('btnSubmitBulkImport');
+
+        if (!raw) {
+            err.textContent = "Iltimos, JSON formatdagi savollarni kiriting!";
+            err.style.display = 'block';
+            return;
+        }
+
+        let questions = [];
+        try {
+            questions = JSON.parse(raw);
+            if (!Array.isArray(questions)) throw new Error("Ma'lumot massiv (array) bo'lishi kerak");
+        } catch (e) {
+            err.textContent = `JSON formati xato: ${e.message}`;
+            err.style.display = 'block';
+            return;
+        }
+
+        if (targetSec) {
+            questions.forEach(q => q.section_id = targetSec);
+        }
+
+        btn.disabled = true;
+        btn.textContent = 'Yuklanmoqda...';
+        err.style.display = 'none';
+
+        fetch(this.getApiUrl('/api/quizzes/bulk-import'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ section_id: targetSec, questions })
+        })
+        .then(r => r.json())
+        .then(res => {
+            btn.disabled = false;
+            btn.textContent = '🚀 Yuklash va Saqlash';
+            if (res.status === 'success') {
+                this.fetchData();
+                this.closeModalById('bulkImportModal');
+                this.showToast(`🎉 ${res.added_count} ta yangi savol muvaffaqiyatli qo'shildi!`);
+            } else {
+                err.textContent = res.error || "Yuklashda xatolik yuz berdi";
+                err.style.display = 'block';
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            btn.textContent = '🚀 Yuklash va Saqlash';
+            err.textContent = "Server bilan ulanishda xato!";
+            err.style.display = 'block';
+        });
+    }
+
+    // --- LOCAL STATS TRACKING ---
+    recordUserAnswer(isCorrect, question) {
+        this.userStats.solved++;
+        if (isCorrect) {
+            this.userStats.correct++;
+            this.userStats.streak++;
+        } else {
+            this.userStats.streak = 0;
+        }
+        localStorage.setItem('math_user_stats', JSON.stringify(this.userStats));
+        this.updateHeroStats();
+
+        // Send background stat ping
+        fetch(this.getApiUrl('/api/quiz/stat'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ correct: isCorrect, section_id: question.section_id })
+        }).catch(() => {});
+    }
+
+    updateHeroStats() {
+        const secEl = document.getElementById('statSectionsCount');
+        const qEl = document.getElementById('statQuestionsCount');
+        const uEl = document.getElementById('statUserSolved');
+        const stEl = document.getElementById('statStreak');
+        if (secEl) secEl.textContent = this.sections.length;
+        if (qEl) qEl.textContent = this.quizzes.length;
+        if (uEl) uEl.textContent = this.userStats.solved;
+        if (stEl) stEl.textContent = `🔥 ${this.userStats.streak}`;
+    }
+
+    renderUserStats() {
+        const solEl = document.getElementById('userSolvedTotal');
+        const corEl = document.getElementById('userCorrectTotal');
+        const accEl = document.getElementById('userAccuracyTotal');
+        const rankEl = document.getElementById('userRankBadge');
+        if (solEl) solEl.textContent = this.userStats.solved;
+        if (corEl) corEl.textContent = this.userStats.correct;
+        const acc = this.userStats.solved > 0 ? Math.round((this.userStats.correct / this.userStats.solved) * 100) : 0;
+        if (accEl) accEl.textContent = `${acc}%`;
+
+        let rank = "Boshlang'ich";
+        if (this.userStats.solved >= 10) rank = 'Havaskor';
+        if (this.userStats.solved >= 30) rank = 'Usta';
+        if (this.userStats.solved >= 50) rank = 'Grossmeyster';
+        if (rankEl) rankEl.textContent = rank;
+    }
+
+    // --- ADMIN SECTION CRUD ---
+    openSectionModal(secId = null) {
+        document.getElementById('sectionModal').classList.add('active');
+        document.getElementById('editSectionId').value = secId || '';
+        if (secId) {
+            const s = this.sections.find(x => x.id === secId);
+            if (s) {
+                document.getElementById('sectionModalTitle').textContent = "✏️ Bo'limni Tahrirlash";
+                document.getElementById('sectionTitleInput').value = s.title;
+                document.getElementById('sectionDescInput').value = s.description || '';
+                document.getElementById('sectionIconInput').value = s.icon || '📐';
+                document.getElementById('sectionColorInput').value = s.color || '#3b82f6';
+            }
+        } else {
+            document.getElementById('sectionModalTitle').textContent = "➕ Yangi Bo'lim Yaratish";
+            document.getElementById('sectionTitleInput').value = '';
+            document.getElementById('sectionDescInput').value = '';
+            document.getElementById('sectionIconInput').value = '📐';
+            document.getElementById('sectionColorInput').value = '#3b82f6';
+        }
+    }
+
+    saveSection(e) {
+        if (e) e.preventDefault();
+        const secId = document.getElementById('editSectionId').value;
+        const title = document.getElementById('sectionTitleInput').value.trim();
+        const description = document.getElementById('sectionDescInput').value.trim();
+        const icon = document.getElementById('sectionIconInput').value.trim() || '📐';
+        const color = document.getElementById('sectionColorInput').value.trim() || '#3b82f6';
+
+        const action = secId ? 'update' : 'create';
+        const section = { id: secId, title, description, icon, color };
+
+        fetch(this.getApiUrl('/api/quizzes/section'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ action, section })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                this.sections = res.sections;
+                this.renderSections();
+                this.updateHeroStats();
+                this.closeModalById('sectionModal');
+                this.showToast("✅ Bo'lim muvaffaqiyatli saqlandi!");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => this.showToast("❌ Server bilan ulanishda xatolik"));
+    }
+
+    deleteSection(secId) {
+        if (!confirm("Ushbu bo'limni va unga tegishli barcha savollarni o'chirishga ishonchingiz komilmi?")) return;
+
+        fetch(this.getApiUrl('/api/quizzes/section'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ action: 'delete', section: { id: secId } })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                this.sections = res.sections;
+                this.quizzes = this.quizzes.filter(q => q.section_id !== secId);
+                this.renderSections();
+                this.updateHeroStats();
+                this.showToast("🗑 Bo'lim o'chirildi");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => this.showToast("❌ O'chirishda xatolik"));
+    }
+
+    // --- ADMIN QUESTION CRUD & LIVE LATEX PREVIEW ---
+    openQuestionModal(defaultSectionId = null, qId = null) {
+        const secSelect = document.getElementById('qSectionSelect');
+        secSelect.innerHTML = this.sections.map(s => `
+            <option value="${s.id}" ${s.id === defaultSectionId ? 'selected' : ''}>${s.icon || ''} ${s.title}</option>
+        `).join('');
+
+        document.getElementById('questionModal').classList.add('active');
+        document.getElementById('editQuestionId').value = qId || '';
+
+        if (qId) {
+            const q = this.quizzes.find(x => x.id === qId);
+            if (q) {
+                document.getElementById('questionModalTitle').textContent = '✏️ Savolni Tahrirlash (LaTeX)';
+                secSelect.value = q.section_id;
+                document.getElementById('qTitleInput').value = q.title || '';
+                document.getElementById('qImageUrlInput').value = q.image || '';
+                document.getElementById('qExplanationInput').value = q.explanation || '';
+                document.getElementById('qDifficultySelect').value = q.difficulty || 'orta';
+                this.clearImageInput();
+                if (q.image) {
+                    document.getElementById('qImageUrlInput').value = q.image;
+                    this.updateImagePreview(q.image);
+                }
+                this.renderOptionInputs(q.options, q.correct_option);
+            }
+        } else {
+            document.getElementById('questionModalTitle').textContent = "➕ Yangi Savol Qo'shish (LaTeX)";
+            document.getElementById('qTitleInput').value = '';
+            document.getElementById('qImageUrlInput').value = '';
+            document.getElementById('qExplanationInput').value = '';
+            this.clearImageInput();
+            this.renderOptionInputs(['', '', '', ''], 0);
+        }
+
+        this.updateLivePreview();
+        this.updateExplanationPreview();
+    }
+
+    renderOptionInputs(options = ['', '', '', ''], correctIdx = 0) {
+        const container = document.getElementById('qOptionsContainer');
+        const alphabet = ['A', 'B', 'C', 'D', 'E', 'F'];
+        
+        container.innerHTML = options.map((opt, i) => `
+            <div class="option-builder-row">
+                <input type="radio" name="qCorrectRadio" value="${i}" ${i === correctIdx ? 'checked' : ''} title="To'g'ri javob">
+                <span class="builder-badge">${alphabet[i] || (i + 1)}</span>
+                <input type="text" class="form-control q-option-val" value="${opt.replace(/"/g, '&quot;')}" placeholder="Variant matni ($LaTeX$)" required oninput="mathApp.updateLivePreview()">
+                ${options.length > 2 ? `<button type="button" class="btn btn-sm btn-danger" onclick="mathApp.removeOptionInput(${i})">✕</button>` : ''}
+            </div>
+        `).join('');
+    }
+
+    addOptionInput() {
+        const current = this.getCurrentOptionValues();
+        current.push('');
+        this.renderOptionInputs(current, this.getCurrentCorrectOptionIndex());
+    }
+
+    removeOptionInput(idx) {
+        const current = this.getCurrentOptionValues();
+        if (current.length <= 2) return;
+        current.splice(idx, 1);
+        this.renderOptionInputs(current, 0);
+    }
+
+    getCurrentOptionValues() {
+        return Array.from(document.querySelectorAll('.q-option-val')).map(el => el.value);
+    }
+
+    getCurrentCorrectOptionIndex() {
+        const checked = document.querySelector('input[name="qCorrectRadio"]:checked');
+        return checked ? parseInt(checked.value) : 0;
+    }
+
+    insertMath(latexCode) {
+        const textarea = document.getElementById('qTitleInput');
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const insert = `$${latexCode}$`;
+        textarea.value = text.substring(0, start) + insert + text.substring(end);
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + insert.length;
+        this.updateLivePreview();
+    }
+
+    updateLivePreview() {
+        const titleVal = document.getElementById('qTitleInput').value.trim();
+        const previewEl = document.getElementById('qTitlePreview');
+        if (previewEl) {
+            if (titleVal) {
+                previewEl.innerHTML = titleVal;
+                this.renderMath(previewEl);
+            } else {
+                previewEl.innerHTML = '<span style="color:var(--text-muted);">Savol prevyusi bu yerda chiqadi...</span>';
+            }
+        }
+    }
+
+    updateExplanationPreview() {
+        const expVal = document.getElementById('qExplanationInput').value.trim();
+        const previewEl = document.getElementById('qExplanationPreview');
+        if (previewEl) {
+            if (expVal) {
+                previewEl.style.display = 'block';
+                previewEl.innerHTML = expVal;
+                this.renderMath(previewEl);
+            } else {
+                previewEl.style.display = 'none';
+            }
+        }
+    }
+
+    handleImageUpload(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const base64 = e.target.result;
+            fetch(this.getApiUrl('/api/upload'), {
+                method: 'POST',
+                headers: this.getAuthHeaders(),
+                body: JSON.stringify({ image: base64 })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === 'success' && res.url) {
+                    document.getElementById('qImageUrlInput').value = res.url;
+                    this.updateImagePreview(res.url);
+                    this.showToast("✅ Rasm muvaffaqiyatli yuklandi!");
+                } else {
+                    this.showToast("❌ Rasmni yuklashda xato!");
+                }
+            })
+            .catch(() => this.showToast("❌ Rasmni yuklashda xato!"));
+        };
+        reader.readAsDataURL(file);
+    }
+
+    updateImagePreview(url) {
+        const box = document.getElementById('qImagePreviewBox');
+        const img = document.getElementById('qImagePreview');
+        if (url && box && img) {
+            img.src = url;
+            box.style.display = 'block';
+        } else if (box) {
+            box.style.display = 'none';
+        }
+    }
+
+    clearImageInput() {
+        const urlInput = document.getElementById('qImageUrlInput');
+        const fileInput = document.getElementById('qImageFileInput');
+        if (urlInput) urlInput.value = '';
+        if (fileInput) fileInput.value = '';
+        this.updateImagePreview('');
+    }
+
+    saveQuestion(e) {
+        if (e) e.preventDefault();
+        const qId = document.getElementById('editQuestionId').value;
+        const section_id = document.getElementById('qSectionSelect').value;
+        const title = document.getElementById('qTitleInput').value.trim();
+        const image = document.getElementById('qImageUrlInput').value.trim();
+        const options = this.getCurrentOptionValues();
+        const correct_option = this.getCurrentCorrectOptionIndex();
+        const explanation = document.getElementById('qExplanationInput').value.trim();
+        const difficulty = document.getElementById('qDifficultySelect').value;
+
+        const action = qId ? 'update' : 'create';
+        const question = { id: qId, section_id, title, image, options, correct_option, explanation, difficulty };
+
+        fetch(this.getApiUrl('/api/quizzes/question'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ action, question })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                if (action === 'create') {
+                    this.quizzes.push(res.question);
+                } else {
+                    this.quizzes = res.quizzes;
+                }
+                this.renderSections();
+                this.updateHeroStats();
+                this.closeModalById('questionModal');
+                this.showToast("✅ Savol muvaffaqiyatli saqlandi!");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => this.showToast("❌ Server bilan ulanishda xato"));
+    }
+
+    // --- ADMIN MANAGE QUESTIONS TABLE ---
+    openManageQuestionsModal() {
+        const select = document.getElementById('manageFilterSection');
+        select.innerHTML = '<option value="all">Barcha bo\'limlar</option>' + this.sections.map(s => `
+            <option value="${s.id}">${s.title}</option>
+        `).join('');
+        document.getElementById('manageQuestionsModal').classList.add('active');
+        this.renderManageQuestionsTable();
+    }
+
+    renderManageQuestionsTable() {
+        const tbody = document.getElementById('manageQuestionsTbody');
+        const filterSec = document.getElementById('manageFilterSection').value;
+        const query = document.getElementById('manageSearchInput').value.toLowerCase().trim();
+
+        let list = this.quizzes;
+        if (filterSec !== 'all') {
+            list = list.filter(q => q.section_id === filterSec);
+        }
+        if (query) {
+            list = list.filter(q => (q.title && q.title.toLowerCase().includes(query)));
+        }
+
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 24px;">Savollar topilmadi</td></tr>';
+            return;
+        }
+
+        const alphabet = ['A', 'B', 'C', 'D', 'E'];
+        tbody.innerHTML = list.map((q, i) => {
+            const sec = this.sections.find(s => s.id === q.section_id);
+            return `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><span class="quiz-topic-tag">${sec ? sec.title : '-'}</span></td>
+                    <td style="max-width: 320px; font-weight: 600;">${q.title}</td>
+                    <td>${(q.options || []).length} ta</td>
+                    <td><b style="color:#34d399;">${alphabet[q.correct_option] || 'A'}</b></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="mathApp.editQuestionFromTable('${q.id}')">✏️</button>
+                        <button class="btn btn-sm btn-danger" onclick="mathApp.deleteQuestion('${q.id}')">🗑</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        this.renderMath(tbody);
+    }
+
+    editQuestionFromTable(qId) {
+        this.closeModalById('manageQuestionsModal');
+        this.openQuestionModal(null, qId);
+    }
+
+    deleteQuestion(qId) {
+        if (!confirm("Ushbu savolni o'chirishga ishonchingiz komilmi?")) return;
+
+        fetch(this.getApiUrl('/api/quizzes/question'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ action: 'delete', question: { id: qId } })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                this.quizzes = this.quizzes.filter(q => q.id !== qId);
+                this.renderManageQuestionsTable();
+                this.renderSections();
+                this.updateHeroStats();
+                this.showToast("🗑 Savol o'chirildi");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => this.showToast("❌ O'chirishda xato"));
+    }
+
+    // --- FORMULAS REFERENCE SHEET ---
+    openFormulasModal() {
+        document.getElementById('formulasModal').classList.add('active');
+        this.showFormulaCategory('algebra');
+    }
+
+    showFormulaCategory(cat) {
+        ['algebra', 'geometriya', 'trigonometriya', 'analiz'].forEach(c => {
+            const btn = document.getElementById('btnFormCat_' + c);
+            if (btn) {
+                btn.className = (c === cat) ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-secondary';
+            }
+        });
+
+        const container = document.getElementById('formulaCardsContainer');
+        const formulaData = {
+            algebra: [
+                { name: 'Kvadrat Tenglama Ildizlari', formula: '$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$', desc: "D = b^2 - 4ac > 0 bo'lganda 2 ta haqiqiy ildiz mavjud." },
+                { name: 'Viyet Teoremasi', formula: '$$x_1 + x_2 = -\\frac{b}{a}, \\quad x_1 x_2 = \\frac{c}{a}$$', desc: "Keltirilgan x^2 + px + q = 0 tenglama uchun: x_1+x_2=-p, x_1x_2=q." },
+                { name: "Qisqa Ko'paytirish Formulalari", formula: '$$(a \\pm b)^2 = a^2 \\pm 2ab + b^2$$\\n$$a^2 - b^2 = (a-b)(a+b)$$', desc: "Eng muhim algebrik ayniyatlar to'plami." },
+                { name: 'Logarifm Asosiy Xossalari', formula: '$$\\log_a(xy) = \\log_a(x) + \\log_a(y)$$\\n$$\\log_a\\left(\\frac{x}{y}\\right) = \\log_a(x) - \\log_a(y)$$', desc: "Asos a > 0, a \\neq 1 va x,y > 0 bo'lganda." },
+                { name: 'Aritmetik Progressiya', formula: '$$a_n = a_1 + (n-1)d$$\\n$$S_n = \\frac{2a_1 + (n-1)d}{2} \\cdot n$$', desc: "Dastlabki n ta hadi va ularning yig'indisi." },
+                { name: 'Geometrik Progressiya', formula: '$$b_n = b_1 \\cdot q^{n-1}$$\\n$$S_n = \\frac{b_1(q^n - 1)}{q - 1}$$', desc: "Cheksiz kamayuvchi bo'lsa: S = \\frac{b_1}{1 - q}." }
+            ],
+            geometriya: [
+                { name: 'Pifagor Teoremasi', formula: '$$c^2 = a^2 + b^2 \\implies c = \\sqrt{a^2 + b^2}$$', desc: "To'g'ri burchakli uchburchak gipotenuzasini topish." },
+                { name: 'Geron Formulasi (Yuza)', formula: '$$S = \\sqrt{p(p-a)(p-b)(p-c)}, \\quad p = \\frac{a+b+c}{2}$$', desc: "Uch tomoni ma'lum ixtiyoriy uchburchak yuzasi." },
+                { name: 'Sinuslar Teoremasi', formula: '$$\\frac{a}{\\sin \\alpha} = \\frac{b}{\\sin \\beta} = \\frac{c}{\\sin \\gamma} = 2R$$', desc: "Tashqi chizilgan aylana radiusi R." },
+                { name: 'Kosinuslar Teoremasi', formula: '$$c^2 = a^2 + b^2 - 2ab \\cos \\gamma$$', desc: "Ikki tomon va burchak orqali uchinchi tomonni topish." },
+                { name: 'Doira va Aylana', formula: '$$C = 2\\pi R, \\quad S = \\pi R^2$$', desc: "Aylana uzunligi va doira yuzasi." },
+                { name: 'Trapetsiya Yuzasi', formula: '$$S = \\frac{a + b}{2} \\cdot h = m \\cdot h$$', desc: "Asoslari a, b va o'rta chizig'i m." }
+            ],
+            trigonometriya: [
+                { name: 'Asosiy Trigonometrik Ayniyatlar', formula: '$$\\sin^2(x) + \\cos^2(x) = 1$$\\n$$1 + \\tan^2(x) = \\frac{1}{\\cos^2(x)}$$', desc: "Barcha aniqlanish sohasidagi burchaklar uchun." },
+                { name: 'Ikki Karra Burchak Formulalari', formula: '$$\\sin(2x) = 2\\sin(x)\\cos(x)$$\\n$$\\cos(2x) = \\cos^2(x) - \\sin^2(x)$$', desc: "Argumentni ikki barobar qisqartirish/kengaytirish." },
+                { name: 'Keltirish Formulalari', formula: '$$\\sin\\left(\\frac{\\pi}{2} - x\\right) = \\cos(x), \\quad \\cos\\left(\\frac{\\pi}{2} - x\\right) = \\sin(x)$$', desc: "To'ldiruvchi burchaklar munosabati." },
+                { name: "Qo'shish Formulalari", formula: '$$\\sin(x \\pm y) = \\sin x \\cos y \\pm \\cos x \\sin y$$', desc: "Burchaklar yig'indisi va ayirmasi trigonometriyasi." }
+            ],
+            analiz: [
+                { name: 'Ajoyib Limitlar', formula: '$$\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1, \\quad \\lim_{x \\to \\infty} \\left(1 + \\frac{1}{x}\\right)^x = e$$', desc: "Trigonometrik va ko'rsatkichli limitlar asosi." },
+                { name: 'Nyuton-Leybnis Formulasi', formula: '$$\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)$$', desc: "Aniq integralni hisoblashning fundamental formulasi." },
+                { name: 'Elementar Funksiyalar Hosilalari', formula: '$$(x^n)\' = n x^{n-1}, \\quad (\\sin x)\' = \\cos x, \\quad (e^x)\' = e^x$$', desc: "Asosiy hosilalar jadvali." },
+                { name: "Bo'laklab Integrallash", formula: '$$\\int u \\, dv = u v - \\int v \\, du$$', desc: "Ko'paytma ko'rinishidagi ifodalarni integrallash." }
+            ]
+        };
+
+        const list = formulaData[cat] || [];
+        container.innerHTML = list.map(item => `
+            <div class="glass-panel" style="padding: 18px;">
+                <h4 style="font-size: 1.05rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px;">${item.name}</h4>
+                <div style="font-size: 1.15rem; margin-bottom: 8px;">${item.formula}</div>
+                <div style="font-size: 0.85rem; color: var(--text-secondary);">${item.desc}</div>
+            </div>
+        `).join('');
+
+        this.renderMath(container);
+    }
+
+    // --- BLOG POSTS (TAB 4) ---
+    renderPosts() {
+        const container = document.getElementById('blogPostsContainer');
+        if (!container) return;
+
+        if (!this.posts || this.posts.length === 0) {
+            container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:30px; color:var(--text-muted);">Maqolalar mavjud emas</div>';
+            return;
+        }
+
+        container.innerHTML = this.posts.map(p => {
+            const adminPostBtns = this.isAdmin ? `
+                <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;">
+                    <button class="btn btn-sm btn-secondary" onclick="mathApp.openPostEditModal(${p.id})">✏️ Tahrirlash</button>
+                    <button class="btn btn-sm btn-danger" onclick="mathApp.deletePost(${p.id})">🗑 O'chirish</button>
+                </div>
+            ` : '';
+
+            return `
+                <div class="post-card">
+                    <div>
+                        <span class="quiz-topic-tag" style="margin-bottom: 8px; display:inline-block;">${p.category || 'Fikrlar'}</span>
+                        <h3 class="post-card-title">${p.title}</h3>
+                        <div class="post-card-body">${p.body}</div>
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; justify-content: space-between; border-top: 1px solid var(--border-subtle); padding-top: 10px; margin-top: 12px;">
+                        <span>👁 ${p.views || 0} ko'rildi</span>
+                        <span>❤️ ${p.likes || 0} layk</span>
+                    </div>
+                    ${adminPostBtns}
+                </div>
+            `;
+        }).join('');
+    }
+
+    // --- BLOG POST CRUD (ADMIN) ---
+    openPostCreateModal() {
+        document.getElementById('postModalTitle').textContent = "➕ Yangi Maqola Yaratish";
+        document.getElementById('postIdInput').value = '';
+        document.getElementById('postTitleInput').value = '';
+        document.getElementById('postCategoryInput').value = 'Matematika';
+        document.getElementById('postBodyInput').value = '';
+        document.getElementById('postModal').classList.add('active');
+    }
+
+    openPostEditModal(postId) {
+        const p = this.posts.find(item => item.id == postId);
+        if (!p) return;
+        document.getElementById('postModalTitle').textContent = "✏️ Maqolani Tahrirlash";
+        document.getElementById('postIdInput').value = p.id;
+        document.getElementById('postTitleInput').value = p.title || '';
+        document.getElementById('postCategoryInput').value = p.category || 'Matematika';
+        document.getElementById('postBodyInput').value = p.body || '';
+        document.getElementById('postModal').classList.add('active');
+    }
+
+    savePost(e) {
+        if (e) e.preventDefault();
+        const pId = document.getElementById('postIdInput').value;
+        const title = document.getElementById('postTitleInput').value.trim();
+        const category = document.getElementById('postCategoryInput').value;
+        const body = document.getElementById('postBodyInput').value.trim();
+        const btn = document.getElementById('btnSavePost');
+
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Saqlanmoqda...';
+        }
+
+        let updatedPosts = [...this.posts];
+        if (pId) {
+            const idx = updatedPosts.findIndex(p => p.id == pId);
+            if (idx !== -1) {
+                updatedPosts[idx].title = title;
+                updatedPosts[idx].category = category;
+                updatedPosts[idx].body = body;
+            }
+        } else {
+            const newPost = {
+                id: Date.now(),
+                title,
+                category,
+                body,
+                date: new Date().toISOString(),
+                views: 0,
+                likes: 0
+            };
+            updatedPosts.unshift(newPost);
+        }
+
+        fetch(this.getApiUrl('/api/save'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ posts: updatedPosts })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Saqlash';
+            }
+            if (res.status === 'success') {
+                this.posts = updatedPosts;
+                this.renderPosts();
+                this.closeModalById('postModal');
+                this.showToast("✅ Maqola muvaffaqiyatli saqlandi!");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Saqlash';
+            }
+            this.showToast("❌ Serverga saqlashda xato!");
+        });
+    }
+
+    deletePost(postId) {
+        if (!confirm("Ushbu maqolani o'chirishga ishonchingiz komilmi?")) return;
+        const updatedPosts = this.posts.filter(p => p.id != postId);
+
+        fetch(this.getApiUrl('/api/save'), {
+            method: 'POST',
+            headers: this.getAuthHeaders(),
+            body: JSON.stringify({ posts: updatedPosts })
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.status === 'success') {
+                this.posts = updatedPosts;
+                this.renderPosts();
+                this.showToast("🗑 Maqola o'chirildi");
+            } else {
+                this.showToast(`❌ Xato: ${res.error}`);
+            }
+        })
+        .catch(() => this.showToast("❌ O'chirishda xato"));
+    }
+
+    // --- UTILITIES & HELPERS ---
+    shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    loadTheme() {
+        const theme = localStorage.getItem('kenjayev_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        this.updateThemeIcon(theme);
+    }
+
+    toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('kenjayev_theme', next);
+        this.updateThemeIcon(next);
+    }
+
+    updateThemeIcon(theme) {
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    showToast(msg) {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = msg;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            toast.style.transition = 'all 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    closeModal(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            e.target.classList.remove('active');
+        }
+    }
+
+    closeModalById(id) {
+        const m = document.getElementById(id);
+        if (m) m.classList.remove('active');
+    }
+
+    setupKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+            
+            // 1-5 keys for option selection in quiz player
+            if (['1', '2', '3', '4', '5'].includes(e.key)) {
+                const idx = parseInt(e.key) - 1;
+                this.selectOption(idx);
+            }
+            if (['a', 'b', 'c', 'd', 'e'].includes(e.key.toLowerCase())) {
+                const idx = e.key.toLowerCase().charCodeAt(0) - 97;
+                this.selectOption(idx);
+            }
+            // Enter key to submit / next
+            if (e.key === 'Enter') {
+                if (!this.isAnswerSubmitted && this.selectedRenderedIndex !== null) {
+                    this.submitAnswer();
+                } else if (this.isAnswerSubmitted) {
+                    this.nextQuestion();
+                }
+            }
+            // Escape key closes modals
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+            }
+        });
+    }
+
+    handleSearch(query) {
+        const q = (query || '').toLowerCase().trim();
+        const clearBtn = document.getElementById('searchClear');
+        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+
+        if (!q) {
+            this.renderSections();
+            return;
+        }
+
+        // Filter sections or start quiz with matching questions
+        const filteredQuizzes = this.quizzes.filter(item => 
+            (item.title && item.title.toLowerCase().includes(q)) ||
+            (item.explanation && item.explanation.toLowerCase().includes(q))
+        );
+
+        if (filteredQuizzes.length > 0) {
+            this.playerQueue = filteredQuizzes;
+            this.currentQuestionIndex = 0;
+            this.playerMode = 'practice';
+            this.switchTab('player');
+            this.renderCurrentQuestion();
+        }
+    }
+
+    clearSearch() {
+        const input = document.getElementById('globalSearch');
+        if (input) input.value = '';
+        this.handleSearch('');
+    }
+}
+
+// Initialize Application
+const mathApp = new MathQuizApp();
+
     </script>
 </body>
 </html>
