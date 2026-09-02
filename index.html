@@ -97,6 +97,23 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Mathematical Generative Canvas Background */
+        .math-bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.45;
+            transition: opacity 0.5s ease;
+        }
+
+        [data-theme="light"] .math-bg-canvas {
+            opacity: 0.22;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-primary);
@@ -104,6 +121,7 @@
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
@@ -111,6 +129,8 @@
             max-width: 1240px;
             margin: 0 auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1;
         }
 
         /* Glassmorphism helpers */
@@ -119,7 +139,8 @@
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-md);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         /* Header */
@@ -127,14 +148,15 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(10, 12, 20, 0.85);
-            backdrop-filter: blur(16px);
+            background: rgba(10, 12, 20, 0.88);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border-bottom: 1px solid var(--border);
             transition: var(--transition-smooth);
         }
 
         [data-theme="light"] .header {
-            background: rgba(248, 250, 252, 0.9);
+            background: rgba(248, 250, 252, 0.92);
         }
 
         .header-inner {
@@ -784,22 +806,285 @@
 
         .solution-box {
             margin-top: 14px;
-            padding: 14px;
-            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
             background: var(--surface-card);
             border: 1px solid var(--border);
             color: var(--text-primary);
             font-size: 0.95rem;
             line-height: 1.6;
+            box-shadow: var(--shadow-sm);
         }
 
         .solution-heading {
-            font-weight: 700;
+            font-weight: 800;
             color: #60a5fa;
-            margin-bottom: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sol-breakdown-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .sol-step-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--surface-elevated);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .sol-step-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-subtle);
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .sol-step-badge.formula {
+            background: rgba(139, 92, 246, 0.15);
+            color: #c084fc;
+        }
+
+        .sol-step-badge.calc {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+        }
+
+        .sol-step-badge.result {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+        }
+
+        .sol-step-content {
+            flex: 1;
+            font-size: 0.92rem;
+            color: var(--text-primary);
+        }
+
+        /* Search 2.0 Dropdown Overlay */
+        .search-shortcut-badge {
+            position: absolute;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            font-size: 0.72rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            pointer-events: none;
+            font-weight: 700;
+        }
+
+        .search-results-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            min-width: 320px;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            max-height: 420px;
+            overflow-y: auto;
+            z-index: 1100;
+            padding: 10px;
+            animation: slideUp 0.2s ease;
+        }
+
+        .search-group-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            padding: 6px 10px 4px;
+        }
+
+        .search-item {
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border: 1px solid transparent;
+        }
+
+        .search-item:hover {
+            background: var(--surface-hover);
+            border-color: var(--border);
+        }
+
+        .search-item-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .search-item-badge {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            background: var(--surface-elevated);
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
+
+        /* Formula Sheet 2.0 Card */
+        .formula-card-2 {
+            border-radius: var(--radius-md);
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+
+        .formula-card-2:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .formula-card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .formula-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-copy-formula {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface-elevated);
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-copy-formula:hover {
+            color: #60a5fa;
+            border-color: var(--accent);
+            background: var(--accent-subtle);
+        }
+
+        .formula-display-box {
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            background: var(--surface-elevated);
+            text-align: center;
+            margin-bottom: 12px;
+            border: 1px solid var(--border-subtle);
+            overflow-x: auto;
+        }
+
+        .formula-meta-note {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Streak Card Pulse */
+        .stat-card-streak {
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border-color: rgba(245, 158, 11, 0.4);
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .stat-card-streak:hover {
+            transform: translateY(-2px);
+            border-color: var(--warning);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4)); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.8)); }
+        }
+
+        /* Category Performance Bars */
+        .category-perf-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            gap: 14px;
+        }
+
+        .category-perf-info {
+            width: 140px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+
+        .category-perf-track {
+            flex: 1;
+            height: 10px;
+            background: var(--surface-elevated);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .category-perf-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            transition: width 0.6s ease;
+        }
+
+        .category-perf-pct {
+            width: 50px;
+            text-align: right;
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
         }
 
         /* Player Controls */
@@ -1732,6 +2017,8 @@
     </style>
 </head>
 <body>
+    <!-- Mathematical Generative Canvas Background -->
+    <canvas id="mathBgCanvas" class="math-bg-canvas"></canvas>
 
     <!-- Main Navigation Header -->
     <header class="header">
@@ -1740,7 +2027,7 @@
                 <div class="logo-icon">📐</div>
                 <div class="logo-name">
                     <span class="name-main">Kenjayev</span>
-                    <span class="name-sub">MATH & QUIZ HUB</span>
+                    <span class="name-sub">DIGITAL MATH LAB</span>
                 </div>
             </a>
 
@@ -1763,11 +2050,15 @@
                 </button>
             </nav>
 
-            <!-- Search Bar -->
+            <!-- Search Bar 2.0 with / Shortcut -->
             <div class="search-container">
                 <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="globalSearch" class="search-input" placeholder="Savol yoki formulani qidirish..." oninput="mathApp.handleSearch(this.value)">
+                <input type="text" id="globalSearch" class="search-input" placeholder="Qidirish... (bosing yoki /)" oninput="mathApp.handleSearch(this.value)">
+                <span class="search-shortcut-badge" id="searchKbdBadge">/</span>
                 <button class="search-clear" id="searchClear" onclick="mathApp.clearSearch()">✕</button>
+                
+                <!-- Search 2.0 Results Dropdown -->
+                <div id="searchResultsBox" class="search-results-dropdown" style="display:none;"></div>
             </div>
 
             <!-- Header Action Buttons -->
@@ -1788,14 +2079,14 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Section — Mathematical Command Center -->
     <section class="hero">
         <div class="container">
             <div class="hero-wrap">
-                <div>
-                    <div class="hero-badge">⚡ Interaktiv Matematika & LaTeX Quiz</div>
-                    <h1 class="hero-title">Matematikani o'rganing va sinang!</h1>
-                    <p class="hero-desc">Barcha mavzular bo'yicha aniq formulalar, grafiklar, LaTeX savollari va bosqichma-bosqich yechimlar.</p>
+                <div class="hero-content-col">
+                    <div class="hero-badge">⚡ MATHEMATICS // DIGITAL TRAINING LAB</div>
+                    <h1 class="hero-title">Matematika & Computational Laboratory</h1>
+                    <p class="hero-desc">250+ interaktiv masala, real vaqt rejimidagi takrorlanmas progress, KaTeX formulalari va milliy reyting tizimi.</p>
                     
                     <div class="hero-action-bar">
                         <button class="btn btn-primary" onclick="mathApp.startRandomPractice()">
@@ -1803,6 +2094,12 @@
                         </button>
                         <button class="btn btn-secondary" onclick="mathApp.startTimedExam()">
                             <span>⏱ Imtihon Rejimi</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="mathApp.openFormulasModal()">
+                            <span>📖 Formulalar 2.0</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="mathApp.switchTab('leaderboard')">
+                            <span>🏆 Jonli Reyting</span>
                         </button>
                         <button class="btn btn-success" id="btnHeroAddSection" style="display:none;" onclick="mathApp.openSectionModal()">
                             <span>➕ Bo'lim Yaratish</span>
@@ -1815,20 +2112,24 @@
 
                 <div class="hero-stats">
                     <div class="stat-card">
-                        <div class="stat-val" id="statSectionsCount">0</div>
+                        <div class="stat-val count-up" id="statQuestionsCount">250</div>
+                        <div class="stat-lbl">Jami Savollar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val count-up" id="statSectionsCount">5</div>
                         <div class="stat-lbl">Bo'limlar</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-val" id="statQuestionsCount">0</div>
-                        <div class="stat-lbl">Savollar</div>
+                        <div class="stat-val count-up" id="statUserSolved">0</div>
+                        <div class="stat-lbl">Yechilgan</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-val" id="statUserSolved">0</div>
-                        <div class="stat-lbl">Yechildi</div>
+                        <div class="stat-val count-up" id="statUserAccuracy">0%</div>
+                        <div class="stat-lbl">Aniqlik</div>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card stat-card-streak" onclick="mathApp.openStreakModal()" title="Streak tafsilotlari uchun bosing!">
                         <div class="stat-val" id="statStreak">🔥 0</div>
-                        <div class="stat-lbl">Streak</div>
+                        <div class="stat-lbl">Jonli Streak</div>
                     </div>
                 </div>
             </div>
@@ -2373,6 +2674,31 @@
         </div>
     </div>
 
+    <!-- Gamification & Streak Milestone Modal -->
+    <div class="modal-overlay" id="streakModal" onclick="mathApp.closeModal(event)">
+        <div class="modal modal-sm" style="text-align: center;" onclick="event.stopPropagation()">
+            <div class="modal-header" style="justify-content: flex-end; border-bottom: none; padding-bottom: 0;">
+                <button class="modal-close" onclick="mathApp.closeModalById('streakModal')">✕</button>
+            </div>
+            <div class="modal-body" style="padding-top: 0;">
+                <div style="font-size: 3.5rem; margin-bottom: 10px; animation: pulseGlow 2s infinite;">🔥</div>
+                <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 6px;" id="streakModalTitle">0 Kunlik Matematik Streak</h2>
+                <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 20px;" id="streakModalDesc">
+                    Har kuni muntazam matematika masalalarini yechib, intellektual salohiyatingizni oshiring!
+                </p>
+
+                <div class="glass-panel" style="padding: 16px; margin-bottom: 20px; border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.08);">
+                    <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; color: #fbbf24; margin-bottom: 4px;">Navbatdagi Yutuq</div>
+                    <div style="font-weight: 700; font-size: 1.1rem; color: var(--text-primary);" id="streakNextMilestone">Yana 3 kun → 🔥 5 Day Streak Master</div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%;" onclick="mathApp.closeModalById('streakModal'); mathApp.startRandomPractice();">
+                    🚀 Mashqni Davom Ettirish
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
@@ -2429,6 +2755,7 @@ class MathQuizApp {
 
     init() {
         this.loadTheme();
+        this.initMathBackgroundCanvas();
         this.initUserIdentity();
         this.checkAdminStatus();
         this.fetchData();
@@ -2436,6 +2763,123 @@ class MathQuizApp {
         this.setupKeyboardShortcuts();
         this.renderUserStats();
         this.checkUrlHash();
+    }
+
+    // --- MATHEMATICAL GENERATIVE CANVAS BACKGROUND ---
+    initMathBackgroundCanvas() {
+        const canvas = document.getElementById('mathBgCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Floating subtle math symbols
+        const formulas = [
+            'f(x) = \\sin(x)',
+            '\\int e^{-x} dx',
+            'a^2 + b^2 = c^2',
+            '\\lim_{x \\to \\infty}',
+            'e^{i\\pi} + 1 = 0',
+            '\\nabla \\cdot \\vec{E} = \\rho',
+            '\\sum_{n=1}^{\\infty} \\frac{1}{n^2}',
+            '\\frac{dy}{dx}',
+            '\\log_a(x)',
+            '\\Delta = b^2 - 4ac'
+        ];
+
+        const isReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const count = width < 768 ? 6 : 14;
+        const particles = [];
+
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.35,
+                vy: (Math.random() - 0.5) * 0.35,
+                text: formulas[i % formulas.length],
+                size: Math.random() * 3 + 12,
+                alpha: Math.random() * 0.12 + 0.04
+            });
+        }
+
+        let time = 0;
+        let isRunning = true;
+
+        document.addEventListener('visibilitychange', () => {
+            isRunning = !document.hidden;
+        });
+
+        const draw = () => {
+            if (!isRunning) {
+                requestAnimationFrame(draw);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            const gridColor = isDark ? 'rgba(59, 130, 246, 0.025)' : 'rgba(37, 99, 235, 0.02)';
+            const waveColor = isDark ? 'rgba(96, 165, 250, 0.045)' : 'rgba(59, 130, 246, 0.035)';
+            const textColor = isDark ? 'rgba(148, 163, 184,' : 'rgba(71, 85, 105,';
+
+            // 1. Subtle Coordinate Grid
+            const gridSize = 60;
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let x = 0; x < width; x += gridSize) {
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+            }
+            for (let y = 0; y < height; y += gridSize) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+            }
+            ctx.stroke();
+
+            // 2. Harmonic Sine Wave
+            if (!isReduced) {
+                time += 0.008;
+                ctx.strokeStyle = waveColor;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                for (let x = 0; x < width; x += 10) {
+                    const y = height * 0.5 + Math.sin(x * 0.003 + time) * 60 + Math.cos(x * 0.007 + time * 0.8) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            }
+
+            // 3. Floating Math Expressions
+            ctx.font = '500 13px "JetBrains Mono", monospace';
+            particles.forEach(p => {
+                if (!isReduced) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.x < -100) p.x = width + 50;
+                    if (p.x > width + 100) p.x = -50;
+                    if (p.y < -50) p.y = height + 50;
+                    if (p.y > height + 50) p.y = -50;
+                }
+
+                ctx.fillStyle = `${textColor} ${p.alpha})`;
+                ctx.fillText(p.text, p.x, p.y);
+            });
+
+            requestAnimationFrame(draw);
+        };
+
+        requestAnimationFrame(draw);
     }
 
     getApiUrl(endpoint) {
@@ -3052,7 +3496,9 @@ class MathQuizApp {
             return;
         }
 
-        container.innerHTML = this.sections.map(sec => {
+        const indexLabels = ['01 ALGEBRA', '02 GEOMETRIYA', '03 TRIGONOMETRIYA', '04 ANALIZ', '05 DTM & SERTIFIKAT'];
+
+        container.innerHTML = this.sections.map((sec, secIdx) => {
             const secQuestions = this.quizzes.filter(q => q.section_id === sec.id);
             const totalCount = secQuestions.length;
             const solvedCount = secQuestions.filter(q => this.isQuestionSolved(q.id)).length;
@@ -3060,6 +3506,7 @@ class MathQuizApp {
             const session = this.getActiveSession(sec.id);
             const hasOngoing = session && session.queueIds && session.queueIds.length > 0 && session.currentIndex < session.queueIds.length;
             const isAllCompleted = (totalCount > 0 && solvedCount >= totalCount);
+            const sectionLabel = indexLabels[secIdx] || `0${secIdx + 1} BO'LIM`;
 
             // Badge Display
             let countBadgeHtml = '';
@@ -3117,7 +3564,10 @@ class MathQuizApp {
                         <div class="section-icon-badge" style="border-color: ${sec.color || '#3b82f6'}; color: ${sec.color || '#3b82f6'};">
                             ${sec.icon || '📐'}
                         </div>
-                        ${countBadgeHtml}
+                        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                            <span style="font-size:0.7rem; font-weight:800; color:var(--text-muted); letter-spacing:1px; font-family:'JetBrains Mono', monospace;">${sectionLabel}</span>
+                            ${countBadgeHtml}
+                        </div>
                     </div>
 
                     <h3 class="section-title">${sec.title}</h3>
@@ -3401,6 +3851,13 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
         const basePts = diffMap[q.difficulty] || 20;
         let pointsEarned = 0;
 
+        // Telegram WebApp Haptic Feedback
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            try {
+                window.Telegram.WebApp.HapticFeedback.impactOccurred(isCorrect ? 'medium' : 'heavy');
+            } catch (e) {}
+        }
+
         if (isCorrect) {
             this.userStats.streak++;
             const streakBonus = Math.min(this.userStats.streak * 2, 20);
@@ -3433,7 +3890,7 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
             if (correctBtn) correctBtn.classList.add('correct');
         }
 
-        // Show Feedback in Practice Mode
+        // Show Feedback in Practice Mode with Structured Solution Breakdown
         if (this.playerMode === 'practice') {
             const fbBox = document.getElementById('playerFeedbackBox');
             fbBox.className = `feedback-banner ${isCorrect ? 'correct' : 'incorrect'}`;
@@ -3442,8 +3899,21 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
             if (q.explanation) {
                 solutionHtml = `
                     <div class="solution-box">
-                        <div class="solution-heading">💡 Bosqichma-bosqich Yechim:</div>
-                        <div class="solution-text">${q.explanation}</div>
+                        <div class="solution-heading">💡 Strukturaviy Yechim (Solution Breakdown):</div>
+                        <div class="sol-breakdown-grid">
+                            <div class="sol-step-row">
+                                <span class="sol-step-badge">Berilgan</span>
+                                <div class="sol-step-content">${q.title}</div>
+                            </div>
+                            <div class="sol-step-row">
+                                <span class="sol-step-badge formula">Formulasi</span>
+                                <div class="sol-step-content">${q.explanation}</div>
+                            </div>
+                            <div class="sol-step-row">
+                                <span class="sol-step-badge result">To'g'ri Javob</span>
+                                <div class="sol-step-content" style="font-weight:700; color:#34d399;">${q.options[q.correct_option] || ''}</div>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -3667,15 +4137,57 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
         .catch(() => {});
     }
 
+    animateCountUp(el, targetVal, suffix = '', duration = 600) {
+        if (!el) return;
+        const start = 0;
+        const startTime = performance.now();
+        const update = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            const current = Math.floor(start + (targetVal - start) * ease);
+            el.textContent = `${current}${suffix}`;
+            if (progress < 1) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+    }
+
     updateHeroStats() {
         const secEl = document.getElementById('statSectionsCount');
         const qEl = document.getElementById('statQuestionsCount');
         const uEl = document.getElementById('statUserSolved');
+        const accEl = document.getElementById('statUserAccuracy');
         const stEl = document.getElementById('statStreak');
-        if (secEl) secEl.textContent = this.sections.length;
-        if (qEl) qEl.textContent = this.quizzes.length;
-        if (uEl) uEl.textContent = this.userStats.solved;
+
+        if (secEl) this.animateCountUp(secEl, this.sections.length);
+        if (qEl) this.animateCountUp(qEl, this.quizzes.length);
+        if (uEl) this.animateCountUp(uEl, this.userStats.solved);
+
+        const acc = this.userStats.solved > 0 ? Math.round((this.userStats.correct / this.userStats.solved) * 100) : 0;
+        if (accEl) this.animateCountUp(accEl, acc, '%');
         if (stEl) stEl.textContent = `🔥 ${this.userStats.streak}`;
+    }
+
+    openStreakModal() {
+        const modal = document.getElementById('streakModal');
+        if (!modal) return;
+        const title = document.getElementById('streakModalTitle');
+        const desc = document.getElementById('streakModalDesc');
+        const next = document.getElementById('streakNextMilestone');
+
+        const streak = this.userStats.streak || 0;
+        if (title) title.textContent = `🔥 ${streak} Kunlik Matematik Streak`;
+        
+        let target = 5;
+        let titleName = "🔥 5 Day Streak Master";
+        if (streak >= 5) { target = 10; titleName = "⚡ 10 Day Problem Solver"; }
+        if (streak >= 10) { target = 20; titleName = "🧠 20 Day Math Grandmaster"; }
+        if (streak >= 20) { target = 30; titleName = "👑 30 Day Mathematics Legend"; }
+
+        const diff = Math.max(target - streak, 1);
+        if (desc) desc.textContent = `Siz ketma-ket ${streak} ta savolga to'g'ri javob berdingiz yoki doimiy mashqdasiz!`;
+        if (next) next.textContent = `Yana ${diff} ta to'g'ri javob / kun → ${titleName}`;
+
+        modal.classList.add('active');
     }
 
     renderUserStats() {
@@ -3683,10 +4195,10 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
         const corEl = document.getElementById('userCorrectTotal');
         const accEl = document.getElementById('userAccuracyTotal');
         const rankEl = document.getElementById('userRankBadge');
-        if (solEl) solEl.textContent = this.userStats.solved;
-        if (corEl) corEl.textContent = this.userStats.correct;
+        if (solEl) this.animateCountUp(solEl, this.userStats.solved);
+        if (corEl) this.animateCountUp(corEl, this.userStats.correct);
         const acc = this.userStats.solved > 0 ? Math.round((this.userStats.correct / this.userStats.solved) * 100) : 0;
-        if (accEl) accEl.textContent = `${acc}%`;
+        if (accEl) this.animateCountUp(accEl, acc, '%');
 
         let rank = "Boshlang'ich";
         if (this.currentUserRank && this.currentUserRank.title) {
@@ -4066,6 +4578,23 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
         this.showFormulaCategory('algebra');
     }
 
+    copyFormulaLatex(latex, name) {
+        if (!latex) return;
+        const clean = latex.replace(/\$\$/g, '').trim();
+        navigator.clipboard.writeText(clean).then(() => {
+            this.showToast(`📋 <b>${name}</b> LaTeX formulasi nusxalandi!`);
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = clean;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            this.showToast(`📋 <b>${name}</b> LaTeX formulasi nusxalandi!`);
+        });
+    }
+
     showFormulaCategory(cat) {
         ['algebra', 'geometriya', 'trigonometriya', 'analiz'].forEach(c => {
             const btn = document.getElementById('btnFormCat_' + c);
@@ -4077,41 +4606,47 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
         const container = document.getElementById('formulaCardsContainer');
         const formulaData = {
             algebra: [
-                { name: 'Kvadrat Tenglama Ildizlari', formula: '$$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$', desc: "D = b^2 - 4ac > 0 bo'lganda 2 ta haqiqiy ildiz mavjud." },
-                { name: 'Viyet Teoremasi', formula: '$$x_1 + x_2 = -\frac{b}{a}, \quad x_1 x_2 = \frac{c}{a}$$', desc: "Keltirilgan x^2 + px + q = 0 tenglama uchun: x_1+x_2=-p, x_1x_2=q." },
-                { name: "Qisqa Ko'paytirish Formulalari", formula: '$$(a \pm b)^2 = a^2 \pm 2ab + b^2$$\n$$a^2 - b^2 = (a-b)(a+b)$$', desc: "Eng muhim algebrik ayniyatlar to'plami." },
-                { name: 'Logarifm Asosiy Xossalari', formula: '$$\log_a(xy) = \log_a(x) + \log_a(y)$$\n$$\log_a\left(\frac{x}{y}\right) = \log_a(x) - \log_a(y)$$', desc: "Asos a > 0, a \neq 1 va x,y > 0 bo'lganda." },
-                { name: 'Aritmetik Progressiya', formula: '$$a_n = a_1 + (n-1)d$$\n$$S_n = \frac{2a_1 + (n-1)d}{2} \cdot n$$', desc: "Dastlabki n ta hadi va ularning yig'indisi." },
-                { name: 'Geometrik Progressiya', formula: '$$b_n = b_1 \cdot q^{n-1}$$\n$$S_n = \frac{b_1(q^n - 1)}{q - 1}$$', desc: "Cheksiz kamayuvchi bo'lsa: S = \frac{b_1}{1 - q}." }
+                { name: 'Kvadrat Tenglama Ildizlari', formula: '$$x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$$', desc: "Kvadrat tenglamani yechishning universal formulasi.", example: "$x^2 - 5x + 6 = 0 \\implies x_1=2, x_2=3$" },
+                { name: 'Viyet Teoremasi', formula: '$$x_1 + x_2 = -\\frac{b}{a}, \\quad x_1 x_2 = \\frac{c}{a}$$', desc: "Ildizlar va koeffitsiyentlar orasidagi bog'liqlik.", example: "$x^2 - 7x + 10 = 0 \\implies x_1+x_2=7, x_1x_2=10$" },
+                { name: "Qisqa Ko'paytirish Formulalari", formula: '$$(a \\pm b)^2 = a^2 \\pm 2ab + b^2$$\n$$a^2 - b^2 = (a-b)(a+b)$$', desc: "Ifodalarni soddalashtirish va ko'paytuvchilarga ajratish.", example: "$(x+3)^2 = x^2 + 6x + 9$" },
+                { name: 'Logarifm Asosiy Xossalari', formula: '$$\\log_a(xy) = \\log_a(x) + \\log_a(y)$$\n$$\\log_a\\left(\\frac{x}{y}\\right) = \\log_a(x) - \\log_a(y)$$', desc: "Ko'paytma va bo'linma logarifmi qoidalari.", example: "$\\log_2(6) + \\log_2(8/3) = \\log_2(16) = 4$" },
+                { name: 'Aritmetik Progressiya', formula: '$$a_n = a_1 + (n-1)d$$\n$$S_n = \\frac{a_1 + a_n}{2} \\cdot n$$', desc: "Hadlar ketma-ketligi va yig'indisini hisoblash.", example: "$a_1 = 3, d = 4 \\implies a_5 = 19$" },
+                { name: 'Geometrik Progressiya', formula: '$$b_n = b_1 \\cdot q^{n-1}$$\n$$S = \\frac{b_1}{1 - q} \\quad (|q| < 1)$$', desc: "Geometrik o'sish va cheksiz kamayuvchi progressiya yig'indisi.", example: "$b_1 = 6, q = 0.5 \\implies S = 12$" }
             ],
             geometriya: [
-                { name: 'Pifagor Teoremasi', formula: '$$c^2 = a^2 + b^2 \implies c = \sqrt{a^2 + b^2}$$', desc: "To'g'ri burchakli uchburchak gipotenuzasini topish." },
-                { name: 'Geron Formulasi (Yuza)', formula: '$$S = \sqrt{p(p-a)(p-b)(p-c)}, \quad p = \frac{a+b+c}{2}$$', desc: "Uch tomoni ma'lum ixtiyoriy uchburchak yuzasi." },
-                { name: 'Sinuslar Teoremasi', formula: '$$\frac{a}{\sin \alpha} = \frac{b}{\sin \beta} = \frac{c}{\sin \gamma} = 2R$$', desc: "Tashqi chizilgan aylana radiusi R." },
-                { name: 'Kosinuslar Teoremasi', formula: '$$c^2 = a^2 + b^2 - 2ab \cos \gamma$$', desc: "Ikki tomon va burchak orqali uchinchi tomonni topish." },
-                { name: 'Doira va Aylana', formula: '$$C = 2\pi R, \quad S = \pi R^2$$', desc: "Aylana uzunligi va doira yuzasi." },
-                { name: 'Trapetsiya Yuzasi', formula: '$$S = \frac{a + b}{2} \cdot h = m \cdot h$$', desc: "Asoslari a, b va o'rta chizig'i m." }
+                { name: 'Pifagor Teoremasi', formula: '$$c^2 = a^2 + b^2 \\implies c = \\sqrt{a^2 + b^2}$$', desc: "To'g'ri burchakli uchburchak gipotenuzasini topish.", example: "$a=6, b=8 \\implies c=10$" },
+                { name: 'Geron Formulasi (Yuza)', formula: '$$S = \\sqrt{p(p-a)(p-b)(p-c)}, \\quad p = \\frac{a+b+c}{2}$$', desc: "3 tomoni ma'lum uchburchak yuzasi.", example: "$a=5, b=6, c=7 \\implies p=9, S=6\\sqrt{6}$" },
+                { name: 'Sinuslar Teoremasi', formula: '$$\\frac{a}{\\sin \\alpha} = \\frac{b}{\\sin \\beta} = \\frac{c}{\\sin \\gamma} = 2R$$', desc: "Tashqi chizilgan aylana radiusi $R$ bog'liqligi.", example: "$a=10, \\alpha=30^\\circ \\implies R=10$" },
+                { name: 'Kosinuslar Teoremasi', formula: '$$c^2 = a^2 + b^2 - 2ab \\cos \\gamma$$', desc: "2 tomon va burchak orqali 3-tomonni topish.", example: "$a=4, b=6, \\gamma=60^\\circ \\implies c=2\\sqrt{7}$" },
+                { name: 'Doira va Aylana', formula: '$$C = 2\\pi R, \\quad S = \\pi R^2$$', desc: "Aylana uzunligi va doira yuzasi formulasi.", example: "$R=5 \\implies C=10\\pi, S=25\\pi$" },
+                { name: 'Trapetsiya Yuzasi', formula: '$$S = \\frac{a + b}{2} \\cdot h = m \\cdot h$$', desc: "Asoslar va balandlik orqali yuza hisoblash.", example: "$a=4, b=8, h=5 \\implies S=30$" }
             ],
             trigonometriya: [
-                { name: 'Asosiy Trigonometrik Ayniyatlar', formula: '$$\sin^2(x) + \cos^2(x) = 1$$\n$$1 + \tan^2(x) = \frac{1}{\cos^2(x)}$$', desc: "Barcha aniqlanish sohasidagi burchaklar uchun." },
-                { name: 'Ikki Karra Burchak Formulalari', formula: '$$\sin(2x) = 2\sin(x)\cos(x)$$\n$$\cos(2x) = \cos^2(x) - \sin^2(x)$$', desc: "Argumentni ikki barobar qisqartirish/kengaytirish." },
-                { name: 'Keltirish Formulalari', formula: '$$\sin\left(\frac{\pi}{2} - x\right) = \cos(x), \quad \cos\left(\frac{\pi}{2} - x\right) = \sin(x)$$', desc: "To'ldiruvchi burchaklar munosabati." },
-                { name: "Qo'shish Formulalari", formula: '$$\sin(x \pm y) = \sin x \cos y \pm \cos x \sin y$$', desc: "Burchaklar yig'indisi va ayirmasi trigonometriyasi." }
+                { name: 'Asosiy Trigonometrik Ayniyatlar', formula: '$$\\sin^2(x) + \\cos^2(x) = 1$$\n$$1 + \\tan^2(x) = \\frac{1}{\\cos^2(x)}$$', desc: "Har qanday argument uchun asosiy munosabat.", example: "$\\sin(x)=0.6 \\implies \\cos(x)=0.8$" },
+                { name: 'Ikki Karra Burchak Formulalari', formula: '$$\\sin(2x) = 2\\sin(x)\\cos(x)$$\n$$\\cos(2x) = \\cos^2(x) - \\sin^2(x)$$', desc: "Ikki karra burchakni yoyish.", example: "$2\\sin(15^\\circ)\\cos(15^\\circ) = \\sin(30^\\circ) = 0.5$" },
+                { name: 'Keltirish Formulalari', formula: '$$\\sin(\\pi - x) = \\sin(x), \\quad \\cos(\\pi - x) = -\\cos(x)$$', desc: "II chorak burchaklarini I chorakka keltirish.", example: "$\\sin(150^\\circ) = \\sin(30^\\circ) = 0.5$" },
+                { name: "Qo'shish Formulalari", formula: '$$\\sin(x \\pm y) = \\sin x \\cos y \\pm \\cos x \\sin y$$', desc: "Burchaklar yig'indisi va ayirmasi trigonometriyasi.", example: "$\\sin(75^\\circ) = \\frac{\\sqrt{6}+\\sqrt{2}}{4}$" }
             ],
             analiz: [
-                { name: 'Ajoyib Limitlar', formula: '$$\lim_{x \to 0} \frac{\sin(x)}{x} = 1, \quad \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e$$', desc: "Trigonometrik va ko'rsatkichli limitlar asosi." },
-                { name: 'Nyuton-Leybnis Formulasi', formula: '$$\int_{a}^{b} f(x) \, dx = F(b) - F(a)$$', desc: "Aniq integralni hisoblashning fundamental formulasi." },
-                { name: 'Elementar Funksiyalar Hosilalari', formula: '$$\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(\sin x) = \cos x, \quad \frac{d}{dx}(e^x) = e^x$$', desc: "Asosiy hosilalar jadvali." },
-                { name: "Bo'laklab Integrallash", formula: '$$\int u \, dv = u v - \int v \, du$$', desc: "Ko'paytma ko'rinishidagi ifodalarni integrallash." }
+                { name: 'Ajoyib Limitlar', formula: '$$\\lim_{x \\to 0} \\frac{\\sin(x)}{x} = 1, \\quad \\lim_{x \\to \\infty} \\left(1 + \\frac{1}{x}\\right)^x = e$$', desc: "Trigonometrik va ko'rsatkichli ajoyib limitlar.", example: "$\\lim_{x \\to 0} \\frac{\\sin(4x)}{x} = 4$" },
+                { name: 'Nyuton-Leybnis Formulasi', formula: '$$\\int_{a}^{b} f(x) \\, dx = F(b) - F(a)$$', desc: "Aniq integralni hisoblashning bosh teoremasi.", example: "$\\int_0^2 2x dx = [x^2]_0^2 = 4$" },
+                { name: 'Elementar Funksiyalar Hosilalari', formula: '$$\\frac{d}{dx}(x^n) = n x^{n-1}, \\quad \\frac{d}{dx}(\\sin x) = \\cos x, \\quad \\frac{d}{dx}(e^x) = e^x$$', desc: "Differensial hisobning asosiy jadvali.", example: "$(x^3)' = 3x^2, \\quad (e^{2x})' = 2e^{2x}$" },
+                { name: 'Asosiy Integrallar', formula: '$$\\int x^n dx = \\frac{x^{n+1}}{n+1} + C, \\quad \\int \\frac{1}{x} dx = \\ln|x| + C$$', desc: "Boshlang'ich funksiyalarni topish qoidalari.", example: "$\\int x^2 dx = \\frac{x^3}{3} + C$" }
             ]
         };
 
         const list = formulaData[cat] || [];
         container.innerHTML = list.map(item => `
-            <div class="glass-panel" style="padding: 18px;">
-                <h4 style="font-size: 1.05rem; font-weight: 700; color: #60a5fa; margin-bottom: 8px;">${item.name}</h4>
-                <div style="font-size: 1.15rem; margin-bottom: 8px;">${item.formula}</div>
-                <div style="font-size: 0.85rem; color: var(--text-secondary);">${item.desc}</div>
+            <div class="formula-card-2">
+                <div class="formula-card-head">
+                    <span class="formula-card-title">${item.name}</span>
+                    <button class="btn-copy-formula" onclick="mathApp.copyFormulaLatex('${item.formula.replace(/'/g, "\\'")}', '${item.name}')" title="LaTeX kodini nusxalash">
+                        📋 Nusxalash
+                    </button>
+                </div>
+                <div class="formula-display-box">${item.formula}</div>
+                <div class="formula-meta-note">💡 <b>Qo'llanishi:</b> ${item.desc}</div>
+                ${item.example ? `<div class="formula-meta-note" style="color:var(--text-muted); margin-top:4px;">🔍 <b>Misol:</b> ${item.example}</div>` : ''}
             </div>
         `).join('');
 
@@ -4316,6 +4851,25 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
 
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
+            // Global '/' shortcut to focus search
+            if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                e.preventDefault();
+                const searchInput = document.getElementById('globalSearch');
+                if (searchInput) {
+                    searchInput.focus();
+                    searchInput.select();
+                }
+                return;
+            }
+
+            // Escape key closes modals and search dropdown
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+                const searchDropdown = document.getElementById('searchResultsBox');
+                if (searchDropdown) searchDropdown.style.display = 'none';
+                return;
+            }
+
             if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
             
             // 1-5 keys for option selection in quiz player
@@ -4335,9 +4889,14 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
                     this.nextQuestion();
                 }
             }
-            // Escape key closes modals
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+        });
+
+        // Hide search dropdown on click outside
+        document.addEventListener('click', (e) => {
+            const searchContainer = document.querySelector('.search-container');
+            const searchDropdown = document.getElementById('searchResultsBox');
+            if (searchContainer && !searchContainer.contains(e.target) && searchDropdown) {
+                searchDropdown.style.display = 'none';
             }
         });
     }
@@ -4345,21 +4904,88 @@ Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`))
     handleSearch(query) {
         const q = (query || '').toLowerCase().trim();
         const clearBtn = document.getElementById('searchClear');
-        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+        const badge = document.getElementById('searchKbdBadge');
+        const dropdown = document.getElementById('searchResultsBox');
 
-        if (!q) {
-            this.renderSections();
+        if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+        if (badge) badge.style.display = q ? 'none' : 'block';
+
+        if (!q || !dropdown) {
+            if (dropdown) dropdown.style.display = 'none';
             return;
         }
 
-        // Filter sections or start quiz with matching questions
-        const filteredQuizzes = this.quizzes.filter(item => 
+        // Search in Quizzes, Formulas, and Posts
+        const matchingQuizzes = this.quizzes.filter(item => 
             (item.title && item.title.toLowerCase().includes(q)) ||
             (item.explanation && item.explanation.toLowerCase().includes(q))
-        );
+        ).slice(0, 5);
 
-        if (filteredQuizzes.length > 0) {
-            this.playerQueue = filteredQuizzes;
+        const formulaKeywords = [
+            { name: 'Pifagor Teoremasi', cat: 'geometriya' },
+            { name: 'Kvadrat Tenglama', cat: 'algebra' },
+            { name: 'Viyet Teoremasi', cat: 'algebra' },
+            { name: 'Trigonometrik Ayniyatlar', cat: 'trigonometriya' },
+            { name: 'Ajoyib Limitlar', cat: 'analiz' },
+            { name: 'Nyuton-Leybnis', cat: 'analiz' }
+        ].filter(f => f.name.toLowerCase().includes(q));
+
+        const matchingPosts = this.posts.filter(p => 
+            (p.title && p.title.toLowerCase().includes(q))
+        ).slice(0, 3);
+
+        if (matchingQuizzes.length === 0 && formulaKeywords.length === 0 && matchingPosts.length === 0) {
+            dropdown.innerHTML = '<div style="padding:14px; text-align:center; color:var(--text-muted); font-size:0.85rem;">Hech narsa topilmadi</div>';
+            dropdown.style.display = 'block';
+            return;
+        }
+
+        let html = '';
+
+        if (matchingQuizzes.length > 0) {
+            html += '<div class="search-group-title">🎯 Savollar</div>';
+            html += matchingQuizzes.map(item => {
+                const sec = this.sections.find(s => s.id === item.section_id);
+                return `
+                    <div class="search-item" onclick="mathApp.startSearchQuestion('${item.id}')">
+                        <span class="search-item-title">${item.title}</span>
+                        <span class="search-item-badge">${sec ? sec.title : 'Savol'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        if (formulaKeywords.length > 0) {
+            html += '<div class="search-group-title" style="margin-top:6px;">📖 Formulalar</div>';
+            html += formulaKeywords.map(f => `
+                <div class="search-item" onclick="mathApp.openFormulasModal(); mathApp.showFormulaCategory('${f.cat}'); document.getElementById('searchResultsBox').style.display='none';">
+                    <span class="search-item-title">${f.name}</span>
+                    <span class="search-item-badge" style="color:#60a5fa;">Formulalar</span>
+                </div>
+            `).join('');
+        }
+
+        if (matchingPosts.length > 0) {
+            html += '<div class="search-group-title" style="margin-top:6px;">✍️ Maqolalar</div>';
+            html += matchingPosts.map(p => `
+                <div class="search-item" onclick="mathApp.switchTab('blog'); document.getElementById('searchResultsBox').style.display='none';">
+                    <span class="search-item-title">${p.title}</span>
+                    <span class="search-item-badge">${p.category || 'Blog'}</span>
+                </div>
+            `).join('');
+        }
+
+        dropdown.innerHTML = html;
+        dropdown.style.display = 'block';
+        this.renderMath(dropdown);
+    }
+
+    startSearchQuestion(qId) {
+        const q = this.quizzes.find(item => item.id === qId);
+        if (q) {
+            const dropdown = document.getElementById('searchResultsBox');
+            if (dropdown) dropdown.style.display = 'none';
+            this.playerQueue = [q];
             this.currentQuestionIndex = 0;
             this.playerMode = 'practice';
             this.switchTab('player');
