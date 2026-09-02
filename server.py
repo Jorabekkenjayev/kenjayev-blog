@@ -470,6 +470,29 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
+        # 1c. API: Get Live Global Leaderboard
+        elif path == '/api/leaderboard':
+            import bot_db
+            top = bot_db.get_leaderboard_top(limit=50)
+            self.send_json(200, {
+                "status": "success",
+                "leaderboard": top,
+                "total": len(top)
+            })
+            return
+
+        # 1d. API: Get User's Exact Rank & Distance
+        elif path == '/api/user/rank':
+            params = urllib.parse.parse_qs(parsed.query)
+            user_id = params.get('user_id', [''])[0]
+            import bot_db
+            user_rank = bot_db.get_user_leaderboard_rank(user_id)
+            self.send_json(200, {
+                "status": "success",
+                "user_rank": user_rank
+            })
+            return
+
         # 2. API: Check Session Status
         elif path == '/api/admin/check-session':
             is_auth = self.is_authenticated()
@@ -1103,14 +1126,52 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         # 8e. Public / User Quiz Result Tracking (/api/quiz/stat)
         elif path == '/api/quiz/stat':
             body = self.read_json_body()
+            user_id = str(body.get('user_id', '')).strip()
+            name = str(body.get('name', '')).strip()
+            username = str(body.get('username', '')).strip()
+            points = int(body.get('points', 0))
+            is_correct = bool(body.get('correct', False))
+            current_streak = int(body.get('streak', 0))
+
             data = load_data()
             if "quiz_stats" not in data:
                 data["quiz_stats"] = {"total_solved": 0, "correct_count": 0}
             data["quiz_stats"]["total_solved"] = data["quiz_stats"].get("total_solved", 0) + 1
-            if body.get("correct"):
+            if is_correct:
                 data["quiz_stats"]["correct_count"] = data["quiz_stats"].get("correct_count", 0) + 1
             save_data(data, create_backup=False)
-            self.send_json(200, {"status": "success", "stats": data["quiz_stats"]})
+
+            import bot_db
+            user_rank = None
+            if user_id and name:
+                bot_db.update_leaderboard_score(user_id, name, username, points, is_correct, current_streak)
+                user_rank = bot_db.get_user_leaderboard_rank(user_id)
+
+            self.send_json(200, {
+                "status": "success",
+                "stats": data["quiz_stats"],
+                "user_rank": user_rank
+            })
+            return
+
+        # 8f. User Profile Sync (/api/user/sync)
+        elif path == '/api/user/sync':
+            body = self.read_json_body()
+            user_id = str(body.get('user_id', '')).strip()
+            name = str(body.get('name', '')).strip()
+            username = str(body.get('username', '')).strip()
+
+            if not user_id or not name:
+                self.send_json(400, {"status": "error", "error": "user_id va ism talab qilinadi"})
+                return
+
+            import bot_db
+            bot_db.upsert_leaderboard_user(user_id, name, username)
+            user_rank = bot_db.get_user_leaderboard_rank(user_id)
+            self.send_json(200, {
+                "status": "success",
+                "user_rank": user_rank
+            })
             return
 
         # 9. Telegram Bot Webhook Endpoint (/api/telegram-webhook)

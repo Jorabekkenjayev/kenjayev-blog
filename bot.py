@@ -490,6 +490,25 @@ class BotEngine:
             self.handle_start_flow(user, chat_id, message_id)
             return
 
+        # /REYTING /TOP /LEADERBOARD COMMAND
+        if text.strip().lower() in ["/reyting", "/top", "/leaderboard", "🏆 reyting", "reyting"]:
+            self.handle_leaderboard_command(user, chat_id)
+            return
+
+        # /STAT /PROFIL COMMAND
+        if text.strip().lower() in ["/stat", "/stats", "/profil", "/profile", "📊 natijalarim", "stat"]:
+            self.handle_user_stat_command(user, chat_id)
+            return
+
+        # /APP COMMAND
+        if text.strip().lower() in ["/app", "/quiz", "/mini_app", "🌐 saytga kirish"]:
+            self.client.send_message(
+                chat_id,
+                "🌐 <b>Matematika Quiz Hub Mini App</b>\n\nPastdagi tugma orqali ilovani oching:",
+                reply_markup=get_main_menu_keyboard()
+            )
+            return
+
         user_state = user.get("state", "NEW_USER")
         is_registered = user.get("is_registered", 0)
 
@@ -499,13 +518,97 @@ class BotEngine:
 
         self.handle_user_message_to_admin(user, message)
 
+    def handle_leaderboard_command(self, user, chat_id):
+        user_id = user["telegram_id"]
+        top_users = bot_db.get_leaderboard_top(limit=10)
+        user_rank = bot_db.get_user_leaderboard_rank(f"tg_{user_id}")
+
+        text = "🏆 <b>Matematika Quiz — Jonli Reyting (Top 10)</b>\n\n"
+        if not top_users:
+            text += "<i>Hozircha reytingda ishtirokchilar mavjud emas. Birinchi bo'lib test yeching va 1-o'rinni egallang!</i>\n\n"
+        else:
+            for u in top_users:
+                uname = f" (@{html.escape(u['username'])})" if u.get('username') else ""
+                name = html.escape(u.get('name', 'Ishtirokchi'))
+                pts = u.get('points', 0)
+                acc = u.get('accuracy', 0)
+                streak = u.get('best_streak', 0)
+                badge = u.get('badge', '🎯')
+                text += f"{badge} <b>{u['rank']}. {name}</b>{uname}\n"
+                text += f"   └ 🎯 <b>{pts} ball</b> | {acc}% aniqlik | 🔥 {streak} streak\n\n"
+
+        if user_rank and user_rank.get('total_solved', 0) > 0:
+            text += f"━━━━━━━━━━━━━━━━━━━━\n"
+            text += f"📊 <b>Sizning o'rningiz:</b> #{user_rank['rank']} ({user_rank['points']} ball | {user_rank['accuracy']}%)\n"
+        else:
+            text += f"━━━━━━━━━━━━━━━━━━━━\n"
+            text += f"💡 <i>Siz hali quiz yechmadingiz. Pastdagi tugma orqali boshlang!</i>\n"
+
+        kb = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "🚀 Quizni boshlash va Ball yig'ish",
+                        "web_app": {"url": WEB_APP_URL}
+                    }
+                ],
+                [
+                    {
+                        "text": "📊 To'liq Reyting Jadvali",
+                        "web_app": {"url": f"{WEB_APP_URL}#leaderboard"}
+                    }
+                ]
+            ]
+        }
+        self.client.send_message(chat_id, text, reply_markup=kb)
+
+    def handle_user_stat_command(self, user, chat_id):
+        user_id = user["telegram_id"]
+        full_name = html.escape(user.get("full_name") or user.get("first_name") or "Foydalanuvchi")
+        user_rank = bot_db.get_user_leaderboard_rank(f"tg_{user_id}")
+
+        if not user_rank or user_rank.get('total_solved', 0) == 0:
+            text = (
+                f"👤 <b>Foydalanuvchi:</b> {full_name}\n\n"
+                f"ℹ️ Siz hali birorta ham savol yechmadingiz.\n"
+                f"Saytga kirib quizlarni yeching va o'z bilimingizni sinab ko'ring!"
+            )
+        else:
+            text = (
+                f"📊 <b>{full_name} — Shaxsiy Quiz Statistikasi</b>\n\n"
+                f"🏆 <b>O'rningiz:</b> #{user_rank['rank']} ({user_rank['title']})\n"
+                f"🎯 <b>Jami to'plangan ball:</b> {user_rank['points']} ball\n"
+                f"✅ <b>To'g'ri javoblar:</b> {user_rank['correct_count']} ta\n"
+                f"📝 <b>Jami yechilgan:</b> {user_rank['total_solved']} ta\n"
+                f"📈 <b>Aniqlik darajasi:</b> {user_rank['accuracy']}%\n"
+                f"🔥 <b>Maksimal streak:</b> {user_rank['best_streak']} ta ketma-ket\n"
+            )
+
+        kb = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "🎯 Quiz Yechish",
+                        "web_app": {"url": WEB_APP_URL}
+                    },
+                    {
+                        "text": "🏆 Jonli Reyting",
+                        "web_app": {"url": f"{WEB_APP_URL}#leaderboard"}
+                    }
+                ]
+            ]
+        }
+        self.client.send_message(chat_id, text, reply_markup=kb)
+
     def handle_start_flow(self, user, chat_id, message_id):
         user_id = user["telegram_id"]
         is_registered = user.get("is_registered", 0)
         full_name = user.get("full_name")
+        username = user.get("username", "")
 
         if is_registered and full_name:
             bot_db.set_user_state(user_id, "REGISTERED")
+            bot_db.upsert_leaderboard_user(f"tg_{user_id}", full_name, username)
             self.client.send_message(
                 chat_id,
                 get_welcome_text(),
@@ -522,6 +625,7 @@ class BotEngine:
     def handle_name_input(self, user, message):
         chat_id = message["chat"]["id"]
         user_id = user["telegram_id"]
+        username = user.get("username", "")
         message_id = message["message_id"]
         text = message.get("text", "")
 
@@ -541,6 +645,7 @@ class BotEngine:
 
         bot_db.set_user_full_name(user_id, valid_name)
         bot_db.verify_user(user_id)
+        bot_db.upsert_leaderboard_user(f"tg_{user_id}", valid_name, username)
         bot_db.log_action(user_id, "REGISTERED", f"Name: {valid_name}")
 
         self.notify_admin_new_user(user, valid_name)
@@ -803,7 +908,10 @@ class BotEngine:
 
     def setup_commands_menu(self):
         commands = [
-            {"command": "start", "description": "Bosh sahifa / Menyu"}
+            {"command": "start", "description": "Bosh sahifa / Menyu"},
+            {"command": "reyting", "description": "🏆 Jonli Quiz Reytingi (Top 10)"},
+            {"command": "stat", "description": "📊 Mening natijalarim va ballarim"},
+            {"command": "app", "description": "🌐 Matematika Quiz Hub (Mini App)"}
         ]
         self.client.set_my_commands(commands)
 

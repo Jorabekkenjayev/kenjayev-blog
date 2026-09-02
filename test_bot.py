@@ -344,6 +344,54 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         self.assertTrue(res_json.get("ok"))
         time.sleep(0.05)
 
+    def test_leaderboard_and_stat_commands(self):
+        user_id = 888999
+        chat_id = user_id
+        
+        # 1. User sends /start and registers
+        self.bot_engine.handle_update({
+            "update_id": 100,
+            "message": {
+                "message_id": 1,
+                "chat": {"id": chat_id, "type": "private"},
+                "from": {"id": user_id, "username": "shox_math", "first_name": "Shoxrux"},
+                "text": "Shoxrux Bek"
+            }
+        })
+
+        # 2. Add score to user in leaderboard
+        bot_db.update_leaderboard_score(f"tg_{user_id}", "Shoxrux Bek", "shox_math", points_earned=350, is_correct=True, current_streak=7)
+
+        # 3. User requests /reyting
+        self.bot_engine.handle_update({
+            "update_id": 101,
+            "message": {
+                "message_id": 2,
+                "chat": {"id": chat_id, "type": "private"},
+                "from": {"id": user_id},
+                "text": "/reyting"
+            }
+        })
+        msg = self.mock_client.sent_messages[-1]
+        self.assertIn("Matematika Quiz — Jonli Reyting", msg["text"])
+        self.assertIn("Shoxrux Bek", msg["text"])
+        self.assertIn("350 ball", msg["text"])
+
+        # 4. User requests /stat
+        self.bot_engine.handle_update({
+            "update_id": 102,
+            "message": {
+                "message_id": 3,
+                "chat": {"id": chat_id, "type": "private"},
+                "from": {"id": user_id},
+                "text": "/stat"
+            }
+        })
+        stat_msg = self.mock_client.sent_messages[-1]
+        self.assertIn("Shoxrux Bek — Shaxsiy Quiz Statistikasi", stat_msg["text"])
+        self.assertIn("350 ball", stat_msg["text"])
+        self.assertIn("100%", stat_msg["text"])
+
 
 if __name__ == "__main__":
     unittest.main()

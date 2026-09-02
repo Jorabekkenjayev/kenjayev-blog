@@ -162,18 +162,101 @@ def test_full_system():
     assert json.loads(res_del_sec[0].decode('utf-8')).get('status') == 'success'
     print("   ✓ Test section and cascade questions cleaned up")
 
-    # 6. Test Frontend KaTeX & SPA View structure
-    print("\n6. Validating index.html KaTeX and SPA views...")
+    # 6. Test Leaderboard & Raqobat System
+    print("\n6. Testing Live Leaderboard & User Ranking APIs...")
+    
+    # 6a. User Sync
+    env_sync = {
+        'REQUEST_METHOD': 'POST',
+        'PATH_INFO': '/api/user/sync',
+        'QUERY_STRING': '',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080',
+        'wsgi.input': io.BytesIO(json.dumps({
+            'user_id': 'tg_999111',
+            'name': 'Temur Olimov',
+            'username': 'temur_olimov'
+        }).encode('utf-8'))
+    }
+    env_sync['CONTENT_LENGTH'] = str(len(env_sync['wsgi.input'].getvalue()))
+    res_sync = server.app(env_sync, mock_start)
+    sync_data = json.loads(res_sync[0].decode('utf-8'))
+    assert sync_data.get('status') == 'success'
+    print("   ✓ User profile sync passed (/api/user/sync)")
+
+    # 6b. Quiz Stat / Score Submission
+    env_stat = {
+        'REQUEST_METHOD': 'POST',
+        'PATH_INFO': '/api/quiz/stat',
+        'QUERY_STRING': '',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080',
+        'wsgi.input': io.BytesIO(json.dumps({
+            'user_id': 'tg_999111',
+            'name': 'Temur Olimov',
+            'username': 'temur_olimov',
+            'points': 45,
+            'correct': True,
+            'streak': 3,
+            'section_id': 'sec_algebra'
+        }).encode('utf-8'))
+    }
+    env_stat['CONTENT_LENGTH'] = str(len(env_stat['wsgi.input'].getvalue()))
+    res_stat = server.app(env_stat, mock_start)
+    stat_data = json.loads(res_stat[0].decode('utf-8'))
+    assert stat_data.get('status') == 'success'
+    assert stat_data.get('user_rank', {}).get('points') == 45
+    print("   ✓ Score submission & instant rank update passed (/api/quiz/stat)")
+
+    # 6c. Get Leaderboard
+    env_lead = {
+        'REQUEST_METHOD': 'GET',
+        'PATH_INFO': '/api/leaderboard',
+        'QUERY_STRING': '',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080'
+    }
+    res_lead = server.app(env_lead, mock_start)
+    lead_data = json.loads(res_lead[0].decode('utf-8'))
+    assert lead_data.get('status') == 'success'
+    assert len(lead_data.get('leaderboard', [])) >= 1
+    print(f"   ✓ Leaderboard retrieval passed ({len(lead_data['leaderboard'])} participants found)")
+
+    # 6d. Get Exact User Rank
+    env_rank = {
+        'REQUEST_METHOD': 'GET',
+        'PATH_INFO': '/api/user/rank',
+        'QUERY_STRING': 'user_id=tg_999111',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080'
+    }
+    res_rank = server.app(env_rank, mock_start)
+    rank_data = json.loads(res_rank[0].decode('utf-8'))
+    assert rank_data.get('status') == 'success'
+    assert rank_data.get('user_rank', {}).get('name') == 'Temur Olimov'
+    print(f"   ✓ User exact rank lookup passed (Rank #{rank_data['user_rank']['rank']})")
+
+    # Clean up test leaderboard user
+    import bot_db
+    conn = bot_db.get_connection()
+    with conn:
+        conn.execute("DELETE FROM quiz_leaderboard WHERE user_id = 'tg_999111'")
+
+    # 7. Test Frontend KaTeX & SPA View structure
+    print("\n7. Validating index.html KaTeX, Leaderboard views, and Modals...")
     with open('index.html', 'r', encoding='utf-8') as f:
         html = f.read()
     assert 'katex.min.js' in html, 'KaTeX CDN missing in index.html'
     assert 'viewQuizzes' in html, 'viewQuizzes view missing'
+    assert 'viewLeaderboard' in html, 'viewLeaderboard view missing'
     assert 'viewPlayer' in html, 'viewPlayer view missing'
     assert 'viewBlog' in html, 'viewBlog view missing'
+    assert 'tabBtnLeaderboard' in html, 'tabBtnLeaderboard nav button missing'
+    assert 'profileModal' in html, 'profileModal missing'
     assert 'imageZoomModal' in html, 'imageZoomModal missing'
     assert 'bulkImportModal' in html, 'bulkImportModal missing'
     assert 'postModal' in html, 'postModal missing'
-    print("   ✓ index.html structure, KaTeX integration, and all modals validated")
+    print("   ✓ index.html structure, Leaderboard UI, KaTeX integration, and all modals validated")
 
     print("\n" + "=" * 70)
     print("🎉 ALL INTEGRATION & SYSTEM TESTS PASSED WITH 100% SUCCESS!")

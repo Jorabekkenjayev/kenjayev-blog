@@ -92,9 +92,24 @@ def init_db(db_path=None):
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     );
                 """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS quiz_leaderboard (
+                        user_id TEXT PRIMARY KEY,
+                        name TEXT NOT NULL,
+                        username TEXT,
+                        points INTEGER DEFAULT 0,
+                        correct_count INTEGER DEFAULT 0,
+                        total_solved INTEGER DEFAULT 0,
+                        best_streak INTEGER DEFAULT 0,
+                        current_streak INTEGER DEFAULT 0,
+                        last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    );
+                """)
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_users_registered ON bot_users(is_registered);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_msg_map_user ON bot_message_map(user_telegram_id);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_pending_verif ON bot_pending_verifications(status, expires_at);")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_leaderboard_rank ON quiz_leaderboard(points DESC, correct_count DESC);")
         finally:
             conn.close()
 
@@ -404,6 +419,169 @@ def get_all_registered_user_ids(db_path=None):
         cur = conn.cursor()
         cur.execute("SELECT telegram_id FROM bot_users WHERE is_registered = 1 AND is_blocked = 0")
         return [row['telegram_id'] for row in cur.fetchall()]
+    finally:
+        conn.close()
+
+# --- QUIZ LEADERBOARD & RANKING MANAGEMENT ---
+def upsert_leaderboard_user(user_id, name, username=None, db_path=None):
+    if not user_id or not name:
+        return None
+    user_id_str = str(user_id).strip()
+    name_str = str(name).strip()[:100]
+    username_str = str(username).strip().lstrip('@')[:50] if username else ""
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                conn.execute("""
+                    INSERT INTO quiz_leaderboard (user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active, created_at)
+                    VALUES (?, ?, ?, 0, 0, 0, 0, 0, ?, ?)
+                    ON CONFLICT(user_id) DO UPDATE SET
+                        name = CASE WHEN excluded.name != '' THEN excluded.name ELSE quiz_leaderboard.name END,
+                        username = CASE WHEN excluded.username != '' THEN excluded.username ELSE quiz_leaderboard.username END,
+                        last_active = excluded.last_active
+                """, (user_id_str, name_str, username_str, now, now))
+                return True
+        finally:
+            conn.close()
+
+def update_leaderboard_score(user_id, name, username=None, points_earned=0, is_correct=False, current_streak=0, db_path=None):
+    if not user_id:
+        return None
+    user_id_str = str(user_id).strip()
+    name_str = str(name).strip()[:100] if name else "Ismsiz Ishtirokchi"
+    username_str = str(username).strip().lstrip('@')[:50] if username else ""
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    inc_correct = 1 if is_correct else 0
+    pts = max(0, int(points_earned))
+    streak_val = max(0, int(current_streak))
+
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                # 1. Upsert initial if not exists
+                conn.execute("""
+                    INSERT INTO quiz_leaderboard (user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active, created_at)
+                    VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?, ?)
+                    ON CONFLICT(user_id) DO UPDATE SET
+                        name = CASE WHEN excluded.name != '' AND excluded.name != 'Ismsiz Ishtirokchi' THEN excluded.name ELSE quiz_leaderboard.name END,
+                        username = CASE WHEN excluded.username != '' THEN excluded.username ELSE quiz_leaderboard.username END,
+                        points = quiz_leaderboard.points + excluded.points,
+                        correct_count = quiz_leaderboard.correct_count + excluded.correct_count,
+                        total_solved = quiz_leaderboard.total_solved + 1,
+                        current_streak = excluded.current_streak,
+                        best_streak = MAX(quiz_leaderboard.best_streak, excluded.current_streak),
+                        last_active = excluded.last_active
+                """, (user_id_str, name_str, username_str, pts, inc_correct, streak_val, streak_val, now, now))
+                return True
+        finally:
+            conn.close()
+
+def get_leaderboard_top(limit=50, db_path=None):
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active
+            FROM quiz_leaderboard
+            WHERE total_solved > 0
+            ORDER BY points DESC, correct_count DESC, (CAST(correct_count AS FLOAT) / MAX(total_solved, 1)) DESC, last_active ASC
+            LIMIT ?
+        """, (limit,))
+        rows = [dict(r) for r in cur.fetchall()]
+        
+        # Calculate dynamic ranks and badges
+        result = []
+        for idx, row in enumerate(rows):
+            rank = idx + 1
+            tot = max(1, row.get('total_solved', 0))
+            cor = row.get('correct_count', 0)
+            acc = round((cor / tot) * 100)
+            pts = row.get('points', 0)
+
+            # Badges and Titles
+            if rank == 1:
+                badge = "🥇"
+                title = "Oltin Peshqadam"
+            elif rank == 2:
+                badge = "🥈"
+                title = "Kumush Peshqadam"
+            elif rank == 3:
+                badge = "🥉"
+                title = "Bronza Peshqadam"
+            elif rank <= 10:
+                badge = "🎖"
+                title = "Grossmeyster"
+            elif pts >= 100:
+                badge = "⭐"
+                title = "Usta"
+            else:
+                badge = "🎯"
+                title = "Ishtirokchi"
+
+            row['rank'] = rank
+            row['accuracy'] = acc
+            row['badge'] = badge
+            row['title'] = title
+            result.append(row)
+
+        return result
+    finally:
+        conn.close()
+
+def get_user_leaderboard_rank(user_id, db_path=None):
+    if not user_id:
+        return None
+    user_id_str = str(user_id).strip()
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM quiz_leaderboard WHERE user_id = ?", (user_id_str,))
+        user_row = cur.fetchone()
+        if not user_row:
+            return None
+        
+        user_dict = dict(user_row)
+        user_points = user_dict.get('points', 0)
+        user_correct = user_dict.get('correct_count', 0)
+
+        # Count how many users have strictly better score
+        cur.execute("""
+            SELECT COUNT(*) as rank_above
+            FROM quiz_leaderboard
+            WHERE total_solved > 0 AND (
+                points > ? OR
+                (points = ? AND correct_count > ?)
+            )
+        """, (user_points, user_points, user_correct))
+        
+        rank = cur.fetchone()['rank_above'] + 1
+        tot = max(1, user_dict.get('total_solved', 0))
+        cor = user_dict.get('correct_count', 0)
+        user_dict['rank'] = rank
+        user_dict['accuracy'] = round((cor / tot) * 100)
+
+        if rank == 1:
+            user_dict['badge'] = "🥇"
+            user_dict['title'] = "Oltin Peshqadam"
+            user_dict['points_to_next'] = 0
+        elif rank == 2:
+            user_dict['badge'] = "🥈"
+            user_dict['title'] = "Kumush Peshqadam"
+        elif rank == 3:
+            user_dict['badge'] = "🥉"
+            user_dict['title'] = "Bronza Peshqadam"
+        elif rank <= 10:
+            user_dict['badge'] = "🎖"
+            user_dict['title'] = "Grossmeyster"
+        else:
+            user_dict['badge'] = "🎯"
+            user_dict['title'] = "Ishtirokchi"
+
+        return user_dict
     finally:
         conn.close()
 
