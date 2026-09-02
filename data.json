@@ -58,352 +58,3762 @@
     {
       "id": "q_alg_01",
       "section_id": "sec_algebra",
-      "title": "$x^2 - 7x + 12 = 0$ kvadrat tenglamaning ildizlari yig'indisi va ko'paytmasini toping.",
-      "image": "",
+      "title": "$2x + 7 = 19$ tenglamani yeching.",
       "options": [
-        "$x_1 + x_2 = 7, \\quad x_1 \\cdot x_2 = 12$",
-        "$x_1 + x_2 = -7, \\quad x_1 \\cdot x_2 = 12$",
-        "$x_1 + x_2 = 12, \\quad x_1 \\cdot x_2 = 7$",
-        "$x_1 + x_2 = -12, \\quad x_1 \\cdot x_2 = -7$"
+        "$x = 6$",
+        "$x = 5$",
+        "$x = 12$",
+        "$x = 8$"
       ],
       "correct_option": 0,
-      "explanation": "Viyet teoremasiga ko'ra keltirilgan $x^2 + px + q = 0$ kvadrat tenglama uchun:\n$$x_1 + x_2 = -p = -(-7) = 7$$\n$$x_1 \\cdot x_2 = q = 12$$\nIldizlarning o'zi esa $x_1 = 3$ va $x_2 = 4$ bo'ladi.",
+      "explanation": "$2x = 19 - 7 = 12 \\implies x = 6$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_alg_02",
       "section_id": "sec_algebra",
-      "title": "Ifodaning qiymatini hisoblang: $\\log_2(32) + \\log_3\\left(\\frac{1}{9}\\right) - \\lg(100)$",
-      "image": "",
+      "title": "$5x - 12 = 3x + 8$ tenglamaning ildizini toping.",
       "options": [
-        "$1$",
-        "$3$",
-        "$5$",
-        "$-1$"
+        "$x = 10$",
+        "$x = 8$",
+        "$x = 5$",
+        "$x = 4$"
       ],
       "correct_option": 0,
-      "explanation": "Har bir hadni alohida hisoblaymiz:\n1) $\\log_2(32) = \\log_2(2^5) = 5$\n2) $\\log_3\\left(\\frac{1}{9}\\right) = \\log_3(3^{-2}) = -2$\n3) $\\lg(100) = \\log_{10}(10^2) = 2$\n\nNatija: $5 + (-2) - 2 = 5 - 4 = 1$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$5x - 3x = 8 + 12 \\implies 2x = 20 \\implies x = 10$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_alg_03",
       "section_id": "sec_algebra",
-      "title": "$2^{x+2} + 2^x = 40$ ko'rsatkichli tenglamani yeching.",
-      "image": "",
+      "title": "$x^2 - 9 = 0$ tenglamaning barcha haqiqiy ildizlarini toping.",
       "options": [
+        "$x = \\pm 3$",
         "$x = 3$",
-        "$x = 2$",
-        "$x = 4$",
-        "$x = 5$"
+        "$x = 9$",
+        "$x = \\pm 9$"
       ],
       "correct_option": 0,
-      "explanation": "$2^x$ ni qavsdan tashqariga chiqaramiz:\n$$2^x (2^2 + 1) = 40$$\n$$2^x (4 + 1) = 40 \\implies 2^x \\cdot 5 = 40$$\n$$2^x = \\frac{40}{5} = 8$$\n$$2^x = 2^3 \\implies x = 3$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$x^2 = 9 \\implies x = \\pm \\sqrt{9} = \\pm 3$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_alg_04",
       "section_id": "sec_algebra",
-      "title": "Tengsizliklar sistemasini yeching: $\\begin{cases} 3x - 5 > 4 \\\\ 2x + 3 \\le 17 \\end{cases}$",
-      "image": "",
+      "title": "$x^2 - 7x + 10 = 0$ tenglama ildizlari yig'indisini toping.",
       "options": [
-        "$(3; 7]$",
-        "$[3; 7)$",
-        "$(3; \\infty)$",
-        "$(-\\infty; 7]$"
+        "$7$",
+        "$-7$",
+        "$10$",
+        "$-10$"
       ],
       "correct_option": 0,
-      "explanation": "Har bir tengsizlikni alohida yechamiz:\n1) $3x > 9 \\implies x > 3$\n2) $2x \\le 14 \\implies x \\le 7$\nIkkala oraliqning kesishmasi: $x \\in (3; 7]$.",
+      "explanation": "Viyet teoremasiga ko'ra $x_1 + x_2 = -(-7) = 7$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_alg_05",
       "section_id": "sec_algebra",
-      "title": "Cheksiz kamayuvchi geometrik progressiyada $b_1 = 12$ va maxraj $q = \\frac{1}{3}$ bo'lsa, uning barcha hadlari yig'indisi $S$ ni toping.",
-      "image": "",
+      "title": "$x^2 - 6x + 8 = 0$ tenglama ildizlari ko'paytmasini toping.",
       "options": [
-        "$18$",
-        "$16$",
-        "$24$",
-        "$15$"
+        "$8$",
+        "$6$",
+        "$-8$",
+        "$-6$"
       ],
       "correct_option": 0,
-      "explanation": "Cheksiz kamayuvchi geometrik progressiya yig'indisi:\n$$S = \\frac{b_1}{1 - q} = \\frac{12}{1 - \\frac{1}{3}} = \\frac{12}{\\frac{2}{3}} = 12 \\cdot \\frac{3}{2} = 18$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "Viyet teoremasiga ko'ra $x_1 \\cdot x_2 = 8$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_06",
+      "section_id": "sec_algebra",
+      "title": "$x^2 - 5x + 6 = 0$ tenglamaning ildizlarini toping.",
+      "options": [
+        "$x_1 = 2, x_2 = 3$",
+        "$x_1 = -2, x_2 = -3$",
+        "$x_1 = 1, x_2 = 6$",
+        "$x_1 = -1, x_2 = 6$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(x-2)(x-3) = 0 \\implies x_1 = 2, x_2 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_07",
+      "section_id": "sec_algebra",
+      "title": "$3(x - 2) + 4 = 19$ tenglamani yeching.",
+      "options": [
+        "$x = 7$",
+        "$x = 5$",
+        "$x = 8$",
+        "$x = 6$"
+      ],
+      "correct_option": 0,
+      "explanation": "$3x - 6 + 4 = 19 \\implies 3x - 2 = 19 \\implies 3x = 21 \\implies x = 7$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_08",
+      "section_id": "sec_algebra",
+      "title": "$x^2 + 4x = 0$ tenglamaning ildizlarini toping.",
+      "options": [
+        "$x_1 = 0, x_2 = -4$",
+        "$x_1 = 0, x_2 = 4$",
+        "$x = 4$",
+        "$x = -4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x(x + 4) = 0 \\implies x = 0$ yoki $x = -4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_09",
+      "section_id": "sec_algebra",
+      "title": "$2x^2 - 8 = 0$ tenglamani yeching.",
+      "options": [
+        "$x = \\pm 2$",
+        "$x = 2$",
+        "$x = 4$",
+        "$x = \\pm 4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2x^2 = 8 \\implies x^2 = 4 \\implies x = \\pm 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_10",
+      "section_id": "sec_algebra",
+      "title": "$|x - 4| = 7$ tenglamaning eng katta ildizini toping.",
+      "options": [
+        "$11$",
+        "$3$",
+        "$-3$",
+        "$7$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x - 4 = 7 \\implies x = 11$ yoki $x - 4 = -7 \\implies x = -3$. Eng kattasi $11$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_11",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $2^3 \\cdot 2^4$",
+      "options": [
+        "$128$",
+        "$64$",
+        "$256$",
+        "$32$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2^{3+4} = 2^7 = 128$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_12",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\frac{3^6}{3^2}$",
+      "options": [
+        "$81$",
+        "$27$",
+        "$9$",
+        "$243$"
+      ],
+      "correct_option": 0,
+      "explanation": "$3^{6-2} = 3^4 = 81$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_13",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $(5^2)^3$",
+      "options": [
+        "$5^6$",
+        "$5^5$",
+        "$5^8$",
+        "$125$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(a^m)^n = a^{m \\cdot n} \\implies 5^{2 \\cdot 3} = 5^6$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_14",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $4^{-2}$",
+      "options": [
+        "$\\frac{1}{16}$",
+        "$-\\frac{1}{16}$",
+        "$-8$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a^{-n} = \\frac{1}{a^n} \\implies 4^{-2} = \\frac{1}{4^2} = \\frac{1}{16}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_15",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\sqrt{144} - \\sqrt{49}$",
+      "options": [
+        "$5$",
+        "$7$",
+        "$12$",
+        "$19$"
+      ],
+      "correct_option": 0,
+      "explanation": "$12 - 7 = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_16",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\sqrt{18} \\cdot \\sqrt{2}$",
+      "options": [
+        "$6$",
+        "$9$",
+        "$12$",
+        "$36$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sqrt{18 \\cdot 2} = \\sqrt{36} = 6$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_17",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $27^{1/3}$",
+      "options": [
+        "$3$",
+        "$9$",
+        "$1$",
+        "$6$"
+      ],
+      "correct_option": 0,
+      "explanation": "$27^{1/3} = \\sqrt[3]{27} = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_18",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $16^{3/4}$",
+      "options": [
+        "$8$",
+        "$4$",
+        "$12$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$16^{3/4} = (\\sqrt[4]{16})^3 = 2^3 = 8$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_19",
+      "section_id": "sec_algebra",
+      "title": "Ifodani soddalashtiring: $(x^4 \\cdot x^3) : x^5$",
+      "options": [
+        "$x^2$",
+        "$x^3$",
+        "$x$",
+        "$x^4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x^{4+3-5} = x^2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_20",
+      "section_id": "sec_algebra",
+      "title": "Ko'rsatkichli tenglamani yeching: $2^x = 32$",
+      "options": [
+        "$x = 5$",
+        "$x = 4$",
+        "$x = 6$",
+        "$x = 16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$32 = 2^5 \\implies x = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_21",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_2 16$",
+      "options": [
+        "$4$",
+        "$2$",
+        "$8$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2^4 = 16 \\implies \\log_2 16 = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_22",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_3 81$",
+      "options": [
+        "$4$",
+        "$3$",
+        "$9$",
+        "$27$"
+      ],
+      "correct_option": 0,
+      "explanation": "$3^4 = 81 \\implies \\log_3 81 = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_23",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_5 1$",
+      "options": [
+        "$0$",
+        "$1$",
+        "$5$",
+        "Mavjud emas"
+      ],
+      "correct_option": 0,
+      "explanation": "Har qanday asos bo'yicha $1$ ning logarifmi $0$ ga teng.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_24",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_{10} 1000$",
+      "options": [
+        "$3$",
+        "$2$",
+        "$4$",
+        "$100$"
+      ],
+      "correct_option": 0,
+      "explanation": "$10^3 = 1000 \\implies \\lg 1000 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_25",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_2 6 + \\log_2 \\frac{8}{3}$",
+      "options": [
+        "$4$",
+        "$3$",
+        "$2$",
+        "$5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\log_2\\left(6 \\cdot \\frac{8}{3}\\right) = \\log_2 16 = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_26",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\log_3 54 - \\log_3 2$",
+      "options": [
+        "$3$",
+        "$2$",
+        "$4$",
+        "$27$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\log_3\\left(\\frac{54}{2}\\right) = \\log_3 27 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_27",
+      "section_id": "sec_algebra",
+      "title": "Tenglamani yeching: $\\log_2(x) = 5$",
+      "options": [
+        "$x = 32$",
+        "$x = 10$",
+        "$x = 25$",
+        "$x = 16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x = 2^5 = 32$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_28",
+      "section_id": "sec_algebra",
+      "title": "Tenglamani yeching: $\\log_3(2x - 1) = 2$",
+      "options": [
+        "$x = 5$",
+        "$x = 4$",
+        "$x = 9$",
+        "$x = 3$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2x - 1 = 3^2 = 9 \\implies 2x = 10 \\implies x = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_29",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $2^{\\log_2 9}$",
+      "options": [
+        "$9$",
+        "$2$",
+        "$3$",
+        "$18$"
+      ],
+      "correct_option": 0,
+      "explanation": "Asosiy logarifmik ayniyat: $a^{\\log_a b} = b \\implies 9$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_30",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $\\ln(e^5)$",
+      "options": [
+        "$5$",
+        "$e$",
+        "$1$",
+        "$25$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\ln(e^x) = x \\implies 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_31",
+      "section_id": "sec_algebra",
+      "title": "Qisqa ko'paytirish: $(x + 4)^2$ ifodani oching.",
+      "options": [
+        "$x^2 + 8x + 16$",
+        "$x^2 + 16$",
+        "$x^2 + 4x + 16$",
+        "$x^2 + 8x + 8$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(a+b)^2 = a^2 + 2ab + b^2 = x^2 + 8x + 16$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_32",
+      "section_id": "sec_algebra",
+      "title": "Ko'paytuvchilarga ajrating: $x^2 - 25$",
+      "options": [
+        "$(x - 5)(x + 5)$",
+        "$(x - 5)^2$",
+        "$(x + 5)^2$",
+        "$x(x - 25)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a^2 - b^2 = (a-b)(a+b) \\implies (x-5)(x+5)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_33",
+      "section_id": "sec_algebra",
+      "title": "Agar $a + b = 8$ va $ab = 15$ bo'lsa, $a^2 + b^2$ ni toping.",
+      "options": [
+        "$34$",
+        "$64$",
+        "$49$",
+        "$30$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a^2 + b^2 = (a+b)^2 - 2ab = 64 - 30 = 34$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_34",
+      "section_id": "sec_algebra",
+      "title": "Tengsizlikni yeching: $3x - 5 < 10$",
+      "options": [
+        "$x < 5$",
+        "$x > 5$",
+        "$x < 15$",
+        "$x < 3$"
+      ],
+      "correct_option": 0,
+      "explanation": "$3x < 15 \\implies x < 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_35",
+      "section_id": "sec_algebra",
+      "title": "Tengsizlikni yeching: $-2x \\le 8$",
+      "options": [
+        "$x \\ge -4$",
+        "$x \\le -4$",
+        "$x \\ge 4$",
+        "$x \\le 4$"
+      ],
+      "correct_option": 0,
+      "explanation": "Manfiy songa bo'lganda ishora o'zgaradi: $x \\ge -4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_36",
+      "section_id": "sec_algebra",
+      "title": "Kasrni qisqartiring: $\\frac{x^2 - 4}{x - 2}$",
+      "options": [
+        "$x + 2$",
+        "$x - 2$",
+        "$2$",
+        "$x$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{(x-2)(x+2)}{x-2} = x + 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_37",
+      "section_id": "sec_algebra",
+      "title": "Hisoblang: $53^2 - 47^2$",
+      "options": [
+        "$600$",
+        "$36$",
+        "$500$",
+        "$1200$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(53-47)(53+47) = 6 \\times 100 = 600$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_38",
+      "section_id": "sec_algebra",
+      "title": "Tengsizliklar sistemasini yeching: $\\begin{cases} x > 2 \\\\ x \\le 7 \\end{cases}$",
+      "options": [
+        "$(2; 7]$",
+        "$[2; 7)$",
+        "$[2; 7]$",
+        "$(2; 7)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Ikkala shart kesishmasi $(2; 7]$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_39",
+      "section_id": "sec_algebra",
+      "title": "Ko'paytuvchilarga ajrating: $3x^2 + 6x$",
+      "options": [
+        "$3x(x + 2)$",
+        "$3(x^2 + 2)$",
+        "$x(3x + 6)$",
+        "$3x(x - 2)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Umumiy ko'paytuvchi $3x$: $3x(x + 2)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_40",
+      "section_id": "sec_algebra",
+      "title": "Kasrni qisqartiring: $\\frac{5a^3 b^2}{10a b^4}$",
+      "options": [
+        "$\\frac{a^2}{2b^2}$",
+        "$\\frac{a^2 b^2}{2}$",
+        "$\\frac{2a^2}{b^2}$",
+        "$\\frac{a}{2b}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{5}{10} \\cdot \\frac{a^3}{a} \\cdot \\frac{b^2}{b^4} = \\frac{1}{2} a^2 b^{-2} = \\frac{a^2}{2b^2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_41",
+      "section_id": "sec_algebra",
+      "title": "Aritmetik progressiyada $a_1 = 3, d = 4$. $a_5$ ni toping.",
+      "options": [
+        "$19$",
+        "$15$",
+        "$23$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a_5 = a_1 + 4d = 3 + 4(4) = 3 + 16 = 19$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_42",
+      "section_id": "sec_algebra",
+      "title": "Aritmetik progressiyada $a_1 = 2, a_2 = 7$. Ayirma $d$ ni toping.",
+      "options": [
+        "$5$",
+        "$9$",
+        "$4$",
+        "$3$"
+      ],
+      "correct_option": 0,
+      "explanation": "$d = a_2 - a_1 = 7 - 2 = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_43",
+      "section_id": "sec_algebra",
+      "title": "Aritmetik progressiyada $a_1 = 1, a_{10} = 19$. Dastlabki $10$ ta had yig'indisi $S_{10}$ ni toping.",
+      "options": [
+        "$100$",
+        "$90$",
+        "$110$",
+        "$200$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S_{10} = \\frac{a_1 + a_{10}}{2} \\cdot 10 = \\frac{1 + 19}{2} \\cdot 10 = 10 \\cdot 10 = 100$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_44",
+      "section_id": "sec_algebra",
+      "title": "Geometrik progressiyada $b_1 = 2, q = 3$. $b_4$ ni toping.",
+      "options": [
+        "$54$",
+        "$18$",
+        "$162$",
+        "$24$"
+      ],
+      "correct_option": 0,
+      "explanation": "$b_4 = b_1 \\cdot q^3 = 2 \\cdot 3^3 = 2 \\cdot 27 = 54$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_45",
+      "section_id": "sec_algebra",
+      "title": "Geometrik progressiyada $b_1 = 4, b_2 = 8$. Maxraj $q$ ni toping.",
+      "options": [
+        "$2$",
+        "$4$",
+        "$\\frac{1}{2}$",
+        "$12$"
+      ],
+      "correct_option": 0,
+      "explanation": "$q = \\frac{b_2}{b_1} = \\frac{8}{4} = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_46",
+      "section_id": "sec_algebra",
+      "title": "Cheksiz kamayuvchi geometrik progressiyada $b_1 = 6, q = \\frac{1}{2}$. Yig'indi $S$ ni toping.",
+      "options": [
+        "$12$",
+        "$9$",
+        "$6$",
+        "$18$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{b_1}{1 - q} = \\frac{6}{1 - 0.5} = \\frac{6}{0.5} = 12$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_47",
+      "section_id": "sec_algebra",
+      "title": "Chiziqli funksiya $y = 2x - 6$ ning $OX$ o'qi bilan kesishish nuqtasini toping.",
+      "options": [
+        "$(3; 0)$",
+        "$(0; -6)$",
+        "$(-3; 0)$",
+        "$(0; 3)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y = 0 \\implies 2x - 6 = 0 \\implies x = 3$. Nuqta: $(3; 0)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_48",
+      "section_id": "sec_algebra",
+      "title": "Agar $f(x) = x^2 - 3x + 5$ bo'lsa, $f(2)$ ni toping.",
+      "options": [
+        "$3$",
+        "$5$",
+        "$7$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$f(2) = 2^2 - 3(2) + 5 = 4 - 6 + 5 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_49",
+      "section_id": "sec_algebra",
+      "title": "Parabola uchi koordinatalarini toping: $y = (x - 3)^2 + 4$",
+      "options": [
+        "$(3; 4)$",
+        "$(-3; 4)$",
+        "$(3; -4)$",
+        "$(-3; -4)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y = (x-x_0)^2 + y_0 \\implies (3; 4)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_alg_50",
+      "section_id": "sec_algebra",
+      "title": "$f(x) = \\sqrt{x - 5}$ funksiyaning aniqlanish sohasini toping.",
+      "options": [
+        "$[5; +\\infty)$",
+        "$(5; +\\infty)$",
+        "$(-\\infty; 5]$",
+        "$[0; +\\infty)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Ildiz osti nomanfiy: $x - 5 \\ge 0 \\implies x \\ge 5$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_geom_01",
       "section_id": "sec_geometriya",
-      "title": "To'g'ri burchakli uchburchakning katetlari $a = 6$ sm va $b = 8$ sm ga teng. Gipotenuzaga tushirilgan balandlik $h_c$ ni toping.",
-      "image": "",
+      "title": "To'g'ri burchakli uchburchak katetlari $a = 6, b = 8$. Gipotenuzani toping.",
       "options": [
-        "$4.8$ sm",
-        "$5$ sm",
-        "$4$ sm",
-        "$6.4$ sm"
+        "$c = 10$",
+        "$c = 14$",
+        "$c = 12$",
+        "$c = 9$"
       ],
       "correct_option": 0,
-      "explanation": "Avval Pifagor teoremasi orqali gipotenuzani topamiz:\n$$c = \\sqrt{a^2 + b^2} = \\sqrt{6^2 + 8^2} = \\sqrt{36+64} = 10 \\text{ sm}$$\nUchburchak yuzi formulasi orqali:\n$$S = \\frac{1}{2} a b = \\frac{1}{2} c h_c$$\n$$a \\cdot b = c \\cdot h_c \\implies 6 \\cdot 8 = 10 \\cdot h_c$$\n$$h_c = \\frac{48}{10} = 4.8 \\text{ sm}$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$c = \\sqrt{6^2 + 8^2} = \\sqrt{36 + 64} = \\sqrt{100} = 10$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_geom_02",
       "section_id": "sec_geometriya",
-      "title": "Rombning diagonallari $d_1 = 12$ sm va $d_2 = 16$ sm bo'lsa, uning perimetri $P$ ni hisoblang.",
-      "image": "",
+      "title": "Gipotenuzasi $c = 13$, bir kateti $a = 5$ bo'lgan to'g'ri burchakli uchburchakning ikkinchi katetini toping.",
       "options": [
-        "$40$ sm",
-        "$48$ sm",
-        "$32$ sm",
-        "$56$ sm"
+        "$b = 12$",
+        "$b = 10$",
+        "$b = 8$",
+        "$b = 11$"
       ],
       "correct_option": 0,
-      "explanation": "Rombning diagonallari to'g'ri burchak ostida kesishadi va kesishish nuqtasida teng ikkiga bo'linadi:\nKatetlar: $\\frac{d_1}{2} = 6$ sm, $\\frac{d_2}{2} = 8$ sm.\nRomb tomoni $a = \\sqrt{6^2 + 8^2} = 10$ sm.\nPerimetr: $P = 4a = 4 \\times 10 = 40$ sm.",
+      "explanation": "$b = \\sqrt{13^2 - 5^2} = \\sqrt{169 - 25} = \\sqrt{144} = 12$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_geom_03",
       "section_id": "sec_geometriya",
-      "title": "Muntazam uchburchakning tomoni $a = 4\\sqrt{3}$ sm bo'lsa, unga tashqi chizilgan aylana radiusi $R$ ni toping.",
-      "image": "",
+      "title": "Katetlari $3$ va $4$ bo'lgan to'g'ri burchakli uchburchak yuzini toping.",
       "options": [
-        "$4$ sm",
-        "$2\\sqrt{3}$ sm",
-        "$6$ sm",
-        "$3$ sm"
+        "$6$",
+        "$12$",
+        "$7$",
+        "$10$"
       ],
       "correct_option": 0,
-      "explanation": "Muntazam uchburchak uchun tashqi chizilgan aylana radiusi:\n$$R = \\frac{a}{\\sqrt{3}} = \\frac{4\\sqrt{3}}{\\sqrt{3}} = 4 \\text{ sm}$$.",
+      "explanation": "$S = \\frac{1}{2}ab = \\frac{1}{2} \\cdot 3 \\cdot 4 = 6$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_geom_04",
       "section_id": "sec_geometriya",
-      "title": "Trapetsiyaning asoslari $a = 8$ sm va $b = 14$ sm, balandligi $h = 6$ sm bo'lsa, uning yuzi $S$ ni hisoblang.",
-      "image": "",
+      "title": "To'g'ri burchakli uchburchakning o'tkir burchaklaridan biri $35^\\circ$. Ikkinchi o'tkir burchakni toping.",
       "options": [
-        "$66 \\text{ sm}^2$",
-        "$72 \\text{ sm}^2$",
-        "$60 \\text{ sm}^2$",
-        "$84 \\text{ sm}^2$"
+        "$55^\\circ$",
+        "$45^\\circ$",
+        "$65^\\circ$",
+        "$35^\\circ$"
       ],
       "correct_option": 0,
-      "explanation": "Trapetsiya yuzi formulasi:\n$$S = \\frac{a + b}{2} \\cdot h = \\frac{8 + 14}{2} \\cdot 6 = 11 \\cdot 6 = 66 \\text{ sm}^2$$.",
+      "explanation": "O'tkir burchaklar yig'indisi $90^\\circ$: $90^\\circ - 35^\\circ = 55^\\circ$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
+    },
+    {
+      "id": "q_geom_05",
+      "section_id": "sec_geometriya",
+      "title": "Gipotenuzasi $c = 10$ bo'lgan to'g'ri burchakli uchburchakka tashqi chizilgan aylana radiusini toping.",
+      "options": [
+        "$R = 5$",
+        "$R = 10$",
+        "$R = 2.5$",
+        "$R = 20$"
+      ],
+      "correct_option": 0,
+      "explanation": "$R = \\frac{c}{2} = \\frac{10}{2} = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_06",
+      "section_id": "sec_geometriya",
+      "title": "Katetlari $6$ va $8$ bo'lgan to'g'ri burchakli uchburchak perimetrini toping.",
+      "options": [
+        "$24$",
+        "$20$",
+        "$28$",
+        "$14$"
+      ],
+      "correct_option": 0,
+      "explanation": "Gipotenuza $c = 10$. Perimetr: $P = 6 + 8 + 10 = 24$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_07",
+      "section_id": "sec_geometriya",
+      "title": "Teng yonli to'g'ri burchakli uchburchakning gipotenuzasi $4\\sqrt{2}$. Katetini toping.",
+      "options": [
+        "$4$",
+        "$2$",
+        "$8$",
+        "$2\\sqrt{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a\\sqrt{2} = 4\\sqrt{2} \\implies a = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_08",
+      "section_id": "sec_geometriya",
+      "title": "$30^\\circ$ li burchak qarshisidagi katet $5$ sm. Gipotenuzani toping.",
+      "options": [
+        "$10\\text{ sm}$",
+        "$5\\sqrt{3}\\text{ sm}$",
+        "$15\\text{ sm}$",
+        "$2.5\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$30^\\circ$ qarshisidagi katet gipotenuzaning yarmiga teng: $c = 2 \\times 5 = 10$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_09",
+      "section_id": "sec_geometriya",
+      "title": "Katetlari $8$ va $15$ bo'lgan uchburchak gipotenuzasini toping.",
+      "options": [
+        "$17$",
+        "$19$",
+        "$23$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$c = \\sqrt{8^2 + 15^2} = \\sqrt{64 + 225} = \\sqrt{289} = 17$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_10",
+      "section_id": "sec_geometriya",
+      "title": "Gipotenuzasi $20$ bo'lgan to'g'ri burchakli uchburchak gipotenuzasiga tushirilgan medianasini toping.",
+      "options": [
+        "$10$",
+        "$20$",
+        "$5$",
+        "$15$"
+      ],
+      "correct_option": 0,
+      "explanation": "Gipotenuzaga tushirilgan mediana $m_c = \\frac{c}{2} = 10$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_11",
+      "section_id": "sec_geometriya",
+      "title": "Uchburchakning ichki burchaklari yig'indisi necha gradus?",
+      "options": [
+        "$180^\\circ$",
+        "$360^\\circ$",
+        "$90^\\circ$",
+        "$270^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "Har qanday uchburchak ichki burchaklari yig'indisi $180^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_12",
+      "section_id": "sec_geometriya",
+      "title": "Uchburchak burchaklari $40^\\circ$ va $70^\\circ$. Uchinchi burchagini toping.",
+      "options": [
+        "$70^\\circ$",
+        "$80^\\circ$",
+        "$60^\\circ$",
+        "$90^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$180^\\circ - (40^\\circ + 70^\\circ) = 180^\\circ - 110^\\circ = 70^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_13",
+      "section_id": "sec_geometriya",
+      "title": "Muntazam (teng tomonli) uchburchakning har bir ichki burchagi necha gradus?",
+      "options": [
+        "$60^\\circ$",
+        "$90^\\circ$",
+        "$45^\\circ$",
+        "$120^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$180^\\circ : 3 = 60^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_14",
+      "section_id": "sec_geometriya",
+      "title": "Tomoni $a = 6$ bo'lgan muntazam uchburchak perimetrini toping.",
+      "options": [
+        "$18$",
+        "$12$",
+        "$24$",
+        "$36$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P = 3a = 3 \\cdot 6 = 18$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_15",
+      "section_id": "sec_geometriya",
+      "title": "Tomoni $a = 4$ bo'lgan muntazam uchburchak yuzini toping.",
+      "options": [
+        "$4\\sqrt{3}$",
+        "$8\\sqrt{3}$",
+        "$16\\sqrt{3}$",
+        "$8$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{a^2\\sqrt{3}}{4} = \\frac{16\\sqrt{3}}{4} = 4\\sqrt{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_16",
+      "section_id": "sec_geometriya",
+      "title": "Teng yonli uchburchakning asosidagi burchagi $50^\\circ$. Uchidagi burchagini toping.",
+      "options": [
+        "$80^\\circ$",
+        "$50^\\circ$",
+        "$100^\\circ$",
+        "$65^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$180^\\circ - 2 \\times 50^\\circ = 180^\\circ - 100^\\circ = 80^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_17",
+      "section_id": "sec_geometriya",
+      "title": "Asosi $a = 10$, balandligi $h = 6$ bo'lgan uchburchak yuzini toping.",
+      "options": [
+        "$30$",
+        "$60$",
+        "$15$",
+        "$45$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{1}{2}ah = \\frac{1}{2} \\cdot 10 \\cdot 6 = 30$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_18",
+      "section_id": "sec_geometriya",
+      "title": "Uchburchak tomonlari $a = 6, b = 10$ va ular orasidagi burchak $30^\\circ$. Uchburchak yuzini toping.",
+      "options": [
+        "$15$",
+        "$30$",
+        "$15\\sqrt{3}$",
+        "$20$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{1}{2}ab \\sin(30^\\circ) = \\frac{1}{2} \\cdot 6 \\cdot 10 \\cdot 0.5 = 15$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_19",
+      "section_id": "sec_geometriya",
+      "title": "Uchburchak o'rta chizig'i tegishli asosidan qanday nisbatda bo'ladi?",
+      "options": [
+        "Yarmiga teng ($m = \\frac{a}{2}$)",
+        "Teng ($m = a$)",
+        "Ikki barobar katta",
+        "Uchdan biriga teng"
+      ],
+      "correct_option": 0,
+      "explanation": "O'rta chiziq asosga parallel va uning yarmiga teng.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_20",
+      "section_id": "sec_geometriya",
+      "title": "Asosi $14$ sm bo'lgan uchburchakning o'rta chizig'i uzunligini toping.",
+      "options": [
+        "$7\\text{ sm}$",
+        "$14\\text{ sm}$",
+        "$28\\text{ sm}$",
+        "$3.5\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$m = \\frac{14}{2} = 7\\text{ sm}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_21",
+      "section_id": "sec_geometriya",
+      "title": "Tomoni $a = 7$ bo'lgan kvadratning perimetri va yuzini toping.",
+      "options": [
+        "$P = 28, S = 49$",
+        "$P = 49, S = 28$",
+        "$P = 14, S = 49$",
+        "$P = 28, S = 14$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P = 4a = 28$, $S = a^2 = 49$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_22",
+      "section_id": "sec_geometriya",
+      "title": "Tomoni $a = 5$ bo'lgan kvadrat diagonali uzunligini toping.",
+      "options": [
+        "$5\\sqrt{2}$",
+        "$10$",
+        "$25$",
+        "$5\\sqrt{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$d = a\\sqrt{2} = 5\\sqrt{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_23",
+      "section_id": "sec_geometriya",
+      "title": "Tomonlari $a = 4, b = 9$ bo'lgan to'g'ri to'rtburchak yuzini toping.",
+      "options": [
+        "$36$",
+        "$26$",
+        "$13$",
+        "$18$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = a \\cdot b = 4 \\cdot 9 = 36$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_24",
+      "section_id": "sec_geometriya",
+      "title": "Tomonlari $a = 6, b = 8$ bo'lgan to'g'ri to'rtburchak diagonali uzunligini toping.",
+      "options": [
+        "$10$",
+        "$14$",
+        "$12$",
+        "$48$"
+      ],
+      "correct_option": 0,
+      "explanation": "$d = \\sqrt{6^2 + 8^2} = 10$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_25",
+      "section_id": "sec_geometriya",
+      "title": "Rombning diagonallari $d_1 = 6, d_2 = 8$. Romb yuzini toping.",
+      "options": [
+        "$24$",
+        "$48$",
+        "$14$",
+        "$28$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{1}{2} d_1 d_2 = \\frac{1}{2} \\cdot 6 \\cdot 8 = 24$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_26",
+      "section_id": "sec_geometriya",
+      "title": "Tomoni $a = 10$ bo'lgan rombning perimetrini toping.",
+      "options": [
+        "$40$",
+        "$100$",
+        "$20$",
+        "$30$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P = 4a = 4 \\times 10 = 40$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_27",
+      "section_id": "sec_geometriya",
+      "title": "Parallelogramm asosi $a = 12$, unga tushirilgan balandlik $h = 5$. Parallelogramm yuzini toping.",
+      "options": [
+        "$60$",
+        "$30$",
+        "$17$",
+        "$120$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = a \\cdot h = 12 \\cdot 5 = 60$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_28",
+      "section_id": "sec_geometriya",
+      "title": "Trapetsiya asoslari $a = 6, b = 10$. Uning o'rta chizig'i $m$ ni toping.",
+      "options": [
+        "$8$",
+        "$16$",
+        "$7$",
+        "$9$"
+      ],
+      "correct_option": 0,
+      "explanation": "$m = \\frac{a + b}{2} = \\frac{6 + 10}{2} = 8$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_29",
+      "section_id": "sec_geometriya",
+      "title": "Asoslari $4$ va $8$, balandligi $5$ bo'lgan trapetsiya yuzini toping.",
+      "options": [
+        "$30$",
+        "$60$",
+        "$20$",
+        "$40$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{4 + 8}{2} \\cdot 5 = 6 \\cdot 5 = 30$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_30",
+      "section_id": "sec_geometriya",
+      "title": "Qavariq to'rtburchak ichki burchaklari yig'indisi necha gradus?",
+      "options": [
+        "$360^\\circ$",
+        "$180^\\circ$",
+        "$540^\\circ$",
+        "$720^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(4 - 2) \\cdot 180^\\circ = 360^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_31",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 7$ bo'lgan aylananing diametrini toping.",
+      "options": [
+        "$D = 14$",
+        "$D = 21$",
+        "$D = 3.5$",
+        "$D = 49$"
+      ],
+      "correct_option": 0,
+      "explanation": "$D = 2R = 2 \\times 7 = 14$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_32",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 5$ bo'lgan aylana uzunligini toping.",
+      "options": [
+        "$10\\pi$",
+        "$25\\pi$",
+        "$5\\pi$",
+        "$20\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$C = 2\\pi R = 2\\pi \\cdot 5 = 10\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_33",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 6$ bo'lgan doira yuzini toping.",
+      "options": [
+        "$36\\pi$",
+        "$12\\pi$",
+        "$18\\pi$",
+        "$72\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\pi R^2 = \\pi \\cdot 6^2 = 36\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_34",
+      "section_id": "sec_geometriya",
+      "title": "Yuzi $S = 64\\pi$ bo'lgan doiraning radiusini toping.",
+      "options": [
+        "$R = 8$",
+        "$R = 16$",
+        "$R = 4$",
+        "$R = 32$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\pi R^2 = 64\\pi \\implies R^2 = 64 \\implies R = 8$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_35",
+      "section_id": "sec_geometriya",
+      "title": "Aylana markaziy burchagi $80^\\circ$. Unga mos yoy burchagi qanchaga teng?",
+      "options": [
+        "$80^\\circ$",
+        "$40^\\circ$",
+        "$160^\\circ$",
+        "$100^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "Markaziy burchak o'zi tiralgan yoy gradus o'lchoviga teng: $80^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_36",
+      "section_id": "sec_geometriya",
+      "title": "Aylanaga ichki chizilgan burchak $50^\\circ$. U tiralgan markaziy burchakni toping.",
+      "options": [
+        "$100^\\circ$",
+        "$50^\\circ$",
+        "$25^\\circ$",
+        "$75^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "Markaziy burchak ichki chizilgan burchakdan $2$ barobar katta: $2 \\times 50^\\circ = 100^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_37",
+      "section_id": "sec_geometriya",
+      "title": "Diametrga tiralgan aylanaga ichki chizilgan burchak necha gradus?",
+      "options": [
+        "$90^\\circ$",
+        "$180^\\circ$",
+        "$45^\\circ$",
+        "$60^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "Diametr $180^\\circ$ li yoy ajratadi, unga tiralgan burchak $\\frac{180^\\circ}{2} = 90^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_38",
+      "section_id": "sec_geometriya",
+      "title": "Doiraning $90^\\circ$ li sektor yuzi to'liq doira yuzining qancha qismini tashkil qiladi?",
+      "options": [
+        "$\\frac{1}{4}$ qismini",
+        "$\\frac{1}{2}$ qismini",
+        "$\\frac{1}{3}$ qismini",
+        "$\\frac{1}{6}$ qismini"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{90^\\circ}{360^\\circ} = \\frac{1}{4}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_39",
+      "section_id": "sec_geometriya",
+      "title": "Urinma aylanaga urinish nuqtasida o'tkazilgan radiusga nisbatan qanday joylashadi?",
+      "options": [
+        "Perpendikulyar ($90^\\circ$)",
+        "Parallel",
+        "$45^\\circ$ burchak ostida",
+        "$60^\\circ$ burchak ostida"
+      ],
+      "correct_option": 0,
+      "explanation": "Urinma radiusga har doim perpendikulyar bo'ladi.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_40",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 10$ bo'lgan aylananing $60^\\circ$ li yoy uzunligini toping.",
+      "options": [
+        "$\\frac{10\\pi}{3}$",
+        "$5\\pi$",
+        "$\\frac{5\\pi}{3}$",
+        "$10\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$l = \\frac{\\pi R \\alpha}{180^\\circ} = \\frac{\\pi \\cdot 10 \\cdot 60}{180} = \\frac{10\\pi}{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_41",
+      "section_id": "sec_geometriya",
+      "title": "Qirrasi $a = 4$ bo'lgan kubning hajmi $V$ ni toping.",
+      "options": [
+        "$64$",
+        "$16$",
+        "$96$",
+        "$48$"
+      ],
+      "correct_option": 0,
+      "explanation": "$V = a^3 = 4^3 = 64$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_42",
+      "section_id": "sec_geometriya",
+      "title": "Qirrasi $a = 3$ bo'lgan kubning to'la sirti yuzini toping.",
+      "options": [
+        "$54$",
+        "$27$",
+        "$36$",
+        "$18$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = 6a^2 = 6 \\cdot 3^2 = 6 \\cdot 9 = 54$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_43",
+      "section_id": "sec_geometriya",
+      "title": "O'lchamlari $2, 3, 5$ bo'lgan to'g'ri burchakli parallelepiped hajmini toping.",
+      "options": [
+        "$30$",
+        "$10$",
+        "$25$",
+        "$60$"
+      ],
+      "correct_option": 0,
+      "explanation": "$V = a \\cdot b \\cdot c = 2 \\cdot 3 \\cdot 5 = 30$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_44",
+      "section_id": "sec_geometriya",
+      "title": "Asos radiusi $R = 3$, balandligi $H = 5$ bo'lgan silindr hajmini toping.",
+      "options": [
+        "$45\\pi$",
+        "$15\\pi$",
+        "$30\\pi$",
+        "$90\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$V = \\pi R^2 H = \\pi \\cdot 3^2 \\cdot 5 = 45\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_45",
+      "section_id": "sec_geometriya",
+      "title": "Asos radiusi $R = 3$, balandligi $H = 4$ bo'lgan konus hajmini toping.",
+      "options": [
+        "$12\\pi$",
+        "$36\\pi$",
+        "$24\\pi$",
+        "$6\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$V = \\frac{1}{3}\\pi R^2 H = \\frac{1}{3}\\pi \\cdot 9 \\cdot 4 = 12\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_46",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 3$ bo'lgan shar sirti yuzini toping.",
+      "options": [
+        "$36\\pi$",
+        "$12\\pi$",
+        "$27\\pi$",
+        "$18\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = 4\\pi R^2 = 4\\pi \\cdot 9 = 36\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_47",
+      "section_id": "sec_geometriya",
+      "title": "Radiusi $R = 3$ bo'lgan shar hajmini toping.",
+      "options": [
+        "$36\\pi$",
+        "$27\\pi$",
+        "$108\\pi$",
+        "$18\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$V = \\frac{4}{3}\\pi R^3 = \\frac{4}{3}\\pi \\cdot 27 = 36\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_48",
+      "section_id": "sec_geometriya",
+      "title": "Ikki o'xshash uchburchakning o'xshashlik koeffitsiyenti $k = 3$. Ularning yuzlari nisbati $S_1 : S_2$ nimaga teng?",
+      "options": [
+        "$9$",
+        "$3$",
+        "$6$",
+        "$27$"
+      ],
+      "correct_option": 0,
+      "explanation": "Yuzlar nisbati $k^2 = 3^2 = 9$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_49",
+      "section_id": "sec_geometriya",
+      "title": "Muntazam oltiburchakning ichki burchaklari yig'indisini toping.",
+      "options": [
+        "$720^\\circ$",
+        "$540^\\circ$",
+        "$360^\\circ$",
+        "$900^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(n - 2) \\cdot 180^\\circ = (6 - 2) \\cdot 180^\\circ = 4 \\cdot 180^\\circ = 720^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_geom_50",
+      "section_id": "sec_geometriya",
+      "title": "Muntazam beshburchakning bitta ichki burchagini toping.",
+      "options": [
+        "$108^\\circ$",
+        "$120^\\circ$",
+        "$90^\\circ$",
+        "$72^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{(5-2) \\cdot 180^\\circ}{5} = \\frac{540^\\circ}{5} = 108^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_trig_01",
       "section_id": "sec_trigonometriya",
-      "title": "Ifodani soddalashtiring: $\\frac{\\sin(2\\alpha)}{2\\cos(\\alpha)} + \\cos^2(\\alpha) + \\sin^2(\\alpha)$",
-      "image": "",
+      "title": "Hisoblang: $\\sin(30^\\circ)$",
       "options": [
-        "$\\sin(\\alpha) + 1$",
-        "$\\cos(\\alpha) + 1$",
-        "$2\\sin(\\alpha)$",
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{2}}{2}$",
         "$1$"
       ],
       "correct_option": 0,
-      "explanation": "Ikki karra burchak formulasi: $\\sin(2\\alpha) = 2\\sin(\\alpha)\\cos(\\alpha)$.\n1) $\\frac{2\\sin(\\alpha)\\cos(\\alpha)}{2\\cos(\\alpha)} = \\sin(\\alpha)$\n2) Asosiy ayniyat: $\\cos^2(\\alpha) + \\sin^2(\\alpha) = 1$\nNatija: $\\sin(\\alpha) + 1$.",
+      "explanation": "$\\sin(30^\\circ) = \\frac{1}{2} = 0.5$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_trig_02",
       "section_id": "sec_trigonometriya",
-      "title": "$\\cos(x) = \\frac{\\sqrt{3}}{2}$ tenglamaning $[0, \\pi]$ kesmadagi ildizini toping.",
-      "image": "",
+      "title": "Hisoblang: $\\cos(60^\\circ)$",
       "options": [
-        "$\\frac{\\pi}{6}$",
-        "$\\frac{\\pi}{3}$",
-        "$\\frac{5\\pi}{6}$",
-        "$\\frac{\\pi}{4}$"
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$0$"
       ],
       "correct_option": 0,
-      "explanation": "$\\cos\\left(\\frac{\\pi}{6}\\right) = \\frac{\\sqrt{3}}{2}$ (ya'ni $30^\\circ$). $[0, \\pi]$ oraliqda yagona ildiz $x = \\frac{\\pi}{6}$ dir.",
+      "explanation": "$\\cos(60^\\circ) = \\frac{1}{2}$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
       "id": "q_trig_03",
       "section_id": "sec_trigonometriya",
-      "title": "Agar $\\tan(\\alpha) = 2$ bo'lsa, $\\frac{2\\sin(\\alpha) + 3\\cos(\\alpha)}{4\\sin(\\alpha) - 5\\cos(\\alpha)}$ kasrning qiymatini toping.",
-      "image": "",
+      "title": "Hisoblang: $\\tan(45^\\circ)$",
       "options": [
-        "$\\frac{7}{3}$",
-        "$\\frac{5}{2}$",
-        "$2$",
-        "$\\frac{3}{7}$"
+        "$1$",
+        "$\\sqrt{3}$",
+        "$\\frac{\\sqrt{3}}{3}$",
+        "$0$"
       ],
       "correct_option": 0,
-      "explanation": "Kasrning surat va maxrajini $\\cos(\\alpha)$ ga bo'lamiz:\n$$\\frac{2\\tan(\\alpha) + 3}{4\\tan(\\alpha) - 5} = \\frac{2(2) + 3}{4(2) - 5} = \\frac{4 + 3}{8 - 5} = \\frac{7}{3}$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$\\tan(45^\\circ) = 1$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_trig_04",
       "section_id": "sec_trigonometriya",
-      "title": "Ifodani hisoblang: $\\sin(75^\\circ) \\cdot \\cos(15^\\circ) - \\cos(75^\\circ) \\cdot \\sin(15^\\circ)$",
-      "image": "",
+      "title": "Hisoblang: $\\sin(90^\\circ) + \\cos(0^\\circ)$",
       "options": [
-        "$\\frac{\\sqrt{3}}{2}$",
+        "$2$",
+        "$1$",
+        "$0$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$1 + 1 = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_05",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\sin(45^\\circ) \\cdot \\cos(45^\\circ)$",
+      "options": [
         "$\\frac{1}{2}$",
+        "$1$",
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$\\frac{1}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{\\sqrt{2}}{2} \\cdot \\frac{\\sqrt{2}}{2} = \\frac{2}{4} = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_06",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\cos(90^\\circ)$",
+      "options": [
+        "$0$",
+        "$1$",
+        "$-1$",
+        "$\\frac{1}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(90^\\circ) = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_07",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\tan(60^\\circ)$",
+      "options": [
+        "$\\sqrt{3}$",
+        "$\\frac{\\sqrt{3}}{3}$",
+        "$1$",
+        "$2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\tan(60^\\circ) = \\sqrt{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_08",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\cot(45^\\circ)$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$\\sqrt{3}$",
+        "$\\frac{1}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cot(45^\\circ) = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_09",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\sin(\\pi)$",
+      "options": [
+        "$0$",
+        "$1$",
+        "$-1$",
+        "$\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(180^\\circ) = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_10",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\cos(\\pi)$",
+      "options": [
+        "$-1$",
+        "$1$",
+        "$0$",
+        "$\\frac{1}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(180^\\circ) = -1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_11",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $\\sin^2(x) + \\cos^2(x)$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$2$",
+        "$\\sin(2x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Asosiy trigonometrik ayniyat har qanday $x$ uchun $1$ ga teng.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_12",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $1 - \\cos^2(x)$",
+      "options": [
+        "$\\sin^2(x)$",
+        "$\\cos^2(x)$",
+        "$\\tan^2(x)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$1 - \\cos^2(x) = \\sin^2(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_13",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $\\tan(x) \\cdot \\cot(x)$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$\\sin(x)$",
+        "$\\cos(x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\tan(x) \\cot(x) = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_14",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $\\tan(x) \\cdot \\cos(x)$",
+      "options": [
+        "$\\sin(x)$",
+        "$\\cos(x)$",
+        "$1$",
+        "$\\cot(x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{\\sin x}{\\cos x} \\cdot \\cos x = \\sin x$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_15",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $2\\sin(x)\\cos(x)$",
+      "options": [
+        "$\\sin(2x)$",
+        "$\\cos(2x)$",
+        "$2\\sin(x)$",
+        "$\\tan(2x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Ikki karra burchak formulasi: $\\sin(2x) = 2\\sin x \\cos x$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_16",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $\\cos^2(x) - \\sin^2(x)$",
+      "options": [
+        "$\\cos(2x)$",
+        "$\\sin(2x)$",
+        "$1$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kosinusning ikki karra burchak formulasi: $\\cos(2x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_17",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $2\\sin(15^\\circ)\\cos(15^\\circ)$",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
         "$1$",
         "$\\frac{\\sqrt{2}}{2}$"
       ],
       "correct_option": 0,
-      "explanation": "Burchaklar ayirmasi sinusi formulasi:\n$$\\sin(\\alpha - \\beta) = \\sin\\alpha\\cos\\beta - \\cos\\alpha\\sin\\beta$$\n$$\\sin(75^\\circ - 15^\\circ) = \\sin(60^\\circ) = \\frac{\\sqrt{3}}{2}$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$\\sin(2 \\times 15^\\circ) = \\sin(30^\\circ) = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
-      "id": "q_analiz_01",
-      "section_id": "sec_analiz",
-      "title": "Aniq integralni hisoblang: $\\int_{0}^{2} (3x^2 - 2x + 1) \\, dx$",
-      "image": "",
+      "id": "q_trig_18",
+      "section_id": "sec_trigonometriya",
+      "title": "Ifodani soddalashtiring: $1 + \\tan^2(x)$",
       "options": [
+        "$\\frac{1}{\\cos^2(x)}$",
+        "$\\frac{1}{\\sin^2(x)}$",
+        "$\\cos^2(x)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$1 + \\tan^2 x = \\frac{1}{\\cos^2 x}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_19",
+      "section_id": "sec_trigonometriya",
+      "title": "Agar $\\sin(x) = \\frac{3}{5}$ va $x \\in (0; \\frac{\\pi}{2})$ bo'lsa, $\\cos(x)$ ni toping.",
+      "options": [
+        "$\\frac{4}{5}$",
+        "$\\frac{2}{5}$",
+        "$\\frac{3}{4}$",
+        "$\\frac{5}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(x) = \\sqrt{1 - (3/5)^2} = \\sqrt{16/25} = \\frac{4}{5}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_20",
+      "section_id": "sec_trigonometriya",
+      "title": "Agar $\\cos(x) = \\frac{12}{13}$ va $x \\in (0; \\frac{\\pi}{2})$ bo'lsa, $\\sin(x)$ ni toping.",
+      "options": [
+        "$\\frac{5}{13}$",
+        "$\\frac{1}{13}$",
+        "$\\frac{7}{13}$",
+        "$\\frac{5}{12}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(x) = \\sqrt{1 - (12/13)^2} = \\sqrt{25/169} = \\frac{5}{13}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_21",
+      "section_id": "sec_trigonometriya",
+      "title": "Keltirish formulasi: $\\sin(\\pi - x)$ nimaga teng?",
+      "options": [
+        "$\\sin(x)$",
+        "$-\\sin(x)$",
+        "$\\cos(x)$",
+        "$-\\cos(x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "II chorakda sinus musbat: $\\sin(\\pi - x) = \\sin(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_22",
+      "section_id": "sec_trigonometriya",
+      "title": "Keltirish formulasi: $\\cos(\\pi - x)$ nimaga teng?",
+      "options": [
+        "$-\\cos(x)$",
+        "$\\cos(x)$",
+        "$\\sin(x)$",
+        "$-\\sin(x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "II chorakda kosinus manfiy: $\\cos(\\pi - x) = -\\cos(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_23",
+      "section_id": "sec_trigonometriya",
+      "title": "Keltirish formulasi: $\\sin\\left(\\frac{\\pi}{2} - x\\right)$ nimaga teng?",
+      "options": [
+        "$\\cos(x)$",
+        "$\\sin(x)$",
+        "$-\\cos(x)$",
+        "$-\\sin(x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{\\pi}{2}$ da funksiya kofunksiyasiga o'zgaradi: $\\cos(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_24",
+      "section_id": "sec_trigonometriya",
+      "title": "Keltirish formulasi: $\\cos\\left(\\frac{\\pi}{2} - x\\right)$ nimaga teng?",
+      "options": [
+        "$\\sin(x)$",
+        "$\\cos(x)$",
+        "$-\\sin(x)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(\\frac{\\pi}{2} - x) = \\sin(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_25",
+      "section_id": "sec_trigonometriya",
+      "title": "Juft/Toqlik: $\\cos(-x)$ nimaga teng?",
+      "options": [
+        "$\\cos(x)$",
+        "$-\\cos(x)$",
+        "$\\sin(x)$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kosinus juft funksiya: $\\cos(-x) = \\cos(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_26",
+      "section_id": "sec_trigonometriya",
+      "title": "Juft/Toqlik: $\\sin(-x)$ nimaga teng?",
+      "options": [
+        "$-\\sin(x)$",
+        "$\\sin(x)$",
+        "$\\cos(x)$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "Sinus toq funksiya: $\\sin(-x) = -\\sin(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_27",
+      "section_id": "sec_trigonometriya",
+      "title": "Juft/Toqlik: $\\tan(-x)$ nimaga teng?",
+      "options": [
+        "$-\\tan(x)$",
+        "$\\tan(x)$",
+        "$\\cot(x)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "Tangens toq funksiya: $\\tan(-x) = -\\tan(x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_28",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\sin(150^\\circ)$",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$-\\frac{1}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$-\\frac{\\sqrt{3}}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(150^\\circ) = \\sin(180^\\circ - 30^\\circ) = \\sin(30^\\circ) = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_29",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\cos(120^\\circ)$",
+      "options": [
+        "$-\\frac{1}{2}$",
+        "$\\frac{1}{2}$",
+        "$-\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(120^\\circ) = \\cos(180^\\circ - 60^\\circ) = -\\cos(60^\\circ) = -\\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_30",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\tan(135^\\circ)$",
+      "options": [
+        "$-1$",
+        "$1$",
+        "$\\sqrt{3}$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\tan(135^\\circ) = \\tan(180^\\circ - 45^\\circ) = -\\tan(45^\\circ) = -1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_31",
+      "section_id": "sec_trigonometriya",
+      "title": "$60^\\circ$ ni radianda ifodalang.",
+      "options": [
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$60^\\circ \\cdot \\frac{\\pi}{180^\\circ} = \\frac{\\pi}{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_32",
+      "section_id": "sec_trigonometriya",
+      "title": "$45^\\circ$ ni radianda ifodalang.",
+      "options": [
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{2}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{6}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$45^\\circ \\cdot \\frac{\\pi}{180^\\circ} = \\frac{\\pi}{4}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_33",
+      "section_id": "sec_trigonometriya",
+      "title": "$\\frac{\\pi}{6}$ radian necha gradusga teng?",
+      "options": [
+        "$30^\\circ$",
+        "$60^\\circ$",
+        "$45^\\circ$",
+        "$90^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{180^\\circ}{6} = 30^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_34",
+      "section_id": "sec_trigonometriya",
+      "title": "$y = \\sin(x)$ funksiyasining eng kichik musbat davri $T$ nimaga teng?",
+      "options": [
+        "$2\\pi$",
+        "$\\pi$",
+        "$\\frac{\\pi}{2}$",
+        "$4\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y = \\sin(x)$ davri $2\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_35",
+      "section_id": "sec_trigonometriya",
+      "title": "$y = \\tan(x)$ funksiyasining eng kichik musbat davri $T$ nimaga teng?",
+      "options": [
+        "$\\pi$",
+        "$2\\pi$",
+        "$\\frac{\\pi}{2}$",
+        "$3\\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y = \\tan(x)$ davri $\\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_36",
+      "section_id": "sec_trigonometriya",
+      "title": "$y = \\sin(2x)$ funksiyasining asosiy davri $T$ ni toping.",
+      "options": [
+        "$\\pi$",
+        "$2\\pi$",
+        "$4\\pi$",
+        "$\\frac{\\pi}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$T = \\frac{2\\pi}{k} = \\frac{2\\pi}{2} = \\pi$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_37",
+      "section_id": "sec_trigonometriya",
+      "title": "$y = 3\\cos(x) + 2$ funksiyasining eng katta qiymatini toping.",
+      "options": [
+        "$5$",
+        "$3$",
+        "$2$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(x) \\le 1 \\implies y_{\\max} = 3(1) + 2 = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_38",
+      "section_id": "sec_trigonometriya",
+      "title": "$y = \\sin(x) - 4$ funksiyasining eng kichik qiymatini toping.",
+      "options": [
+        "$-5$",
+        "$-4$",
+        "$-3$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(x) \\ge -1 \\implies y_{\\min} = -1 - 4 = -5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_39",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\sin(360^\\circ)$",
+      "options": [
+        "$0$",
+        "$1$",
+        "$-1$",
+        "$360$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(360^\\circ) = \\sin(0^\\circ) = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_40",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\cos(360^\\circ)$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$-1$",
+        "$2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(360^\\circ) = \\cos(0^\\circ) = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_41",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; 2\\pi]$ oralig'ida $\\sin(x) = 1$ tenglamaning yechimini toping.",
+      "options": [
+        "$x = \\frac{\\pi}{2}$",
+        "$x = \\pi$",
+        "$x = \\frac{3\\pi}{2}$",
+        "$x = 0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(x) = 1 \\implies x = \\frac{\\pi}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_42",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; \\pi]$ oralig'ida $\\cos(x) = 0$ tenglamani yeching.",
+      "options": [
+        "$x = \\frac{\\pi}{2}$",
+        "$x = 0$",
+        "$x = \\pi$",
+        "$x = \\frac{\\pi}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(x) = 0 \\implies x = \\frac{\\pi}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_43",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; \\frac{\\pi}{2}]$ oralig'ida $\\tan(x) = 1$ tenglamaning ildizini toping.",
+      "options": [
+        "$x = \\frac{\\pi}{4}$",
+        "$x = \\frac{\\pi}{3}$",
+        "$x = \\frac{\\pi}{6}$",
+        "$x = 0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\tan(x) = 1 \\implies x = 45^\\circ = \\frac{\\pi}{4}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_44",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; \\frac{\\pi}{2}]$ oralig'ida $\\sin(x) = \\frac{1}{2}$ tenglamaning ildizini toping.",
+      "options": [
+        "$x = \\frac{\\pi}{6}$",
+        "$x = \\frac{\\pi}{3}$",
+        "$x = \\frac{\\pi}{4}$",
+        "$x = \\frac{\\pi}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(x) = 0.5 \\implies x = 30^\\circ = \\frac{\\pi}{6}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_45",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; \\frac{\\pi}{2}]$ oralig'ida $\\cos(x) = \\frac{1}{2}$ tenglamaning ildizini toping.",
+      "options": [
+        "$x = \\frac{\\pi}{3}$",
+        "$x = \\frac{\\pi}{6}$",
+        "$x = \\frac{\\pi}{4}$",
+        "$x = 0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\cos(x) = 0.5 \\implies x = 60^\\circ = \\frac{\\pi}{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_46",
+      "section_id": "sec_trigonometriya",
+      "title": "$[0; \\pi]$ oralig'ida $\\sin(x) = 0$ tenglamaning barcha ildizlarini toping.",
+      "options": [
+        "$x = 0$ va $x = \\pi$",
+        "$x = \\frac{\\pi}{2}$",
+        "$x = 0$",
+        "$x = \\pi$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sin(0) = 0$ va $\\sin(\\pi) = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_47",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\arcsin(1)$",
+      "options": [
+        "$\\frac{\\pi}{2}$",
+        "$0$",
+        "$\\pi$",
+        "$\\frac{\\pi}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\arcsin(1) = 90^\\circ = \\frac{\\pi}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_48",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\arccos(1)$",
+      "options": [
+        "$0$",
+        "$\\frac{\\pi}{2}$",
+        "$\\pi$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\arccos(1) = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_49",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\arctan(1)$",
+      "options": [
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{6}$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\arctan(1) = 45^\\circ = \\frac{\\pi}{4}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_trig_50",
+      "section_id": "sec_trigonometriya",
+      "title": "Hisoblang: $\\sin^2(25^\\circ) + \\cos^2(25^\\circ)$",
+      "options": [
+        "$1$",
+        "$25$",
+        "$0$",
+        "$50$"
+      ],
+      "correct_option": 0,
+      "explanation": "Burchak bir xil bo'lgani uchun natija har doim $1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_01",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = x^3$",
+      "options": [
+        "$3x^2$",
+        "$x^2$",
+        "$3x$",
+        "$3x^3$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(x^n)' = n x^{n-1} \\implies (x^3)' = 3x^2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_02",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = x^5$",
+      "options": [
+        "$5x^4$",
+        "$4x^5$",
+        "$5x^5$",
+        "$x^4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(x^5)' = 5x^4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_03",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = 7x$",
+      "options": [
+        "$7$",
+        "$7x$",
+        "$0$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(k x)' = k \\implies (7x)' = 7$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_04",
+      "section_id": "sec_analiz",
+      "title": "O'zgarmas son hosilasini toping: $f(x) = 15$",
+      "options": [
+        "$0$",
+        "$15$",
+        "$1$",
+        "$15x$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(C)' = 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_05",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = x^2 - 4x + 6$",
+      "options": [
+        "$2x - 4$",
+        "$2x + 4$",
+        "$x - 4$",
+        "$2x$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(x^2)' - (4x)' + (6)' = 2x - 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_06",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = \\sin(x)$",
+      "options": [
+        "$\\cos(x)$",
+        "$-\\cos(x)$",
+        "$-\\sin(x)$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(\\sin x)' = \\cos x$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_07",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = \\cos(x)$",
+      "options": [
+        "$-\\sin(x)$",
+        "$\\sin(x)$",
+        "$-\\cos(x)$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(\\cos x)' = -\\sin x$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_08",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = e^x$",
+      "options": [
+        "$e^x$",
+        "$x e^{x-1}$",
+        "$\\ln x$",
+        "$e$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(e^x)' = e^x$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_09",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = \\ln(x)$",
+      "options": [
+        "$\\frac{1}{x}$",
+        "$e^x$",
+        "$\\frac{1}{x^2}$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(\\ln x)' = \\frac{1}{x}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_10",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = \\sqrt{x}$",
+      "options": [
+        "$\\frac{1}{2\\sqrt{x}}$",
+        "$\\frac{1}{\\sqrt{x}}$",
+        "$\\frac{2}{\\sqrt{x}}$",
+        "$\\frac{1}{2x}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(\\sqrt{x})' = (x^{1/2})' = \\frac{1}{2} x^{-1/2} = \\frac{1}{2\\sqrt{x}}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_11",
+      "section_id": "sec_analiz",
+      "title": "Agar $f(x) = x^2 - 3x$ bo'lsa, $f'(4)$ qiymatini toping.",
+      "options": [
+        "$5$",
+        "$4$",
+        "$8$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$f'(x) = 2x - 3 \\implies f'(4) = 2(4) - 3 = 8 - 3 = 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_12",
+      "section_id": "sec_analiz",
+      "title": "Agar $f(x) = x^3$ bo'lsa, $f'(2)$ qiymatini toping.",
+      "options": [
+        "$12$",
         "$6$",
         "$8$",
-        "$10$",
         "$4$"
       ],
       "correct_option": 0,
-      "explanation": "Boshlang'ich funksiyani topamiz:\n$$F(x) = \\int (3x^2 - 2x + 1) dx = x^3 - x^2 + x$$\nNyuton-Leybnis formulasi bo'yicha:\n$$F(2) - F(0) = (2^3 - 2^2 + 2) - 0 = (8 - 4 + 2) = 6$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$f'(x) = 3x^2 \\implies f'(2) = 3(4) = 12$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
-      "id": "q_analiz_02",
+      "id": "q_ana_13",
       "section_id": "sec_analiz",
-      "title": "$f(x) = x^3 - 3x^2 + 5$ funksiyaning $x = 2$ nuqtadagi hosilasi $f'(2)$ ni hisoblang.",
-      "image": "",
+      "title": "Funksiya hosilasini toping: $f(x) = 3x^4 - 2x^2$",
       "options": [
-        "$0$",
-        "$3$",
-        "$-3$",
-        "$6$"
+        "$12x^3 - 4x$",
+        "$12x^3 - 2x$",
+        "$7x^3 - 4x$",
+        "$12x^4 - 4x^2$"
       ],
       "correct_option": 0,
-      "explanation": "Hosilani hisoblaymiz:\n$$f'(x) = (x^3)' - (3x^2)' + (5)' = 3x^2 - 6x$$\n$x = 2$ nuqtada:\n$$f'(2) = 3(2^2) - 6(2) = 3(4) - 12 = 12 - 12 = 0$$.",
+      "explanation": "$f'(x) = 3(4x^3) - 2(2x) = 12x^3 - 4x$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
-      "id": "q_analiz_03",
+      "id": "q_ana_14",
       "section_id": "sec_analiz",
-      "title": "Limitni hisoblang: $\\lim_{x \\to 0} \\frac{\\sin(7x)}{x}$",
-      "image": "",
+      "title": "Funksiya hosilasini toping: $f(x) = e^{2x}$",
       "options": [
-        "$7$",
+        "$2e^{2x}$",
+        "$e^{2x}$",
+        "$2e^x$",
+        "$4e^{2x}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(e^{kx})' = k e^{kx} \\implies 2e^{2x}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_15",
+      "section_id": "sec_analiz",
+      "title": "Funksiya hosilasini toping: $f(x) = \\sin(3x)$",
+      "options": [
+        "$3\\cos(3x)$",
+        "$\\cos(3x)$",
+        "$-3\\cos(3x)$",
+        "$3\\sin(3x)$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(\\sin(kx))' = k \\cos(kx) \\implies 3\\cos(3x)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_16",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 3} (2x + 4)$",
+      "options": [
+        "$10$",
+        "$6$",
+        "$14$",
+        "$8$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2(3) + 4 = 6 + 4 = 10$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_17",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 2} (x^2 - 1)$",
+      "options": [
+        "$3$",
+        "$4$",
+        "$5$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2^2 - 1 = 4 - 1 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_18",
+      "section_id": "sec_analiz",
+      "title": "Birinchi ajoyib limit: $\\lim_{x \\to 0} \\frac{\\sin x}{x}$ nimaga teng?",
+      "options": [
+        "$1$",
+        "$0$",
+        "$\\infty$",
+        "Mavjud emas"
+      ],
+      "correct_option": 0,
+      "explanation": "Fundamental limit: $\\lim_{x \\to 0} \\frac{\\sin x}{x} = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_19",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 0} \\frac{\\sin(4x)}{x}$",
+      "options": [
+        "$4$",
+        "$1$",
+        "$0$",
+        "$1/4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\lim_{x \\to 0} \\frac{\\sin(kx)}{x} = k \\implies 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_20",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$",
+      "options": [
+        "$4$",
+        "$2$",
+        "$0$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\lim_{x \\to 2} \\frac{(x-2)(x+2)}{x-2} = \\lim_{x \\to 2} (x+2) = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_21",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 3} \\frac{x^2 - 9}{x - 3}$",
+      "options": [
+        "$6$",
+        "$3$",
+        "$9$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\lim_{x \\to 3} (x+3) = 6$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_22",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to \\infty} \\frac{1}{x}$",
+      "options": [
+        "$0$",
+        "$1$",
+        "$\\infty$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x \\to \\infty$ da $\\frac{1}{x} \\to 0$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_23",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to \\infty} \\frac{4x + 1}{2x - 3}$",
+      "options": [
+        "$2$",
+        "$4$",
+        "$1$",
+        "$\\infty$"
+      ],
+      "correct_option": 0,
+      "explanation": "Katta darajalar nisbati: $\\frac{4}{2} = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_24",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to \\infty} \\frac{3x^2 + 5}{x^2 - 2}$",
+      "options": [
+        "$3$",
+        "$5$",
+        "$1$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{3}{1} = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_25",
+      "section_id": "sec_analiz",
+      "title": "Ikkinchi ajoyib limit: $\\lim_{x \\to \\infty} \\left(1 + \\frac{1}{x}\\right)^x$ nimaga teng?",
+      "options": [
+        "$e$",
         "$1$",
         "$0$",
         "$\\infty$"
       ],
       "correct_option": 0,
-      "explanation": "Birinchi ajoyib limit formulasiga ko'ra $\\lim_{t \\to 0} \\frac{\\sin(t)}{t} = 1$.\n$$\\lim_{x \\to 0} \\frac{\\sin(7x)}{x} = \\lim_{x \\to 0} \\left( \\frac{\\sin(7x)}{7x} \\cdot 7 \\right) = 1 \\cdot 7 = 7$$.",
+      "explanation": "Eyler soni $e \\approx 2.718...$.",
       "difficulty": "oson",
-      "points": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "points": 10
     },
     {
-      "id": "q_analiz_04",
+      "id": "q_ana_26",
       "section_id": "sec_analiz",
-      "title": "$y = x^2 - 4x + 3$ parabolaning uchi (ekstremum nuqtasi) koordinatalarini toping.",
-      "image": "",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 0} (5x^3 - 2x + 8)$",
       "options": [
-        "$(2; -1)$",
-        "$(-2; 1)$",
-        "$(2; 1)$",
-        "$(0; 3)$"
+        "$8$",
+        "$0$",
+        "$5$",
+        "$-2$"
       ],
       "correct_option": 0,
-      "explanation": "Hosila orqali: $y' = 2x - 4 = 0 \\implies x_0 = 2$.\n$y_0 = 2^2 - 4(2) + 3 = 4 - 8 + 3 = -1$.\nParabola uchi koordinatalari: $(2; -1)$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$0 - 0 + 8 = 8$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_27",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 1} \\frac{x - 1}{x^2 - 1}$",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$1$",
+        "$0$",
+        "$2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\lim_{x \\to 1} \\frac{1}{x+1} = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_28",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 0} \\frac{\\tan x}{x}$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$\\infty$",
+        "Mavjud emas"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\lim_{x \\to 0} \\frac{\\sin x}{x \\cos x} = 1 \\cdot 1 = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_29",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 4} \\sqrt{x}$",
+      "options": [
+        "$2$",
+        "$4$",
+        "$16$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\sqrt{4} = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_30",
+      "section_id": "sec_analiz",
+      "title": "Limitni hisoblang: $\\lim_{x \\to 0} e^x$",
+      "options": [
+        "$1$",
+        "$0$",
+        "$e$",
+        "$\\infty$"
+      ],
+      "correct_option": 0,
+      "explanation": "$e^0 = 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_31",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int x^2 \\, dx$",
+      "options": [
+        "$\\frac{x^3}{3} + C$",
+        "$2x + C$",
+        "$x^3 + C$",
+        "$\\frac{x^2}{2} + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int x^n \\, dx = \\frac{x^{n+1}}{n+1} + C \\implies \\frac{x^3}{3} + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_32",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int x^4 \\, dx$",
+      "options": [
+        "$\\frac{x^5}{5} + C$",
+        "$4x^3 + C$",
+        "$x^5 + C$",
+        "$\\frac{x^4}{4} + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{x^5}{5} + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_33",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int 6 \\, dx$",
+      "options": [
+        "$6x + C$",
+        "$0 + C$",
+        "$6x^2 + C$",
+        "$3x + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int k \\, dx = kx + C \\implies 6x + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_34",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int \\cos(x) \\, dx$",
+      "options": [
+        "$\\sin(x) + C$",
+        "$-\\sin(x) + C$",
+        "$\\cos(x) + C$",
+        "$-\\cos(x) + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int \\cos x \\, dx = \\sin x + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_35",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int \\sin(x) \\, dx$",
+      "options": [
+        "$-\\cos(x) + C$",
+        "$\\cos(x) + C$",
+        "$\\sin(x) + C$",
+        "$-\\sin(x) + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int \\sin x \\, dx = -\\cos x + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_36",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int e^x \\, dx$",
+      "options": [
+        "$e^x + C$",
+        "$x e^x + C$",
+        "$\\frac{e^x}{x} + C$",
+        "$\\ln x + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int e^x \\, dx = e^x + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_37",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int \\frac{1}{x} \\, dx$",
+      "options": [
+        "$\\ln|x| + C$",
+        "$-\\frac{1}{x^2} + C$",
+        "$e^x + C$",
+        "$x + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\int \\frac{1}{x} \\, dx = \\ln|x| + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_38",
+      "section_id": "sec_analiz",
+      "title": "Noaniq integralni toping: $\\int (2x + 3) \\, dx$",
+      "options": [
+        "$x^2 + 3x + C$",
+        "$2x^2 + 3x + C$",
+        "$x^2 + C$",
+        "$2 + C$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2 \\frac{x^2}{2} + 3x + C = x^2 + 3x + C$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_39",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_0^1 x \\, dx$",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$1$",
+        "$2$",
+        "$\\frac{1}{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\left[ \\frac{x^2}{2} \\right]_0^1 = \\frac{1}{2} - 0 = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_40",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_0^2 2x \\, dx$",
+      "options": [
+        "$4$",
+        "$2$",
+        "$8$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\left[ x^2 \\right]_0^2 = 2^2 - 0 = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_41",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_0^3 1 \\, dx$",
+      "options": [
+        "$3$",
+        "$0$",
+        "$1$",
+        "$9$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\left[ x \\right]_0^3 = 3 - 0 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_42",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_1^2 3x^2 \\, dx$",
+      "options": [
+        "$7$",
+        "$8$",
+        "$6$",
+        "$5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\left[ x^3 \\right]_1^2 = 2^3 - 1^3 = 8 - 1 = 7$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_43",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_0^{\\pi} \\sin(x) \\, dx$",
+      "options": [
+        "$2$",
+        "$0$",
+        "$1$",
+        "$-2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$[-\\cos x]_0^{\\pi} = -\\cos(\\pi) - (-\\cos 0) = -(-1) + 1 = 1 + 1 = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_44",
+      "section_id": "sec_analiz",
+      "title": "Aniq integralni hisoblang: $\\int_0^1 e^x \\, dx$",
+      "options": [
+        "$e - 1$",
+        "$e$",
+        "$1$",
+        "$e + 1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$[e^x]_0^1 = e^1 - e^0 = e - 1$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_45",
+      "section_id": "sec_analiz",
+      "title": "Nyuton-Leybnis formulasi: $\\int_a^b f(x) \\, dx$ nimaga teng?",
+      "options": [
+        "$F(b) - F(a)$",
+        "$F(a) - F(b)$",
+        "$F(b) + F(a)$",
+        "$f(b) - f(a)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Nyuton-Leybnis fundamental formulasi: $F(b) - F(a)$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_46",
+      "section_id": "sec_analiz",
+      "title": "$y = x^2 - 4x + 5$ funksiyaning minimum nuqtasini toping.",
+      "options": [
+        "$x = 2$",
+        "$x = -2$",
+        "$x = 4$",
+        "$x = 0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y' = 2x - 4 = 0 \\implies x = 2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_47",
+      "section_id": "sec_analiz",
+      "title": "$y = 6x - x^2$ funksiyaning maksimum nuqtasini toping.",
+      "options": [
+        "$x = 3$",
+        "$x = 6$",
+        "$x = -3$",
+        "$x = 0$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y' = 6 - 2x = 0 \\implies x = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_48",
+      "section_id": "sec_analiz",
+      "title": "Agar oraliqda $f'(x) > 0$ bo'lsa, funksiya ushbu oraliqda qanday harakat qiladi?",
+      "options": [
+        "O'sadi",
+        "Kamayadi",
+        "O'zgarmaydi",
+        "Minimumga ega"
+      ],
+      "correct_option": 0,
+      "explanation": "Hosila musbat bo'lsa, funksiya o'suvchi bo'ladi.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_49",
+      "section_id": "sec_analiz",
+      "title": "Agar oraliqda $f'(x) < 0$ bo'lsa, funksiya ushbu oraliqda qanday harakat qiladi?",
+      "options": [
+        "Kamayadi",
+        "O'sadi",
+        "O'zgarmaydi",
+        "Maksimumga ega"
+      ],
+      "correct_option": 0,
+      "explanation": "Hosila manfiy bo'lsa, funksiya kamayuvchi bo'ladi.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_ana_50",
+      "section_id": "sec_analiz",
+      "title": "$f(x) = x^3 - 3x$ funksiyaning kritik (statsionar) nuqtalarini toping.",
+      "options": [
+        "$x = \\pm 1$",
+        "$x = 0$",
+        "$x = \\pm 3$",
+        "$x = 1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$f'(x) = 3x^2 - 3 = 0 \\implies 3(x^2 - 1) = 0 \\implies x = \\pm 1$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_dtm_01",
       "section_id": "sec_dtm",
-      "title": "Aritmetik progressiyada $a_1 = 3$ va ayirma $d = 4$ bo'lsa, dastlabki $10$ ta hadi yig'indisi $S_{10}$ ni toping.",
-      "image": "",
+      "title": "$150$ sonining $20\\%$ ini toping.",
       "options": [
-        "$210$",
-        "$240$",
-        "$190$",
-        "$180$"
+        "$30$",
+        "$25$",
+        "$35$",
+        "$40$"
       ],
       "correct_option": 0,
-      "explanation": "Aritmetik progressiya dastlabki $n$ ta hadi yig'indisi formulasi:\n$$S_n = \\frac{2a_1 + (n - 1)d}{2} \\cdot n$$\n$$S_{10} = \\frac{2(3) + (10 - 1) \\cdot 4}{2} \\cdot 10 = \\frac{6 + 36}{2} \\cdot 10 = \\frac{42}{2} \\cdot 10 = 21 \\cdot 10 = 210$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$150 \\cdot 0.20 = 30$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_dtm_02",
       "section_id": "sec_dtm",
-      "title": "Agar $x + \\frac{1}{x} = 5$ bo'lsa, $x^2 + \\frac{1}{x^2}$ ning qiymatini toping.",
-      "image": "",
+      "title": "Sonning $25\\%$ i $40$ ga teng. Ushbu sonni toping.",
       "options": [
-        "$23$",
-        "$25$",
-        "$27$",
-        "$21$"
+        "$160$",
+        "$100$",
+        "$120$",
+        "$200$"
       ],
       "correct_option": 0,
-      "explanation": "Tenglikning ikkala tomonini kvadratga ko'taramiz:\n$$\\left(x + \\frac{1}{x}\\right)^2 = 5^2$$\n$$x^2 + 2 \\cdot x \\cdot \\frac{1}{x} + \\frac{1}{x^2} = 25$$\n$$x^2 + 2 + \\frac{1}{x^2} = 25 \\implies x^2 + \\frac{1}{x^2} = 25 - 2 = 23$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$40 : 0.25 = 40 \\times 4 = 160$.",
+      "difficulty": "oson",
+      "points": 10
     },
     {
       "id": "q_dtm_03",
       "section_id": "sec_dtm",
-      "title": "Qavariq ko'pburchakning ichki burchaklari yig'indisi $1260^\\circ$ ga teng bo'lsa, uning tomonlari soni $n$ ni toping.",
-      "image": "",
+      "title": "Mahsulot narxi $200\\,000$ so'mdan $160\\,000$ so'mga tushirildi. Narx necha foizga arzonlashgan?",
       "options": [
-        "$9$",
-        "$8$",
-        "$10$",
-        "$7$"
+        "$20\\%$",
+        "$25\\%$",
+        "$15\\%$",
+        "$40\\%$"
       ],
       "correct_option": 0,
-      "explanation": "Qavariq $n$-burchak ichki burchaklari yig'indisi formulasi: $180^\\circ(n - 2)$.\n$$180^\\circ(n - 2) = 1260^\\circ$$\n$$n - 2 = \\frac{1260}{180} = 7 \\implies n = 7 + 2 = 9$$.",
-      "difficulty": "orta",
-      "points": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "explanation": "$\\frac{200000 - 160000}{200000} \\times 100\\% = \\frac{40000}{200000} \\times 100\\% = 20\\%$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_04",
+      "section_id": "sec_dtm",
+      "title": "Proporsiyadan $x$ ni toping: $\\frac{x}{6} = \\frac{10}{15}$",
+      "options": [
+        "$x = 4$",
+        "$x = 5$",
+        "$x = 3$",
+        "$x = 9$"
+      ],
+      "correct_option": 0,
+      "explanation": "$15x = 60 \\implies x = 4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_05",
+      "section_id": "sec_dtm",
+      "title": "$80$ sonini $3 : 5$ nisbatda ikkita songa ajrating. Katta sonni toping.",
+      "options": [
+        "$50$",
+        "$30$",
+        "$45$",
+        "$60$"
+      ],
+      "correct_option": 0,
+      "explanation": "$3k + 5k = 80 \\implies 8k = 80 \\implies k = 10$. Katta son: $5k = 50$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_06",
+      "section_id": "sec_dtm",
+      "title": "$500$ ning $10\\%$ i va $200$ ning $20\\%$ i yig'indisini toping.",
+      "options": [
+        "$90$",
+        "$70$",
+        "$80$",
+        "$100$"
+      ],
+      "correct_option": 0,
+      "explanation": "$50 + 40 = 90$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_07",
+      "section_id": "sec_dtm",
+      "title": "Kitob narxi $10\\%$ ga oshirilib, so'ngra yangi narxi $10\\%$ ga arzonlashtirildi. Dastlabki narx qanday o'zgardi?",
+      "options": [
+        "$1\\%$ ga kamaydi",
+        "O'zgarmadi",
+        "$1\\%$ ga oshdi",
+        "$2\\%$ ga kamaydi"
+      ],
+      "correct_option": 0,
+      "explanation": "$1.10 \\times 0.90 = 0.99 = 99\\% \\implies 1\\%$ kamaydi.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_08",
+      "section_id": "sec_dtm",
+      "title": "Sinfda $30$ ta o'quvchi bor. Ularning $60\\%$ i o'g'il bolalar bo'lsa, qizlar sonini toping.",
+      "options": [
+        "$12$",
+        "$18$",
+        "$15$",
+        "$10$"
+      ],
+      "correct_option": 0,
+      "explanation": "Qizlar $40\\%$: $30 \\times 0.40 = 12$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_09",
+      "section_id": "sec_dtm",
+      "title": "Proporsiyadan $y$ ni toping: $\\frac{4}{y} = \\frac{8}{14}$",
+      "options": [
+        "$y = 7$",
+        "$y = 6$",
+        "$y = 8$",
+        "$y = 5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$8y = 56 \\implies y = 7$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_10",
+      "section_id": "sec_dtm",
+      "title": "$250$ soni $200$ sonidan necha foiz ko'p?",
+      "options": [
+        "$25\\%$",
+        "$20\\%$",
+        "$50\\%$",
+        "$30\\%$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{250 - 200}{200} \\times 100\\% = \\frac{50}{200} \\times 100\\% = 25\\%$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_11",
+      "section_id": "sec_dtm",
+      "title": "$24$ va $36$ sonlarining eng katta umumiy bo'luvchisi (EKUB) ni toping.",
+      "options": [
+        "$12$",
+        "$6$",
+        "$18$",
+        "$24$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\text{EKUB}(24, 36) = 12$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_12",
+      "section_id": "sec_dtm",
+      "title": "$12$ va $15$ sonlarining eng kichik umumiy karralisi (EKUK) ni toping.",
+      "options": [
+        "$60$",
+        "$30$",
+        "$180$",
+        "$45$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\text{EKUK}(12, 15) = 60$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_13",
+      "section_id": "sec_dtm",
+      "title": "Quyidagi sonlardan qaysi biri $3$ ga qoldiqsiz bo'linadi?",
+      "options": [
+        "$417$",
+        "$521$",
+        "$314$",
+        "$602$"
+      ],
+      "correct_option": 0,
+      "explanation": "$4 + 1 + 7 = 12$ ($3$ ga bo'linadi).",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_14",
+      "section_id": "sec_dtm",
+      "title": "Quyidagi sonlardan qaysi biri $9$ ga qoldiqsiz bo'linadi?",
+      "options": [
+        "$738$",
+        "$624$",
+        "$512$",
+        "$802$"
+      ],
+      "correct_option": 0,
+      "explanation": "$7 + 3 + 8 = 18$ ($9$ ga bo'linadi).",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_15",
+      "section_id": "sec_dtm",
+      "title": "$1$ dan $20$ gacha bo'lgan natural sonlar ichida nechta tub son bor?",
+      "options": [
+        "$8\\text{ ta}$",
+        "$7\\text{ ta}$",
+        "$9\\text{ ta}$",
+        "$10\\text{ ta}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Tub sonlar: $2, 3, 5, 7, 11, 13, 17, 19$ — jami $8$ ta.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_16",
+      "section_id": "sec_dtm",
+      "title": "Eng kichik tub son qaysi?",
+      "options": [
+        "$2$",
+        "$1$",
+        "$0$",
+        "$3$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2$ eng kichik va yagona juft tub son.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_17",
+      "section_id": "sec_dtm",
+      "title": "$60$ sonining tub ko'paytuvchilarga ajralmasini toping.",
+      "options": [
+        "$2^2 \\cdot 3 \\cdot 5$",
+        "$2 \\cdot 3 \\cdot 10$",
+        "$4 \\cdot 15$",
+        "$2^3 \\cdot 5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$60 = 4 \\cdot 15 = 2^2 \\cdot 3 \\cdot 5$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_18",
+      "section_id": "sec_dtm",
+      "title": "$72$ sonining barcha natural bo'luvchilari sonini toping.",
+      "options": [
+        "$12\\text{ ta}$",
+        "$10\\text{ ta}$",
+        "$8\\text{ ta}$",
+        "$16\\text{ ta}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$72 = 2^3 \\cdot 3^2 \\implies (3+1)(2+1) = 4 \\times 3 = 12$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_19",
+      "section_id": "sec_dtm",
+      "title": "$47$ ni $5$ ga bo'lgandagi qoldiqni toping.",
+      "options": [
+        "$2$",
+        "$3$",
+        "$4$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$47 = 5 \\times 9 + 2$. Qoldiq: $2$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_20",
+      "section_id": "sec_dtm",
+      "title": "O'zaro tub sonlar juftligini toping.",
+      "options": [
+        "$8$ va $15$",
+        "$6$ va $9$",
+        "$14$ va $21$",
+        "$10$ va $25$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\text{EKUB}(8, 15) = 1$ bo'lgani uchun ular o'zaro tub.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_21",
+      "section_id": "sec_dtm",
+      "title": "$12, 18, 24, 30$ sonlarining o'rta arifmetigini toping.",
+      "options": [
+        "$21$",
+        "$20$",
+        "$22$",
+        "$24$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{12 + 18 + 24 + 30}{4} = \\frac{84}{4} = 21$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_22",
+      "section_id": "sec_dtm",
+      "title": "Avtomobil $3$ soatda $180$ km yo'l bosdi. Uning o'rtacha tezligini toping.",
+      "options": [
+        "$60\\text{ km/soat}$",
+        "$50\\text{ km/soat}$",
+        "$70\\text{ km/soat}$",
+        "$90\\text{ km/soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$v = \\frac{s}{t} = \\frac{180}{3} = 60\\text{ km/soat}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_23",
+      "section_id": "sec_dtm",
+      "title": "Poyezd $80\\text{ km/soat}$ tezlik bilan $2.5$ soat harakatlandi. Bosib o'tilgan masofani toping.",
+      "options": [
+        "$200\\text{ km}$",
+        "$160\\text{ km}$",
+        "$240\\text{ km}$",
+        "$180\\text{ km}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$s = v \\cdot t = 80 \\times 2.5 = 200\\text{ km}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_24",
+      "section_id": "sec_dtm",
+      "title": "Usta ishni $6$ soatda, shogirdi $12$ soatda bajaradi. Ular birgalikda ishlasa, ish necha soatda tugaydi?",
+      "options": [
+        "$4\\text{ soat}$",
+        "$3\\text{ soat}$",
+        "$5\\text{ soat}$",
+        "$6\\text{ soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{1}{6} + \\frac{1}{12} = \\frac{3}{12} = \\frac{1}{4} \\implies t = 4\\text{ soat}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_25",
+      "section_id": "sec_dtm",
+      "title": "Ota $36$ yoshda, o'g'il $10$ yoshda. Necha yildan keyin ota o'g'lidan $2$ barobar katta bo'ladi?",
+      "options": [
+        "$16\\text{ yildan keyin}$",
+        "$12\\text{ yildan keyin}$",
+        "$14\\text{ yildan keyin}$",
+        "$18\\text{ yildan keyin}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$36 + x = 2(10 + x) \\implies 36 + x = 20 + 2x \\implies x = 16$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_26",
+      "section_id": "sec_dtm",
+      "title": "Ketma-ket uchta butun sonning yig'indisi $45$. Ushbu sonlarning eng kichigini toping.",
+      "options": [
+        "$14$",
+        "$15$",
+        "$13$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(n-1) + n + (n+1) = 45 \\implies 3n = 45 \\implies n = 15$. Kichigi: $14$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_27",
+      "section_id": "sec_dtm",
+      "title": "$200$ gramm $15\\%$ li tuz eritmasida necha gramm tuz bor?",
+      "options": [
+        "$30\\text{ g}$",
+        "$25\\text{ g}$",
+        "$20\\text{ g}$",
+        "$40\\text{ g}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$200 \\times 0.15 = 30\\text{ g}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_28",
+      "section_id": "sec_dtm",
+      "title": "Soat $3:00$ da soat va daqiqa millari orasidagi burchak necha gradus?",
+      "options": [
+        "$90^\\circ$",
+        "$60^\\circ$",
+        "$120^\\circ$",
+        "$45^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "Har bir soat orasi $30^\\circ$: $3 \\times 30^\\circ = 90^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_29",
+      "section_id": "sec_dtm",
+      "title": "Soat $6:00$ da soat va daqiqa millari orasidagi burchak necha gradus?",
+      "options": [
+        "$180^\\circ$",
+        "$90^\\circ$",
+        "$120^\\circ$",
+        "$360^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$6 \\times 30^\\circ = 180^\\circ$ (yoyiq burchak).",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_30",
+      "section_id": "sec_dtm",
+      "title": "Hovuzdagi suv birinchi quvurdan $4$ soatda, ikkinchisidan $6$ soatda to'ladi. Ikkalasi birgalikda ochilsa, necha soatda to'ladi?",
+      "options": [
+        "$2.4\\text{ soat}$",
+        "$2.5\\text{ soat}$",
+        "$5\\text{ soat}$",
+        "$3\\text{ soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$t = \\frac{4 \\times 6}{4 + 6} = \\frac{24}{10} = 2.4\\text{ soat}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_31",
+      "section_id": "sec_dtm",
+      "title": "Tenglamalar sistemasini yeching: $\\begin{cases} x + y = 10 \\\\ x - y = 4 \\end{cases}$",
+      "options": [
+        "$x = 7, y = 3$",
+        "$x = 6, y = 4$",
+        "$x = 8, y = 2$",
+        "$x = 5, y = 5$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2x = 14 \\implies x = 7, y = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_32",
+      "section_id": "sec_dtm",
+      "title": "Tenglamalar sistemasidan $y$ ni toping: $\\begin{cases} 2x + y = 13 \\\\ x + y = 8 \\end{cases}$",
+      "options": [
+        "$y = 3$",
+        "$y = 5$",
+        "$y = 4$",
+        "$y = 2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(2x+y) - (x+y) = 13 - 8 \\implies x = 5 \\implies y = 8 - 5 = 3$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_33",
+      "section_id": "sec_dtm",
+      "title": "Ikki sonning yig'indisi $20$, ko'paytmasi $96$. Ushbu sonlarni toping.",
+      "options": [
+        "$8$ va $12$",
+        "$6$ va $16$",
+        "$10$ va $10$",
+        "$4$ va $24$"
+      ],
+      "correct_option": 0,
+      "explanation": "$8 + 12 = 20$ va $8 \\times 12 = 96$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_34",
+      "section_id": "sec_dtm",
+      "title": "To'g'ri to'rtburchak perimetri $28$, bir tomoni $6$. Uning yuzini toping.",
+      "options": [
+        "$48$",
+        "$42$",
+        "$36$",
+        "$54$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2(a+b) = 28 \\implies a+b=14 \\implies b = 14-6 = 8$. Yuzi: $6 \\times 8 = 48$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_35",
+      "section_id": "sec_dtm",
+      "title": "Qayiqning oqim bo'ylab tezligi $18\\text{ km/soat}$, oqim tezligi $3\\text{ km/soat}$. Qayiqning o'z tezligini toping.",
+      "options": [
+        "$15\\text{ km/soat}$",
+        "$21\\text{ km/soat}$",
+        "$12\\text{ km/soat}$",
+        "$16\\text{ km/soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$v_{\\text{o'z}} = 18 - 3 = 15\\text{ km/soat}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_36",
+      "section_id": "sec_dtm",
+      "title": "Qayiqning oqimga qarshi tezligi $12\\text{ km/soat}$, oqim tezligi $2\\text{ km/soat}$. Oqim bo'ylab tezligini toping.",
+      "options": [
+        "$16\\text{ km/soat}$",
+        "$14\\text{ km/soat}$",
+        "$18\\text{ km/soat}$",
+        "$15\\text{ km/soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$v_{\\text{o'z}} = 12 + 2 = 14$. Oqim bo'ylab: $14 + 2 = 16\\text{ km/soat}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_37",
+      "section_id": "sec_dtm",
+      "title": "Daftar va qalam birgalikda $5000$ so'm turadi. Daftar qalamdan $3000$ so'm qimmat. Qalam narxini toping.",
+      "options": [
+        "$1000\\text{ so'm}$",
+        "$2000\\text{ so'm}$",
+        "$1500\\text{ so'm}$",
+        "$4000\\text{ so'm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$q + (q + 3000) = 5000 \\implies 2q = 2000 \\implies q = 1000\\text{ so'm}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_38",
+      "section_id": "sec_dtm",
+      "title": "Balandligi $10$ m bo'lgan yog'och har kuni $2$ m yuqoriga chiqib, kechasi $1$ m sirpanib tushadigan shilliqqurt necha kunda tepaga yetadi?",
+      "options": [
+        "$9\\text{ kunda}$",
+        "$10\\text{ kunda}$",
+        "$8\\text{ kunda}$",
+        "$11\\text{ kunda}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$8$ kunda $8$ metrga chiqadi. $9$-kuni $8+2=10$ metrga yetadi va sirpanmaydi.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_39",
+      "section_id": "sec_dtm",
+      "title": "$1, 2, 3, 4, 5$ raqamlaridan raqamlari takrorlanmagan nechta $3$ xonali son tuzish mumkin?",
+      "options": [
+        "$60\\text{ ta}$",
+        "$120\\text{ ta}$",
+        "$24\\text{ ta}$",
+        "$50\\text{ ta}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$A_5^3 = 5 \\times 4 \\times 3 = 60$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_40",
+      "section_id": "sec_dtm",
+      "title": "$4$ nafar o'quvchini bitta qatorga necha xil usulda safga tizish mumkin?",
+      "options": [
+        "$24\\text{ xil}$",
+        "$12\\text{ xil}$",
+        "$16\\text{ xil}$",
+        "$8\\text{ xil}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P_4 = 4! = 4 \\times 3 \\times 2 \\times 1 = 24$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_41",
+      "section_id": "sec_dtm",
+      "title": "Oddiy o'yin soqqasi (zar) tashlanganda toq son tushish ehtimolligini toping.",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{1}{6}$",
+        "$\\frac{2}{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Toq sonlar: $1, 3, 5$ ($3$ ta). Jami: $6$ ta. $P = \\frac{3}{6} = \\frac{1}{2}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_42",
+      "section_id": "sec_dtm",
+      "title": "Oddiy o'yin soqqasi tashlanganda $4$ dan katta son tushish ehtimolligini toping.",
+      "options": [
+        "$\\frac{1}{3}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{6}$",
+        "$\\frac{2}{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$5$ va $6$ ($2$ ta). $P = \\frac{2}{6} = \\frac{1}{3}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_43",
+      "section_id": "sec_dtm",
+      "title": "Qutida $4$ ta oq va $6$ ta qora shar bor. Tavakkaliga olingan bitta sharning oq bo'lish ehtimolligini toping.",
+      "options": [
+        "$\\frac{2}{5}$",
+        "$\\frac{3}{5}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P = \\frac{4}{4 + 6} = \\frac{4}{10} = \\frac{2}{5} = 0.4$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_44",
+      "section_id": "sec_dtm",
+      "title": "Tanga $2$ marta tashlandi. Ikkala marta ham raqamli tomoni tushish ehtimolligini toping.",
+      "options": [
+        "$\\frac{1}{4}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{3}{4}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$P = \\frac{1}{2} \\times \\frac{1}{2} = \\frac{1}{4}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_45",
+      "section_id": "sec_dtm",
+      "title": "Quyidagi sonlar ketma-ketligida keyingi sonni toping: $2, 4, 8, 16, \\dots$",
+      "options": [
+        "$32$",
+        "$24$",
+        "$30$",
+        "$64$"
+      ],
+      "correct_option": 0,
+      "explanation": "Har bir son $2$ ga ko'paytirilmoqda: $16 \\times 2 = 32$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_46",
+      "section_id": "sec_dtm",
+      "title": "Quyidagi sonlar ketma-ketligida keyingi sonni toping: $1, 4, 9, 16, 25, \\dots$",
+      "options": [
+        "$36$",
+        "$30$",
+        "$49$",
+        "$32$"
+      ],
+      "correct_option": 0,
+      "explanation": "Natural sonlar kvadratlari: $6^2 = 36$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_47",
+      "section_id": "sec_dtm",
+      "title": "Hisoblang: $1 + 2 + 3 + \\dots + 20$",
+      "options": [
+        "$210$",
+        "$200$",
+        "$220$",
+        "$190$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{n(n+1)}{2} = \\frac{20 \\times 21}{2} = 210$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_48",
+      "section_id": "sec_dtm",
+      "title": "Agar $x + \\frac{1}{x} = 4$ bo'lsa, $x^2 + \\frac{1}{x^2}$ ni toping.",
+      "options": [
+        "$14$",
+        "$16$",
+        "$18$",
+        "$12$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\left(x + \\frac{1}{x}\\right)^2 = x^2 + 2 + \\frac{1}{x^2} = 16 \\implies x^2 + \\frac{1}{x^2} = 14$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_49",
+      "section_id": "sec_dtm",
+      "title": "Kubning barcha qirralari yig'indisi $48$ sm. Uning bitta qirrasi uzunligini toping.",
+      "options": [
+        "$4\\text{ sm}$",
+        "$6\\text{ sm}$",
+        "$8\\text{ sm}$",
+        "$12\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kubda $12$ ta qirra bor: $48 : 12 = 4\\text{ sm}$.",
+      "difficulty": "oson",
+      "points": 10
+    },
+    {
+      "id": "q_dtm_50",
+      "section_id": "sec_dtm",
+      "title": "Ikkita to'ldiruvchi burchak nisbati $1 : 2$. Katta burchakni toping.",
+      "options": [
+        "$60^\\circ$",
+        "$30^\\circ$",
+        "$45^\\circ$",
+        "$90^\\circ$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x + 2x = 90^\\circ \\implies 3x = 90^\\circ \\implies x = 30^\\circ$. Katta burchak: $2x = 60^\\circ$.",
+      "difficulty": "oson",
+      "points": 10
     }
   ],
   "quiz_stats": {
-    "total_solved": 5,
-    "correct_count": 5
+    "total_solved": 7,
+    "correct_count": 7
   },
   "settings": {
     "site_name": "Kenjayev BLOG & Matematika Quiz",
     "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
   },
-  "updated_at": "2026-09-02T21:16:52.099072",
-  "version": 58
+  "updated_at": "2026-09-02T21:23:31.702317",
+  "version": 64
 }
