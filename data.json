@@ -397,13 +397,13 @@
     }
   ],
   "quiz_stats": {
-    "total_solved": 2,
-    "correct_count": 2
+    "total_solved": 5,
+    "correct_count": 5
   },
   "settings": {
     "site_name": "Kenjayev BLOG & Matematika Quiz",
     "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
   },
-  "updated_at": "2026-09-02T21:06:11.628166",
-  "version": 51
+  "updated_at": "2026-09-02T21:16:52.099072",
+  "version": 58
 }

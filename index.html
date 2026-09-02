@@ -2395,6 +2395,12 @@ class MathQuizApp {
         this.currentUser = null;
         this.currentUserRank = null;
 
+        // User Question Progress & Session Persistence
+        this.userProgress = {
+            solvedMap: {}, // { [question_id]: { is_correct: bool, points: number, date: string } }
+            activeSessions: {} // { [section_id]: { queueIds: [], currentIndex: 0, mode: 'practice' } }
+        };
+
         // Player State
         this.activeSectionId = 'all';
         this.playerQueue = [];
@@ -2485,8 +2491,101 @@ class MathQuizApp {
             }
         }
 
+        this.loadUserProgressFromLocal();
+        this.fetchUserProgressFromCloud();
         this.syncUserProfile();
         this.renderUserProfileUI();
+    }
+
+    // --- USER PROGRESS PERSISTENCE (SAVOLLAR TAKRORLANMASLIGI VA RESUME) ---
+    getProgressStorageKey() {
+        const uid = this.currentUser ? this.currentUser.id : 'guest';
+        return `quiz_progress_data_${uid}`;
+    }
+
+    loadUserProgressFromLocal() {
+        try {
+            const raw = localStorage.getItem(this.getProgressStorageKey());
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                this.userProgress.solvedMap = parsed.solvedMap || {};
+                this.userProgress.activeSessions = parsed.activeSessions || {};
+            }
+        } catch (e) {
+            this.userProgress = { solvedMap: {}, activeSessions: {} };
+        }
+    }
+
+    saveUserProgressToLocal() {
+        try {
+            localStorage.setItem(this.getProgressStorageKey(), JSON.stringify(this.userProgress));
+        } catch (e) {}
+    }
+
+    fetchUserProgressFromCloud() {
+        if (!this.currentUser || !this.currentUser.id) return;
+        fetch(this.getApiUrl(`/api/user/progress?user_id=${encodeURIComponent(this.currentUser.id)}`))
+            .then(r => r.json())
+            .then(res => {
+                if (res && res.status === 'success' && Array.isArray(res.progress)) {
+                    res.progress.forEach(row => {
+                        if (row.question_id) {
+                            this.userProgress.solvedMap[row.question_id] = {
+                                is_correct: Boolean(row.is_correct),
+                                points: row.points || 0,
+                                section_id: row.section_id,
+                                solved_at: row.solved_at
+                            };
+                        }
+                    });
+                    this.saveUserProgressToLocal();
+                    this.renderSections();
+                }
+            })
+            .catch(() => {});
+    }
+
+    isQuestionSolved(qId) {
+        return Boolean(this.userProgress.solvedMap && this.userProgress.solvedMap[qId]);
+    }
+
+    markQuestionSolved(qId, secId, isCorrect, points) {
+        if (!this.userProgress.solvedMap) this.userProgress.solvedMap = {};
+        this.userProgress.solvedMap[qId] = {
+            is_correct: isCorrect,
+            points: points,
+            section_id: secId,
+            solved_at: new Date().toISOString()
+        };
+        this.saveUserProgressToLocal();
+    }
+
+    saveActiveSession() {
+        if (!this.activeSectionId) return;
+        if (!this.userProgress.activeSessions) this.userProgress.activeSessions = {};
+        
+        if (this.playerQueue && this.playerQueue.length > 0) {
+            this.userProgress.activeSessions[this.activeSectionId] = {
+                queueIds: this.playerQueue.map(q => q.id),
+                currentIndex: this.currentQuestionIndex,
+                mode: this.playerMode,
+                examSessionCorrect: this.examSessionCorrect || 0,
+                examSessionTotal: this.examSessionTotal || this.playerQueue.length,
+                updatedAt: new Date().toISOString()
+            };
+        }
+        this.saveUserProgressToLocal();
+    }
+
+    clearActiveSession(secId) {
+        if (this.userProgress.activeSessions && this.userProgress.activeSessions[secId]) {
+            delete this.userProgress.activeSessions[secId];
+            this.saveUserProgressToLocal();
+        }
+    }
+
+    getActiveSession(secId) {
+        return this.userProgress.activeSessions ? this.userProgress.activeSessions[secId] : null;
     }
 
     syncUserProfile() {
@@ -2939,7 +3038,7 @@ class MathQuizApp {
         if (notify) this.showToast("ℹ️ Admin rejimidan chiqdingiz");
     }
 
-    // --- SECTIONS RENDERING ---
+    // --- SECTIONS RENDERING WITH USER PROGRESS & RESUME BADGES ---
     renderSections() {
         const container = document.getElementById('sectionsGridContainer');
         if (!container) return;
@@ -2954,7 +3053,55 @@ class MathQuizApp {
         }
 
         container.innerHTML = this.sections.map(sec => {
-            const qCount = this.quizzes.filter(q => q.section_id === sec.id).length;
+            const secQuestions = this.quizzes.filter(q => q.section_id === sec.id);
+            const totalCount = secQuestions.length;
+            const solvedCount = secQuestions.filter(q => this.isQuestionSolved(q.id)).length;
+            const percent = totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
+            const session = this.getActiveSession(sec.id);
+            const hasOngoing = session && session.queueIds && session.queueIds.length > 0 && session.currentIndex < session.queueIds.length;
+            const isAllCompleted = (totalCount > 0 && solvedCount >= totalCount);
+
+            // Badge Display
+            let countBadgeHtml = '';
+            if (isAllCompleted) {
+                countBadgeHtml = `<span class="section-count-badge" style="background:#059669; color:#fff;">✅ 100% Yechilgan</span>`;
+            } else if (hasOngoing) {
+                countBadgeHtml = `<span class="section-count-badge" style="background:#2563eb; color:#fff;">▶️ Savol ${session.currentIndex + 1}/${session.queueIds.length}</span>`;
+            } else {
+                countBadgeHtml = `<span class="section-count-badge">${solvedCount}/${totalCount} yechilgan</span>`;
+            }
+
+            // Action Buttons
+            let actionBtnsHtml = '';
+            if (isAllCompleted) {
+                actionBtnsHtml = `
+                    <button class="btn btn-secondary" style="flex:1;" onclick="mathApp.confirmResetSection('${sec.id}')">
+                        <span>🔄 Qaytadan Yechish</span>
+                    </button>
+                    <button class="btn btn-outline" style="flex:1;" onclick="mathApp.startSectionExam('${sec.id}')">
+                        <span>⏱ Imtihon Testi</span>
+                    </button>
+                `;
+            } else if (hasOngoing) {
+                actionBtnsHtml = `
+                    <button class="btn btn-primary" style="flex:3;" onclick="mathApp.startSectionPractice('${sec.id}')">
+                        <span>▶️ Davom ettirish (${session.currentIndex + 1}/${session.queueIds.length})</span>
+                    </button>
+                    <button class="btn btn-secondary" style="flex:1;" title="Boshidan boshlash" onclick="mathApp.confirmResetSection('${sec.id}')">
+                        <span>🔄</span>
+                    </button>
+                `;
+            } else {
+                actionBtnsHtml = `
+                    <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
+                        <span>Mashq qilish</span>
+                    </button>
+                    <button class="btn btn-secondary" style="flex:1;" onclick="mathApp.startSectionExam('${sec.id}')">
+                        <span>Test (Imtihon)</span>
+                    </button>
+                `;
+            }
+
             const adminBtns = this.isAdmin ? `
                 <div class="section-admin-actions">
                     <button class="btn btn-sm btn-secondary" title="Savol qo'shish" onclick="event.stopPropagation(); mathApp.openQuestionModal('${sec.id}')">➕</button>
@@ -2970,41 +3117,71 @@ class MathQuizApp {
                         <div class="section-icon-badge" style="border-color: ${sec.color || '#3b82f6'}; color: ${sec.color || '#3b82f6'};">
                             ${sec.icon || '📐'}
                         </div>
-                        <span class="section-count-badge">${qCount} ta savol</span>
+                        ${countBadgeHtml}
                     </div>
 
                     <h3 class="section-title">${sec.title}</h3>
                     <p class="section-desc">${sec.description || "Matematika bo'yicha interaktiv testlar"}</p>
 
+                    <!-- Mini Progress Bar -->
+                    <div style="background:var(--border); border-radius:10px; height:6px; overflow:hidden; margin: 10px 0 12px;">
+                        <div style="background: ${isAllCompleted ? '#10b981' : '#3b82f6'}; width:${percent}%; height:100%; transition: width 0.3s ease;"></div>
+                    </div>
+
                     <div class="section-meta-row">
-                        <span>🎯 Interaktiv Mashq</span>
-                        <span>⏱ Imtihon Testi</span>
+                        <span>🎯 ${solvedCount}/${totalCount} savol</span>
+                        <span>📊 ${percent}% tayyor</span>
                     </div>
 
                     <div class="section-actions" onclick="event.stopPropagation()">
-                        <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
-                            <span>Mashq qilish</span>
-                        </button>
-                        <button class="btn btn-secondary" style="flex:1;" onclick="mathApp.startSectionExam('${sec.id}')">
-                            <span>Test (Imtihon)</span>
-                        </button>
+                        ${actionBtnsHtml}
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    // --- QUIZ PLAYER ENGINE ---
+    // --- QUIZ PLAYER ENGINE WITH RESUME & NON-REPEATING QUEUE ---
     startSectionPractice(secId) {
         this.activeSectionId = secId;
         this.playerMode = 'practice';
-        const list = this.quizzes.filter(q => q.section_id === secId);
-        if (list.length === 0) {
-            this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
+
+        // 1. Check if user already has an ongoing session
+        const session = this.getActiveSession(secId);
+        if (session && session.queueIds && session.queueIds.length > 0 && session.currentIndex < session.queueIds.length) {
+            // Restore from saved session
+            const restoredQueue = session.queueIds
+                .map(id => this.quizzes.find(q => q.id === id))
+                .filter(Boolean);
+
+            if (restoredQueue.length > 0) {
+                this.playerQueue = restoredQueue;
+                this.currentQuestionIndex = Math.min(session.currentIndex, this.playerQueue.length - 1);
+                this.switchTab('player');
+                this.renderCurrentQuestion();
+                this.showToast(`▶️ To'xtagan joyingizdan davom etmoqdasiz (${this.currentQuestionIndex + 1}-savol)`);
+                return;
+            }
+        }
+
+        // 2. Fresh Queue: filter ONLY unsolved questions for this user!
+        const allSecQuizzes = this.quizzes.filter(q => q.section_id === secId);
+        if (allSecQuizzes.length === 0) {
+            this.showToast("⚠️ Ushbu bo'limda hali savollar mavjud emas!");
             return;
         }
-        this.playerQueue = this.shuffleArray([...list]);
+
+        const unsolved = allSecQuizzes.filter(q => !this.isQuestionSolved(q.id));
+
+        if (unsolved.length === 0) {
+            // All questions already solved!
+            this.showAllCompletedModal(secId);
+            return;
+        }
+
+        this.playerQueue = this.shuffleArray([...unsolved]);
         this.currentQuestionIndex = 0;
+        this.saveActiveSession();
         this.switchTab('player');
         this.renderCurrentQuestion();
     }
@@ -3012,12 +3189,14 @@ class MathQuizApp {
     startSectionExam(secId) {
         this.activeSectionId = secId;
         this.playerMode = 'exam';
-        const list = this.quizzes.filter(q => q.section_id === secId);
-        if (list.length === 0) {
+        const allSecQuizzes = this.quizzes.filter(q => q.section_id === secId);
+        if (allSecQuizzes.length === 0) {
             this.showToast("⚠️ Ushbu bo'limda hali savollar yo'q!");
             return;
         }
-        this.playerQueue = this.shuffleArray([...list]);
+
+        // Exam mode takes all questions (or top 20) shuffled
+        this.playerQueue = this.shuffleArray([...allSecQuizzes]);
         this.currentQuestionIndex = 0;
         this.examSessionCorrect = 0;
         this.examSessionTotal = this.playerQueue.length;
@@ -3033,8 +3212,14 @@ class MathQuizApp {
         }
         this.activeSectionId = 'all';
         this.playerMode = 'practice';
-        this.playerQueue = this.shuffleArray([...this.quizzes]);
+
+        // Filter unsolved from whole database
+        const unsolved = this.quizzes.filter(q => !this.isQuestionSolved(q.id));
+        const pool = (unsolved.length > 0) ? unsolved : this.quizzes;
+
+        this.playerQueue = this.shuffleArray([...pool]);
         this.currentQuestionIndex = 0;
+        this.saveActiveSession();
         this.switchTab('player');
         this.renderCurrentQuestion();
     }
@@ -3053,6 +3238,70 @@ class MathQuizApp {
         this.startExamTimer();
         this.switchTab('player');
         this.renderCurrentQuestion();
+    }
+
+    confirmResetSection(secId) {
+        const sec = this.sections.find(s => s.id === secId);
+        const title = sec ? sec.title : "Ushbu bo'lim";
+
+        if (!confirm(`${title} bo'limidagi barcha natijalarni tozalab, savollarni 1-savoldan qayta yechishni xohlaysizmi?`)) {
+            return;
+        }
+
+        this.resetSectionProgress(secId);
+    }
+
+    resetSectionProgress(secId) {
+        this.clearActiveSession(secId);
+
+        // Delete from local solved map
+        const secQuizzes = this.quizzes.filter(q => q.section_id === secId);
+        secQuizzes.forEach(q => {
+            if (this.userProgress.solvedMap && this.userProgress.solvedMap[q.id]) {
+                delete this.userProgress.solvedMap[q.id];
+            }
+        });
+        this.saveUserProgressToLocal();
+
+        // Call backend reset
+        if (this.currentUser && this.currentUser.id) {
+            fetch(this.getApiUrl('/api/user/progress/reset'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: this.currentUser.id,
+                    section_id: secId
+                })
+            }).catch(() => {});
+        }
+
+        this.renderSections();
+        this.showToast("🔄 Bo'lim progressi tozalandi! Boshidan boshlanmoqda...");
+
+        // Start fresh practice
+        setTimeout(() => {
+            const allSecQuizzes = this.quizzes.filter(q => q.section_id === secId);
+            if (allSecQuizzes.length > 0) {
+                this.playerQueue = this.shuffleArray([...allSecQuizzes]);
+                this.currentQuestionIndex = 0;
+                this.saveActiveSession();
+                this.switchTab('player');
+                this.renderCurrentQuestion();
+            }
+        }, 300);
+    }
+
+    showAllCompletedModal(secId) {
+        const sec = this.sections.find(s => s.id === secId);
+        const title = sec ? sec.title : "Bo'lim";
+
+        if (confirm(`🎉 Tabriklaymiz! Siz "${title}" bo'limidagi barcha savollarni to'liq yechib bo'lgansiz!
+
+Natijalarni yangilash uchun barcha savollarni qaytadan yechishni xohlaysizmi?`)) {
+            this.resetSectionProgress(secId);
+        } else {
+            this.switchTab('quizzes');
+        }
     }
 
     renderCurrentQuestion() {
@@ -3120,6 +3369,9 @@ class MathQuizApp {
         document.getElementById('btnPlayerSubmit').disabled = true;
         document.getElementById('btnPlayerNext').style.display = 'none';
         document.getElementById('btnPlayerPrev').disabled = this.currentQuestionIndex === 0;
+
+        // Auto save session position
+        this.saveActiveSession();
     }
 
     selectOption(renderedIdx) {
@@ -3156,6 +3408,9 @@ class MathQuizApp {
         } else {
             this.userStats.streak = 0;
         }
+
+        // Mark question as solved for this user
+        this.markQuestionSolved(q.id, q.section_id, isCorrect, pointsEarned);
 
         // Update Lifetime Stats
         this.recordUserAnswer(isCorrect, q, pointsEarned);
@@ -3211,13 +3466,15 @@ class MathQuizApp {
     nextQuestion() {
         if (this.currentQuestionIndex < this.playerQueue.length - 1) {
             this.currentQuestionIndex++;
+            this.saveActiveSession();
             this.renderCurrentQuestion();
         } else {
-            // Completed
+            // Completed whole queue
+            this.clearActiveSession(this.activeSectionId);
             if (this.playerMode === 'exam') {
                 this.finishExam();
             } else {
-                this.showToast("🎉 Ushbu to'plamdagi barcha savollarni yakunladingiz!");
+                this.showToast("🎉 Ushbu to'plamdagi barcha savollarni muvaffaqiyatli yakunladingiz!");
                 this.switchTab('quizzes');
             }
         }
@@ -3226,12 +3483,14 @@ class MathQuizApp {
     prevQuestion() {
         if (this.currentQuestionIndex > 0) {
             this.currentQuestionIndex--;
+            this.saveActiveSession();
             this.renderCurrentQuestion();
         }
     }
 
     exitPlayer() {
         if (this.examTimerInterval) clearInterval(this.examTimerInterval);
+        this.saveActiveSession();
         this.switchTab('quizzes');
     }
 
@@ -3382,7 +3641,7 @@ class MathQuizApp {
         localStorage.setItem('math_user_stats', JSON.stringify(this.userStats));
         this.updateHeroStats();
 
-        // Send background stat ping with user identity and points
+        // Send background stat ping with user identity, question_id, and points
         fetch(this.getApiUrl('/api/quiz/stat'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -3393,6 +3652,7 @@ class MathQuizApp {
                 points: pointsEarned,
                 correct: isCorrect,
                 streak: this.userStats.streak,
+                question_id: question.id,
                 section_id: question.section_id
             })
         })
@@ -3841,7 +4101,7 @@ class MathQuizApp {
             analiz: [
                 { name: 'Ajoyib Limitlar', formula: '$$\lim_{x \to 0} \frac{\sin(x)}{x} = 1, \quad \lim_{x \to \infty} \left(1 + \frac{1}{x}\right)^x = e$$', desc: "Trigonometrik va ko'rsatkichli limitlar asosi." },
                 { name: 'Nyuton-Leybnis Formulasi', formula: '$$\int_{a}^{b} f(x) \, dx = F(b) - F(a)$$', desc: "Aniq integralni hisoblashning fundamental formulasi." },
-                { name: 'Elementar Funksiyalar Hosilalari', formula: '$$\\frac{d}{dx}(x^n) = n x^{n-1}, \\quad \\frac{d}{dx}(\\sin x) = \\cos x, \\quad \\frac{d}{dx}(e^x) = e^x$$', desc: "Asosiy hosilalar jadvali." },
+                { name: 'Elementar Funksiyalar Hosilalari', formula: '$$\frac{d}{dx}(x^n) = n x^{n-1}, \quad \frac{d}{dx}(\sin x) = \cos x, \quad \frac{d}{dx}(e^x) = e^x$$', desc: "Asosiy hosilalar jadvali." },
                 { name: "Bo'laklab Integrallash", formula: '$$\int u \, dv = u v - \int v \, du$$', desc: "Ko'paytma ko'rinishidagi ifodalarni integrallash." }
             ]
         };

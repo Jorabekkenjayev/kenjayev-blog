@@ -236,11 +236,63 @@ def test_full_system():
     assert rank_data.get('user_rank', {}).get('name') == 'Temur Olimov'
     print(f"   ✓ User exact rank lookup passed (Rank #{rank_data['user_rank']['rank']})")
 
+    # 6e. User Question Progress & Reset Persistence
+    env_stat_prog = {
+        'REQUEST_METHOD': 'POST',
+        'PATH_INFO': '/api/quiz/stat',
+        'QUERY_STRING': '',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080',
+        'wsgi.input': io.BytesIO(json.dumps({
+            'user_id': 'tg_999111',
+            'name': 'Temur Olimov',
+            'points': 20,
+            'correct': True,
+            'streak': 1,
+            'question_id': 'q_test_saved_01',
+            'section_id': 'sec_algebra'
+        }).encode('utf-8'))
+    }
+    env_stat_prog['CONTENT_LENGTH'] = str(len(env_stat_prog['wsgi.input'].getvalue()))
+    res_stat_prog = server.app(env_stat_prog, mock_start)
+    assert json.loads(res_stat_prog[0].decode('utf-8')).get('status') == 'success'
+
+    env_get_prog = {
+        'REQUEST_METHOD': 'GET',
+        'PATH_INFO': '/api/user/progress',
+        'QUERY_STRING': 'user_id=tg_999111&section_id=sec_algebra',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080'
+    }
+    res_get_prog = server.app(env_get_prog, mock_start)
+    prog_data = json.loads(res_get_prog[0].decode('utf-8'))
+    assert prog_data.get('status') == 'success'
+    assert len(prog_data.get('progress', [])) == 1
+    assert prog_data['progress'][0]['question_id'] == 'q_test_saved_01'
+    print("   ✓ User question progress persistence verified (/api/user/progress)")
+
+    env_reset_prog = {
+        'REQUEST_METHOD': 'POST',
+        'PATH_INFO': '/api/user/progress/reset',
+        'QUERY_STRING': '',
+        'SERVER_NAME': 'localhost',
+        'SERVER_PORT': '8080',
+        'wsgi.input': io.BytesIO(json.dumps({
+            'user_id': 'tg_999111',
+            'section_id': 'sec_algebra'
+        }).encode('utf-8'))
+    }
+    env_reset_prog['CONTENT_LENGTH'] = str(len(env_reset_prog['wsgi.input'].getvalue()))
+    res_reset_prog = server.app(env_reset_prog, mock_start)
+    assert json.loads(res_reset_prog[0].decode('utf-8')).get('status') == 'success'
+    print("   ✓ User section progress reset verified (/api/user/progress/reset)")
+
     # Clean up test leaderboard user
     import bot_db
     conn = bot_db.get_connection()
     with conn:
         conn.execute("DELETE FROM quiz_leaderboard WHERE user_id = 'tg_999111'")
+        conn.execute("DELETE FROM quiz_user_progress WHERE user_id = 'tg_999111'")
 
     # 7. Test Frontend KaTeX & SPA View structure
     print("\n7. Validating index.html KaTeX, Leaderboard views, and Modals...")

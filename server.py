@@ -493,6 +493,19 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
+        # 1e. API: Get User's Solved Questions Progress
+        elif path == '/api/user/progress':
+            params = urllib.parse.parse_qs(parsed.query)
+            user_id = params.get('user_id', [''])[0]
+            section_id = params.get('section_id', [''])[0]
+            import bot_db
+            progress = bot_db.get_user_solved_question_ids(user_id, section_id if section_id else None)
+            self.send_json(200, {
+                "status": "success",
+                "progress": progress
+            })
+            return
+
         # 2. API: Check Session Status
         elif path == '/api/admin/check-session':
             is_auth = self.is_authenticated()
@@ -1132,6 +1145,8 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             points = int(body.get('points', 0))
             is_correct = bool(body.get('correct', False))
             current_streak = int(body.get('streak', 0))
+            question_id = str(body.get('question_id', '')).strip()
+            section_id = str(body.get('section_id', '')).strip()
 
             data = load_data()
             if "quiz_stats" not in data:
@@ -1143,9 +1158,12 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
             import bot_db
             user_rank = None
-            if user_id and name:
-                bot_db.update_leaderboard_score(user_id, name, username, points, is_correct, current_streak)
-                user_rank = bot_db.get_user_leaderboard_rank(user_id)
+            if user_id:
+                if name:
+                    bot_db.update_leaderboard_score(user_id, name, username, points, is_correct, current_streak)
+                    user_rank = bot_db.get_user_leaderboard_rank(user_id)
+                if question_id:
+                    bot_db.record_user_question_progress(user_id, question_id, section_id, is_correct, points)
 
             self.send_json(200, {
                 "status": "success",
@@ -1171,6 +1189,24 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json(200, {
                 "status": "success",
                 "user_rank": user_rank
+            })
+            return
+
+        # 8g. Reset User Section Progress (/api/user/progress/reset)
+        elif path == '/api/user/progress/reset':
+            body = self.read_json_body()
+            user_id = str(body.get('user_id', '')).strip()
+            section_id = str(body.get('section_id', '')).strip()
+
+            if not user_id:
+                self.send_json(400, {"status": "error", "error": "user_id talab qilinadi"})
+                return
+
+            import bot_db
+            bot_db.reset_user_section_progress(user_id, section_id if section_id else None)
+            self.send_json(200, {
+                "status": "success",
+                "message": "Progress muvaffaqiyatli tozalandi"
             })
             return
 

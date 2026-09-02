@@ -106,10 +106,22 @@ def init_db(db_path=None):
                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     );
                 """)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS quiz_user_progress (
+                        user_id TEXT NOT NULL,
+                        question_id TEXT NOT NULL,
+                        section_id TEXT,
+                        is_correct INTEGER DEFAULT 0,
+                        points INTEGER DEFAULT 0,
+                        solved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        PRIMARY KEY (user_id, question_id)
+                    );
+                """)
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_users_registered ON bot_users(is_registered);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_msg_map_user ON bot_message_map(user_telegram_id);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_pending_verif ON bot_pending_verifications(status, expires_at);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_leaderboard_rank ON quiz_leaderboard(points DESC, correct_count DESC);")
+                conn.execute("CREATE INDEX IF NOT EXISTS idx_user_prog_sec ON quiz_user_progress(user_id, section_id);")
         finally:
             conn.close()
 
@@ -584,6 +596,79 @@ def get_user_leaderboard_rank(user_id, db_path=None):
         return user_dict
     finally:
         conn.close()
+
+# --- USER QUESTION PROGRESS & PERSISTENCE ---
+def record_user_question_progress(user_id, question_id, section_id=None, is_correct=False, points=0, db_path=None):
+    if not user_id or not question_id:
+        return False
+    user_id_str = str(user_id).strip()
+    question_id_str = str(question_id).strip()
+    section_id_str = str(section_id).strip() if section_id else ""
+    correct_val = 1 if is_correct else 0
+    points_val = max(0, int(points))
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                conn.execute("""
+                    INSERT INTO quiz_user_progress (user_id, question_id, section_id, is_correct, points, solved_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(user_id, question_id) DO UPDATE SET
+                        section_id = excluded.section_id,
+                        is_correct = excluded.is_correct,
+                        points = excluded.points,
+                        solved_at = excluded.solved_at
+                """, (user_id_str, question_id_str, section_id_str, correct_val, points_val, now))
+                return True
+        finally:
+            conn.close()
+
+def get_user_solved_question_ids(user_id, section_id=None, db_path=None):
+    if not user_id:
+        return []
+    user_id_str = str(user_id).strip()
+    conn = get_connection(db_path)
+    try:
+        cur = conn.cursor()
+        if section_id:
+            cur.execute("""
+                SELECT question_id, section_id, is_correct, points, solved_at
+                FROM quiz_user_progress
+                WHERE user_id = ? AND section_id = ?
+            """, (user_id_str, str(section_id).strip()))
+        else:
+            cur.execute("""
+                SELECT question_id, section_id, is_correct, points, solved_at
+                FROM quiz_user_progress
+                WHERE user_id = ?
+            """, (user_id_str,))
+        return [dict(r) for r in cur.fetchall()]
+    finally:
+        conn.close()
+
+def reset_user_section_progress(user_id, section_id=None, db_path=None):
+    if not user_id:
+        return False
+    user_id_str = str(user_id).strip()
+    with _db_lock:
+        conn = get_connection(db_path)
+        try:
+            with conn:
+                if section_id:
+                    conn.execute("""
+                        DELETE FROM quiz_user_progress
+                        WHERE user_id = ? AND section_id = ?
+                    """, (user_id_str, str(section_id).strip()))
+                else:
+                    conn.execute("""
+                        DELETE FROM quiz_user_progress
+                        WHERE user_id = ?
+                    """, (user_id_str,))
+                return True
+        finally:
+            conn.close()
 
 # Auto-initialize on import
 init_db()
