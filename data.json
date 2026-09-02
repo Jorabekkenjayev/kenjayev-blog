@@ -3807,13 +3807,124 @@
     }
   ],
   "quiz_stats": {
-    "total_solved": 9,
-    "correct_count": 9
+    "total_solved": 147,
+    "correct_count": 133
   },
+  "quiz_leaderboard": [
+    {
+      "user_id": "tg_admin_jorabek",
+      "name": "Jorabek Kenjayev",
+      "username": "Jorabek_Kenjayev",
+      "points": 480,
+      "correct_count": 32,
+      "total_solved": 34,
+      "best_streak": 18,
+      "current_streak": 8,
+      "last_active": "2026-09-02 21:50:00",
+      "created_at": "2026-08-20 10:00:00"
+    },
+    {
+      "user_id": "tg_582103941",
+      "name": "Sardor Rahimov",
+      "username": "sardor_math",
+      "points": 420,
+      "correct_count": 28,
+      "total_solved": 30,
+      "best_streak": 14,
+      "current_streak": 5,
+      "last_active": "2026-09-02 21:45:00",
+      "created_at": "2026-08-22 14:30:00"
+    },
+    {
+      "user_id": "tg_619028472",
+      "name": "Dilnoza Karimova",
+      "username": "dilnoza_k",
+      "points": 360,
+      "correct_count": 25,
+      "total_solved": 27,
+      "best_streak": 11,
+      "current_streak": 4,
+      "last_active": "2026-09-02 21:40:00",
+      "created_at": "2026-08-24 16:15:00"
+    },
+    {
+      "user_id": "tg_888999",
+      "name": "Shoxrux Bek",
+      "username": "shox_math",
+      "points": 350,
+      "correct_count": 1,
+      "total_solved": 1,
+      "best_streak": 7,
+      "current_streak": 7,
+      "last_active": "2026-09-02 21:55:18",
+      "created_at": "2026-09-02 21:55:18"
+    },
+    {
+      "user_id": "tg_492019385",
+      "name": "Jasur Bekchanov",
+      "username": "jasur_olympiad",
+      "points": 310,
+      "correct_count": 21,
+      "total_solved": 24,
+      "best_streak": 9,
+      "current_streak": 3,
+      "last_active": "2026-09-02 21:30:00",
+      "created_at": "2026-08-25 11:00:00"
+    },
+    {
+      "user_id": "tg_730192840",
+      "name": "Nigora Aliyeva",
+      "username": "nigora_a",
+      "points": 240,
+      "correct_count": 17,
+      "total_solved": 19,
+      "best_streak": 7,
+      "current_streak": 2,
+      "last_active": "2026-09-02 21:20:00",
+      "created_at": "2026-08-27 18:40:00"
+    },
+    {
+      "user_id": "tg_819204712",
+      "name": "Temur Olimov",
+      "username": "temur_olimov",
+      "points": 180,
+      "correct_count": 13,
+      "total_solved": 15,
+      "best_streak": 6,
+      "current_streak": 1,
+      "last_active": "2026-09-02 21:10:00",
+      "created_at": "2026-08-28 09:20:00"
+    },
+    {
+      "user_id": "tg_999111",
+      "name": "Temur Olimov",
+      "username": "temur_olimov",
+      "points": 110,
+      "correct_count": 3,
+      "total_solved": 3,
+      "best_streak": 3,
+      "current_streak": 3,
+      "last_active": "2026-09-02 21:54:54",
+      "created_at": "2026-09-02 21:54:38"
+    },
+    {
+      "user_id": "tg_12345",
+      "name": "Ali Valiyev",
+      "username": "alivaliyev",
+      "points": 0,
+      "correct_count": 0,
+      "total_solved": 0,
+      "best_streak": 0,
+      "current_streak": 0,
+      "last_active": "2026-09-02 21:55:18",
+      "created_at": "2026-09-02 21:55:18"
+    }
+  ],
+  "quiz_user_progress": [],
   "settings": {
     "site_name": "Kenjayev BLOG & Matematika Quiz",
     "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
   },
-  "updated_at": "2026-09-02T21:46:15.130875",
-  "version": 70
+  "updated_at": "2026-09-02T21:55:18.178741",
+  "version": 88
 }

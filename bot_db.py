@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 import threading
 import time
@@ -6,6 +7,7 @@ from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_FILE = os.path.join(BASE_DIR, 'bot_database.db')
+DATA_JSON_FILE = os.path.join(BASE_DIR, 'data.json')
 
 _db_lock = threading.Lock()
 
@@ -122,8 +124,91 @@ def init_db(db_path=None):
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_pending_verif ON bot_pending_verifications(status, expires_at);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_leaderboard_rank ON quiz_leaderboard(points DESC, correct_count DESC);")
                 conn.execute("CREATE INDEX IF NOT EXISTS idx_user_prog_sec ON quiz_user_progress(user_id, section_id);")
+                
+                # Auto-sync data.json -> SQLite if SQLite was newly created or has fewer records
+                sync_leaderboard_from_json(conn)
         finally:
             conn.close()
+
+def sync_leaderboard_from_json(conn):
+    """Loads and merges persistent leaderboard and progress from data.json into SQLite."""
+    if not os.path.exists(DATA_JSON_FILE):
+        return
+    try:
+        with open(DATA_JSON_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        json_lb = data.get('quiz_leaderboard', [])
+        json_prog = data.get('quiz_user_progress', [])
+
+        for u in json_lb:
+            uid = str(u.get('user_id', '')).strip()
+            if not uid: continue
+            conn.execute("""
+                INSERT INTO quiz_leaderboard (user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(user_id) DO UPDATE SET
+                    points = MAX(quiz_leaderboard.points, excluded.points),
+                    correct_count = MAX(quiz_leaderboard.correct_count, excluded.correct_count),
+                    total_solved = MAX(quiz_leaderboard.total_solved, excluded.total_solved),
+                    best_streak = MAX(quiz_leaderboard.best_streak, excluded.best_streak),
+                    name = CASE WHEN excluded.name != '' THEN excluded.name ELSE quiz_leaderboard.name END,
+                    username = CASE WHEN excluded.username != '' THEN excluded.username ELSE quiz_leaderboard.username END
+            """, (
+                uid,
+                u.get('name', 'Foydalanuvchi'),
+                u.get('username', ''),
+                int(u.get('points', 0)),
+                int(u.get('correct_count', 0)),
+                int(u.get('total_solved', 0)),
+                int(u.get('best_streak', 0)),
+                int(u.get('current_streak', 0)),
+                u.get('last_active', datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+                u.get('created_at', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            ))
+
+        for p in json_prog:
+            uid = str(p.get('user_id', '')).strip()
+            qid = str(p.get('question_id', '')).strip()
+            if not uid or not qid: continue
+            conn.execute("""
+                INSERT INTO quiz_user_progress (user_id, question_id, section_id, is_correct, points, solved_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(user_id, question_id) DO NOTHING
+            """, (
+                uid,
+                qid,
+                p.get('section_id', ''),
+                1 if p.get('is_correct') else 0,
+                int(p.get('points', 0)),
+                p.get('solved_at', datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            ))
+    except Exception as e:
+        print(f"[LeaderboardSyncFromJSON] Error: {e}")
+
+def sync_leaderboard_to_json(conn):
+    """Saves SQLite leaderboard & progress state into data.json for persistent survival."""
+    if not os.path.exists(DATA_JSON_FILE):
+        return
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM quiz_leaderboard ORDER BY points DESC, correct_count DESC")
+        all_lb = [dict(r) for r in cur.fetchall()]
+        cur.execute("SELECT * FROM quiz_user_progress")
+        all_prog = [dict(r) for r in cur.fetchall()]
+
+        with open(DATA_JSON_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        data['quiz_leaderboard'] = all_lb
+        data['quiz_user_progress'] = all_prog
+
+        tmp_path = DATA_JSON_FILE + '.tmp'
+        with open(tmp_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(tmp_path, DATA_JSON_FILE)
+    except Exception as e:
+        print(f"[LeaderboardSyncToJSON] Error: {e}")
 
 # --- SETTINGS MANAGEMENT ---
 def get_setting(key, default="60", db_path=None):
@@ -455,6 +540,7 @@ def upsert_leaderboard_user(user_id, name, username=None, db_path=None):
                         username = CASE WHEN excluded.username != '' THEN excluded.username ELSE quiz_leaderboard.username END,
                         last_active = excluded.last_active
                 """, (user_id_str, name_str, username_str, now, now))
+                sync_leaderboard_to_json(conn)
                 return True
         finally:
             conn.close()
@@ -488,6 +574,7 @@ def update_leaderboard_score(user_id, name, username=None, points_earned=0, is_c
                         best_streak = MAX(quiz_leaderboard.best_streak, excluded.current_streak),
                         last_active = excluded.last_active
                 """, (user_id_str, name_str, username_str, pts, inc_correct, streak_val, streak_val, now, now))
+                sync_leaderboard_to_json(conn)
                 return True
         finally:
             conn.close()
@@ -621,6 +708,7 @@ def record_user_question_progress(user_id, question_id, section_id=None, is_corr
                         points = excluded.points,
                         solved_at = excluded.solved_at
                 """, (user_id_str, question_id_str, section_id_str, correct_val, points_val, now))
+                sync_leaderboard_to_json(conn)
                 return True
         finally:
             conn.close()
@@ -666,6 +754,7 @@ def reset_user_section_progress(user_id, section_id=None, db_path=None):
                         DELETE FROM quiz_user_progress
                         WHERE user_id = ?
                     """, (user_id_str,))
+                sync_leaderboard_to_json(conn)
                 return True
         finally:
             conn.close()

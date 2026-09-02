@@ -164,7 +164,13 @@ def test_full_system():
 
     # 6. Test Leaderboard & Raqobat System
     print("\n6. Testing Live Leaderboard & User Ranking APIs...")
-    
+    import bot_db
+    conn = bot_db.get_connection()
+    with conn:
+        conn.execute("DELETE FROM quiz_leaderboard WHERE user_id = 'tg_test_suite_unique'")
+        conn.execute("DELETE FROM quiz_user_progress WHERE user_id = 'tg_test_suite_unique'")
+        bot_db.sync_leaderboard_to_json(conn)
+
     # 6a. User Sync
     env_sync = {
         'REQUEST_METHOD': 'POST',
@@ -173,9 +179,9 @@ def test_full_system():
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080',
         'wsgi.input': io.BytesIO(json.dumps({
-            'user_id': 'tg_999111',
-            'name': 'Temur Olimov',
-            'username': 'temur_olimov'
+            'user_id': 'tg_test_suite_unique',
+            'name': 'Test Ishtirokchi',
+            'username': 'test_unique'
         }).encode('utf-8'))
     }
     env_sync['CONTENT_LENGTH'] = str(len(env_sync['wsgi.input'].getvalue()))
@@ -192,9 +198,9 @@ def test_full_system():
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080',
         'wsgi.input': io.BytesIO(json.dumps({
-            'user_id': 'tg_999111',
-            'name': 'Temur Olimov',
-            'username': 'temur_olimov',
+            'user_id': 'tg_test_suite_unique',
+            'name': 'Test Ishtirokchi',
+            'username': 'test_unique',
             'points': 45,
             'correct': True,
             'streak': 3,
@@ -226,14 +232,14 @@ def test_full_system():
     env_rank = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': '/api/user/rank',
-        'QUERY_STRING': 'user_id=tg_999111',
+        'QUERY_STRING': 'user_id=tg_test_suite_unique',
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080'
     }
     res_rank = server.app(env_rank, mock_start)
     rank_data = json.loads(res_rank[0].decode('utf-8'))
     assert rank_data.get('status') == 'success'
-    assert rank_data.get('user_rank', {}).get('name') == 'Temur Olimov'
+    assert rank_data.get('user_rank', {}).get('name') == 'Test Ishtirokchi'
     print(f"   ✓ User exact rank lookup passed (Rank #{rank_data['user_rank']['rank']})")
 
     # 6e. User Question Progress & Reset Persistence
@@ -244,8 +250,8 @@ def test_full_system():
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080',
         'wsgi.input': io.BytesIO(json.dumps({
-            'user_id': 'tg_999111',
-            'name': 'Temur Olimov',
+            'user_id': 'tg_test_suite_unique',
+            'name': 'Test Ishtirokchi',
             'points': 20,
             'correct': True,
             'streak': 1,
@@ -260,7 +266,7 @@ def test_full_system():
     env_get_prog = {
         'REQUEST_METHOD': 'GET',
         'PATH_INFO': '/api/user/progress',
-        'QUERY_STRING': 'user_id=tg_999111&section_id=sec_algebra',
+        'QUERY_STRING': 'user_id=tg_test_suite_unique&section_id=sec_algebra',
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080'
     }
@@ -278,7 +284,7 @@ def test_full_system():
         'SERVER_NAME': 'localhost',
         'SERVER_PORT': '8080',
         'wsgi.input': io.BytesIO(json.dumps({
-            'user_id': 'tg_999111',
+            'user_id': 'tg_test_suite_unique',
             'section_id': 'sec_algebra'
         }).encode('utf-8'))
     }
@@ -288,11 +294,10 @@ def test_full_system():
     print("   ✓ User section progress reset verified (/api/user/progress/reset)")
 
     # Clean up test leaderboard user
-    import bot_db
-    conn = bot_db.get_connection()
     with conn:
-        conn.execute("DELETE FROM quiz_leaderboard WHERE user_id = 'tg_999111'")
-        conn.execute("DELETE FROM quiz_user_progress WHERE user_id = 'tg_999111'")
+        conn.execute("DELETE FROM quiz_leaderboard WHERE user_id = 'tg_test_suite_unique'")
+        conn.execute("DELETE FROM quiz_user_progress WHERE user_id = 'tg_test_suite_unique'")
+        bot_db.sync_leaderboard_to_json(conn)
 
     # 7. Test Frontend KaTeX & SPA View structure
     print("\n7. Validating index.html KaTeX, Leaderboard views, and Modals...")
