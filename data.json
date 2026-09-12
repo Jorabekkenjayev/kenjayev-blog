@@ -15,7 +15,8 @@
       "icon": "🔢",
       "color": "#10b981",
       "order": 1,
-      "created_at": "2026-08-27T20:00:00"
+      "created_at": "2026-08-27T20:00:00",
+      "category_tier": "oson"
     },
     {
       "id": "sec_geometriya",
@@ -24,7 +25,8 @@
       "icon": "📐",
       "color": "#3b82f6",
       "order": 2,
-      "created_at": "2026-08-27T20:00:00"
+      "created_at": "2026-08-27T20:00:00",
+      "category_tier": "oson"
     },
     {
       "id": "sec_trigonometriya",
@@ -33,7 +35,8 @@
       "icon": "📈",
       "color": "#8b5cf6",
       "order": 3,
-      "created_at": "2026-08-27T20:00:00"
+      "created_at": "2026-08-27T20:00:00",
+      "category_tier": "oson"
     },
     {
       "id": "sec_analiz",
@@ -42,7 +45,8 @@
       "icon": "♾️",
       "color": "#f59e0b",
       "order": 4,
-      "created_at": "2026-08-27T20:00:00"
+      "created_at": "2026-08-27T20:00:00",
+      "category_tier": "oson"
     },
     {
       "id": "sec_dtm",
@@ -51,7 +55,19 @@
       "icon": "🏆",
       "color": "#ec4899",
       "order": 5,
-      "created_at": "2026-08-27T20:00:00"
+      "created_at": "2026-08-27T20:00:00",
+      "category_tier": "oson"
+    },
+    {
+      "id": "sec_milliy_sertifikat",
+      "title": "Milliy Sertifikat (Qiyin Masalalar)",
+      "description": "Matematika fanidan milliy test tizimi standarti bo'yicha 45 ta murakkab va chuqur test topshiriqlari",
+      "icon": "🎖️",
+      "color": "#ef4444",
+      "category_tier": "qiyin",
+      "order": 6,
+      "time_limit": 150,
+      "created_at": "2026-09-12T22:00:00"
     }
   ],
   "quizzes": [
@@ -3804,11 +3820,686 @@
       "explanation": "$x + 2x = 90^\\circ \\implies 3x = 90^\\circ \\implies x = 30^\\circ$. Katta burchak: $2x = 60^\\circ$.",
       "difficulty": "oson",
       "points": 10
+    },
+    {
+      "id": "q_ms_01",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$N = 2^{2024} + 3^{2024}$ sonini $5$ ga bo'lgandagi qoldiqni toping.",
+      "options": [
+        "$2$",
+        "$1$",
+        "$3$",
+        "$4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2^1 \\equiv 2, 2^2 \\equiv 4, 2^3 \\equiv 3, 2^4 \\equiv 1 \\pmod 5$. Davri 4 bo'lgani uchun $2^{2024} \\equiv 1 \\pmod 5$. Shuningdek, $3^1 \\equiv 3, 3^2 \\equiv 4, 3^3 \\equiv 2, 3^4 \\equiv 1 \\pmod 5$. Demak, $3^{2024} \\equiv 1 \\pmod 5$. Jami: $1 + 1 = 2 \\pmod 5$. Qoldiq $2$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_02",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$A = \\frac{1}{1 \\cdot 3} + \\frac{1}{3 \\cdot 5} + \\frac{1}{5 \\cdot 7} + \\dots + \\frac{1}{19 \\cdot 21}$ yig'indining qiymatini hisoblang.",
+      "options": [
+        "$\\frac{10}{21}$",
+        "$\\frac{20}{21}$",
+        "$\\frac{5}{21}$",
+        "$\\frac{11}{21}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Teleskopik yig'indi: $\\frac{1}{(2k-1)(2k+1)} = \\frac{1}{2}\\left(\\frac{1}{2k-1} - \\frac{1}{2k+1}\\right)$. Yig'indi: $\\frac{1}{2}\\left(1 - \\frac{1}{21}\\right) = \\frac{1}{2} \\cdot \\frac{20}{21} = \\frac{10}{21}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_03",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\sqrt{7 + 4\\sqrt{3}} - \\sqrt{7 - 4\\sqrt{3}}$ ifodaning qiymatini hisoblang.",
+      "options": [
+        "$2\\sqrt{3}$",
+        "$4$",
+        "$2$",
+        "$4\\sqrt{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$7 \\pm 4\\sqrt{3} = (2 \\pm \\sqrt{3})^2$. Shuning uchun $\\sqrt{(2+\\sqrt{3})^2} - \\sqrt{(2-\\sqrt{3})^2} = (2+\\sqrt{3}) - (2-\\sqrt{3}) = 2\\sqrt{3}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_04",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Agar $x + \\frac{1}{x} = 3$ bo'lsa, $x^4 + \\frac{1}{x^4}$ ifodaning qiymatini toping.",
+      "options": [
+        "$47$",
+        "$49$",
+        "$45$",
+        "$51$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x^2 + \\frac{1}{x^2} = \\left(x + \\frac{1}{x}\\right)^2 - 2 = 3^2 - 2 = 7$. So'ng $x^4 + \\frac{1}{x^4} = 7^2 - 2 = 49 - 2 = 47$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_05",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\cos 20^\\circ \\cdot \\cos 40^\\circ \\cdot \\cos 80^\\circ$ ko'paytmaning qiymatini hisoblang.",
+      "options": [
+        "$\\frac{1}{8}$",
+        "$\\frac{1}{4}$",
+        "$\\frac{1}{16}$",
+        "$\\frac{\\sqrt{3}}{8}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2\\sin 20^\\circ$ ga ko'paytirib bo'lamiz: $\\frac{2\\sin 20^\\circ \\cos 20^\\circ \\cos 40^\\circ \\cos 80^\\circ}{2\\sin 20^\\circ} = \\frac{\\sin 40^\\circ \\cos 40^\\circ \\cos 80^\\circ}{2\\sin 20^\\circ} = \\frac{\\sin 80^\\circ \\cos 80^\\circ}{4\\sin 20^\\circ} = \\frac{\\sin 160^\\circ}{8\\sin 20^\\circ} = \\frac{\\sin 20^\\circ}{8\\sin 20^\\circ} = \\frac{1}{8}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_06",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\frac{\\sin 3x + \\sin x}{\\cos 3x + \\cos x}$ trigonometrik ifodani soddalashtiring.",
+      "options": [
+        "$\\tan 2x$",
+        "$\\cot 2x$",
+        "$\\tan x$",
+        "$\\sin 2x$"
+      ],
+      "correct_option": 0,
+      "explanation": "Yig'indini ko'paytmaga keltiramiz: $\\sin 3x + \\sin x = 2\\sin 2x \\cos x$ va $\\cos 3x + \\cos x = 2\\cos 2x \\cos x$. Ularning nisbati: $\\frac{2\\sin 2x \\cos x}{2\\cos 2x \\cos x} = \\tan 2x$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_07",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Agar $\\log_2 3 = a$ bo'lsa, $\\log_{12} 18$ ni $a$ orqali ifodalang.",
+      "options": [
+        "$\\frac{2a + 1}{a + 2}$",
+        "$\\frac{a + 2}{2a + 1}$",
+        "$\\frac{2a - 1}{a + 2}$",
+        "$\\frac{a + 1}{a + 2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Asosni 2 ga o'tkazamiz: $\\log_{12} 18 = \\frac{\\log_2 18}{\\log_2 12} = \\frac{\\log_2(2 \\cdot 3^2)}{\\log_2(2^2 \\cdot 3)} = \\frac{1 + 2\\log_2 3}{2 + \\log_2 3} = \\frac{2a + 1}{a + 2}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_08",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$3^{\\log_9 16} + 2^{\\log_4 25}$ ifodaning qiymatini toping.",
+      "options": [
+        "$9$",
+        "$41$",
+        "$7$",
+        "$11$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\log_9 16 = \\log_{3^2} 4^2 = \\log_3 4 \\implies 3^{\\log_3 4} = 4$. Xuddi shunday $\\log_4 25 = \\log_2 5 \\implies 2^{\\log_2 5} = 5$. Yig'indi: $4 + 5 = 9$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_09",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Arifmetik progressiyada $a_4 + a_8 + a_{12} + a_{16} = 224$ bo'lsa, dastlabki $19$ ta hadi yig'indisi $S_{19}$ ni toping.",
+      "options": [
+        "$1064$",
+        "$1120$",
+        "$1008$",
+        "$988$"
+      ],
+      "correct_option": 0,
+      "explanation": "$a_4 + a_{16} = 2a_{10}$ va $a_8 + a_{12} = 2a_{10}$. Demak, $4a_{10} = 224 \\implies a_{10} = 56$. $S_{19} = \\frac{a_1 + a_{19}}{2} \\cdot 19 = a_{10} \\cdot 19 = 56 \\cdot 19 = 1064$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_10",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Hadlari musbat bo'lgan geometrik progressiyada $b_2 \\cdot b_4 \\cdot b_6 = 64$ bo'lsa, $b_4$ ning qiymatini toping.",
+      "options": [
+        "$4$",
+        "$2$",
+        "$8$",
+        "$16$"
+      ],
+      "correct_option": 0,
+      "explanation": "Geometrik progressiya xossasiga ko'ra $b_2 \\cdot b_6 = b_4^2$. Demak, $b_2 \\cdot b_4 \\cdot b_6 = b_4^3 = 64 \\implies b_4 = 4$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_11",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Cheksiz kamayuvchi geometrik progressiya hadlarining yig'indisi $16$ ga, hadlarining kvadratlari yig'indisi esa $\\frac{512}{3}$ ga teng. Uning birinchi hadi $b_1$ ni toping.",
+      "options": [
+        "$12.8$",
+        "$12$",
+        "$10$",
+        "$14.4$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\frac{b_1}{1-q} = 16 \\implies b_1 = 16(1-q)$. Kvadratlari yig'indisi: $\\frac{b_1^2}{1-q^2} = \\frac{256(1-q)}{1+q} = \\frac{512}{3} \\implies \\frac{1-q}{1+q} = \\frac{2}{3} \\implies q = \\frac{1}{5}$. Demak, $b_1 = 16 \\cdot \\frac{4}{5} = 12.8$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_12",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$20\\%$ li $40\\text{ litr}$ tuzli eritmaga qancha litr toza suv qo'shilsa, eritmadagi tuz miqdori $16\\%$ bo'ladi?",
+      "options": [
+        "$10\\text{ litr}$",
+        "$8\\text{ litr}$",
+        "$12\\text{ litr}$",
+        "$15\\text{ litr}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Eritmadagi tuz miqdori: $40 \\cdot 0.20 = 8\\text{ litr}$. Qo'shilgan suv hajmi $x$ bo'lsin: $\\frac{8}{40 + x} = 0.16 \\implies 40 + x = 50 \\implies x = 10\\text{ litr}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_13",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Ikki velosipedchi orasidagi masofa $90\\text{ km}$. Ular bir vaqtda bir-biriga qarab yo'lga chiqishdi va $3\\text{ soat}$ dan so'ng uchrashishdi. Agar birining tezligi ikkinchisidan $6\\text{ km/soat}$ katta bo'lsa, tezroq harakatlangan velosipedchining tezligini toping.",
+      "options": [
+        "$18\\text{ km/soat}$",
+        "$20\\text{ km/soat}$",
+        "$16\\text{ km/soat}$",
+        "$24\\text{ km/soat}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Yaqinlashish tezligi: $v_1 + v_2 = \\frac{90}{3} = 30\\text{ km/soat}$. Shuningdek $v_1 - v_2 = 6$. Tenglamalarni qo'shsak: $2v_1 = 36 \\implies v_1 = 18\\text{ km/soat}$.",
+      "difficulty": "qiyin",
+      "points": 30
+    },
+    {
+      "id": "q_ms_14",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$x^2 - 2(a+1)x + a^2 - 3 = 0$ kvadrat tenglama ikkita haqiqiy ildizga ega bo'ladigan $a$ parametrning eng kichik butun qiymatini toping.",
+      "options": [
+        "$-2$",
+        "$-1$",
+        "$0$",
+        "$-3$"
+      ],
+      "correct_option": 0,
+      "explanation": "Diskriminant: $D/4 = (a+1)^2 - (a^2 - 3) = a^2 + 2a + 1 - a^2 + 3 = 2a + 4 \\ge 0 \\implies 2a \\ge -4 \\implies a \\ge -2$. Eng kichik butun qiymat $-2$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_15",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\sqrt{x + 1} + \\sqrt{2x + 3} = 5$ irratsional tenglamaning ildizini toping.",
+      "options": [
+        "$3$",
+        "$8$",
+        "$1$",
+        "Ildizga ega emas"
+      ],
+      "correct_option": 0,
+      "explanation": "$x = 3$ qo'yib tekshiramiz: $\\sqrt{3+1} + \\sqrt{2(3)+3} = \\sqrt{4} + \\sqrt{9} = 2 + 3 = 5$. Chap tomon qat'iy o'suvchi funksiya bo'lgani sababli boshqa ildiz mavjud emas.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_16",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\log_2(x^2 - 3x) = 2$ logarifmik tenglamaning barcha haqiqiy ildizlari yig'indisini toping.",
+      "options": [
+        "$3$",
+        "$-3$",
+        "$4$",
+        "$-1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x^2 - 3x = 2^2 = 4 \\implies x^2 - 3x - 4 = 0 \\implies (x-4)(x+1) = 0$. Ildizlar $x_1 = 4, x_2 = -1$. Har ikkala ildiz uchun $x^2 - 3x = 4 > 0$, demak ikkisi ham aniqlangan. Ildizlar yig'indisi: $4 + (-1) = 3$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_17",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\sin 2x = \\cos x$ trigonometrik tenglamaning $[0; \\pi]$ kesmaga tegishli ildizlari sonini toping.",
+      "options": [
+        "$3$",
+        "$2$",
+        "$4$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$2\\sin x \\cos x - \\cos x = 0 \\implies \\cos x(2\\sin x - 1) = 0$. 1) $\\cos x = 0 \\implies x = \\frac{\\pi}{2}$. 2) $\\sin x = \\frac{1}{2} \\implies x = \\frac{\\pi}{6}, x = \\frac{5\\pi}{6}$. Ushbu $3$ ta ildizning barchasi $[0; \\pi]$ kesmaga tegishli.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_18",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\frac{x^2 - 5x + 6}{x + 1} \\le 0$ ratsional tengsizlikning eng katta butun manfiy yechimini toping.",
+      "options": [
+        "$-2$",
+        "$-1$",
+        "$-3$",
+        "$2$"
+      ],
+      "correct_option": 0,
+      "explanation": "$\\frac{(x-2)(x-3)}{x+1} \\le 0$. Oraliqlar usuli: $x \\in (-\\infty; -1) \\cup [2; 3]$. Manfiy oraliq $(-\\infty; -1)$, undagi eng katta butun son $-2$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_19",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$4^x - 5 \\cdot 2^x + 4 \\le 0$ tengsizlikning butun yechimlari sonini toping.",
+      "options": [
+        "$3$",
+        "$2$",
+        "$4$",
+        "$1$"
+      ],
+      "correct_option": 0,
+      "explanation": "$t = 2^x > 0 \\implies t^2 - 5t + 4 \\le 0 \\implies (t-1)(t-4) \\le 0 \\implies 1 \\le t \\le 4$. Demak $1 \\le 2^x \\le 4 \\implies 0 \\le x \\le 2$. Butun yechimlar $x \\in \\{0, 1, 2\\}$, jami $3$ ta.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_20",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$f(x) = \\sqrt{9 - x^2} + \\log_3(x + 1)$ funksiyaning aniqlanish sohasini toping.",
+      "options": [
+        "$(-1; 3]$",
+        "$[-3; 3]$",
+        "$(-1; \\infty)$",
+        "$[0; 3]$"
+      ],
+      "correct_option": 0,
+      "explanation": "1) $9 - x^2 \\ge 0 \\implies -3 \\le x \\le 3$. 2) $x + 1 > 0 \\implies x > -1$. Ularning kesishtirmasi: $x \\in (-1; 3]$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_21",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$f(x) = \\frac{2x + 1}{x - 3}$ ($x \\ne 3$) funksiyaga teskari funksiya $f^{-1}(x)$ ni toping.",
+      "options": [
+        "$\\frac{3x + 1}{x - 2}$",
+        "$\\frac{2x - 1}{x + 3}$",
+        "$\\frac{x - 3}{2x + 1}$",
+        "$\\frac{3x - 1}{x + 2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$y = \\frac{2x+1}{x-3} \\implies yx - 3y = 2x + 1 \\implies x(y-2) = 3y + 1 \\implies x = \\frac{3y+1}{y-2}$. Demak, $f^{-1}(x) = \\frac{3x + 1}{x - 2}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_22",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$y = x^3 - 3x + 2$ egri chiziqqa $x_0 = 2$ nuqtasida o'tkazilgan urinmaning burchak koeffitsiyentini toping.",
+      "options": [
+        "$9$",
+        "$6$",
+        "$12$",
+        "$4$"
+      ],
+      "correct_option": 0,
+      "explanation": "Urinmaning burchak koeffitsiyenti hosilaning berilgan nuqtadagi qiymatiga teng: $k = y'(2)$. $y' = 3x^2 - 3 \\implies y'(2) = 3(2^2) - 3 = 12 - 3 = 9$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_23",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$y = 4 - x^2$ parabola va $y = 0$ to'g'ri chiziq bilan chegaralangan soha yuzini hisoblang.",
+      "options": [
+        "$\\frac{32}{3}$",
+        "$\\frac{16}{3}$",
+        "$8$",
+        "$\\frac{64}{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$4 - x^2 = 0 \\implies x = \\pm 2$. $S = \\int_{-2}^{2} (4 - x^2) dx = \\left[4x - \\frac{x^3}{3}\\right]_{-2}^{2} = \\left(8 - \\frac{8}{3}\\right) - \\left(-8 + \\frac{8}{3}\\right) = \\frac{32}{3}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_24",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "To'g'ri burchakli uchburchakning katetlari $6\\text{ sm}$ va $8\\text{ sm}$ ga teng. To'g'ri burchak uchidan gipotenuzaga tushirilgan balandlik uzunligini toping.",
+      "options": [
+        "$4.8\\text{ sm}$",
+        "$5\\text{ sm}$",
+        "$4.5\\text{ sm}$",
+        "$5.2\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Gipotenuza $c = \\sqrt{6^2 + 8^2} = 10\\text{ sm}$. Yuza formulasi: $S = \\frac{1}{2} a b = \\frac{1}{2} c h \\implies h = \\frac{a b}{c} = \\frac{6 \\cdot 8}{10} = 4.8\\text{ sm}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_25",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Uchburchakning ikki tomoni $5\\text{ sm}$ va $8\\text{ sm}$ ga, ular orasidagi burchak $60^\\circ$ ga teng. Uchinchi tomonining uzunligini toping.",
+      "options": [
+        "$7\\text{ sm}$",
+        "$\\sqrt{65}\\text{ sm}$",
+        "$8\\text{ sm}$",
+        "$6\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kosinuslar teoremasi: $c^2 = a^2 + b^2 - 2ab\\cos 60^\\circ = 5^2 + 8^2 - 2(5)(8)(0.5) = 25 + 64 - 40 = 49 \\implies c = 7\\text{ sm}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_26",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Teng yonli trapetsiyaning asoslari $8\\text{ sm}$ va $18\\text{ sm}$ bo'lib, unga ichki aylana chizilgan. Trapetsiyaning yuzini toping.",
+      "options": [
+        "$156\\text{ sm}^2$",
+        "$144\\text{ sm}^2$",
+        "$168\\text{ sm}^2$",
+        "$130\\text{ sm}^2$"
+      ],
+      "correct_option": 0,
+      "explanation": "Aylanaga tashqi chizilgan teng yonli trapetsiyada yon tomon $c = \\frac{a+b}{2} = \\frac{8+18}{2} = 13\\text{ sm}$. Balandlik $h = \\sqrt{13^2 - \\left(\\frac{18-8}{2}\\right)^2} = \\sqrt{169 - 25} = 12\\text{ sm}$. Yuza: $S = \\frac{a+b}{2} \\cdot h = 13 \\cdot 12 = 156\\text{ sm}^2$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_27",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Aylanadan tashqaridagi $M$ nuqtadan aylanaga $MA$ urinma va $M, B, C$ nuqtalar orqali o'tuvchi kesuvchi o'tkazilgan. Agar $MB = 4\\text{ sm}$ va $BC = 5\\text{ sm}$ bo'lsa, $MA$ urinmaning uzunligini toping.",
+      "options": [
+        "$6\\text{ sm}$",
+        "$4.5\\text{ sm}$",
+        "$2\\sqrt{5}\\text{ sm}$",
+        "$8\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Urinma va kesuvchi teoremasiga ko'ra $MA^2 = MB \\cdot MC$. Bu yerda $MC = MB + BC = 4 + 5 = 9\\text{ sm}$. Demak, $MA^2 = 4 \\cdot 9 = 36 \\implies MA = 6\\text{ sm}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_28",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "To'g'ri to'rtburchakli parallelepipedning o'lchovlari $2\\text{ sm}$, $3\\text{ sm}$ va $6\\text{ sm}$ ga teng. Uning bosh diagonali uzunligini toping.",
+      "options": [
+        "$7\\text{ sm}$",
+        "$8\\text{ sm}$",
+        "$\\sqrt{45}\\text{ sm}$",
+        "$11\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Bosh diagonal formulasi: $d = \\sqrt{a^2 + b^2 + c^2} = \\sqrt{2^2 + 3^2 + 6^2} = \\sqrt{4 + 9 + 36} = \\sqrt{49} = 7\\text{ sm}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_29",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Muntazam to'rtburchakli piramidaning asos tomoni $6\\text{ sm}$, balandligi $4\\text{ sm}$ ga teng. Piramidaning yon sirti yuzini toping.",
+      "options": [
+        "$60\\text{ sm}^2$",
+        "$48\\text{ sm}^2$",
+        "$72\\text{ sm}^2$",
+        "$96\\text{ sm}^2$"
+      ],
+      "correct_option": 0,
+      "explanation": "Apofema $l = \\sqrt{h^2 + (a/2)^2} = \\sqrt{4^2 + 3^2} = 5\\text{ sm}$. Yon sirt: $S_{yon} = \\frac{1}{2} P_{asos} \\cdot l = \\frac{1}{2} (4 \\cdot 6) \\cdot 5 = 12 \\cdot 5 = 60\\text{ sm}^2$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_30",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\vec{a}(2; -3; 1)$ va $\\vec{b}(1; 2; m)$ vektorlar o'zaro perpendikulyar bo'lsa, $m$ parametrning qiymatini toping.",
+      "options": [
+        "$4$",
+        "$-4$",
+        "$2$",
+        "$0$"
+      ],
+      "correct_option": 0,
+      "explanation": "Vektorlarning perpendikulyarlik sharti: ularning skalyar ko'paytmasi nolga teng bo'lishi kerak. $\\vec{a} \\cdot \\vec{b} = 2(1) + (-3)(2) + 1(m) = 2 - 6 + m = 0 \\implies m = 4$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_31",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$10$ nafar o'quvchidan $3$ kishilik jamoani necha xil usulda tanlab olish mumkin?",
+      "options": [
+        "$120$",
+        "$720$",
+        "$90$",
+        "$240$"
+      ],
+      "correct_option": 0,
+      "explanation": "Guruhlashlar soni (kombinatsiya): $C_{10}^3 = \\frac{10 \\cdot 9 \\cdot 8}{3 \\cdot 2 \\cdot 1} = 10 \\cdot 3 \\cdot 4 = 120$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_32",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Qutida $5$ ta oq va $7$ ta qora shar bor. Tavakkaliga bir vaqtda olingan $2$ ta sharning ikkalasi ham oq bo'lish ehtimolligini toping.",
+      "options": [
+        "$\\frac{5}{33}$",
+        "$\\frac{5}{12}$",
+        "$\\frac{7}{33}$",
+        "$\\frac{10}{33}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Jami sharlar soni: $12$. Jami hollar soni: $C_{12}^2 = \\frac{12 \\cdot 11}{2} = 66$. Qulay hollar: $C_5^2 = \\frac{5 \\cdot 4}{2} = 10$. Ehtimollik: $P = \\frac{10}{66} = \\frac{5}{33}$.",
+      "difficulty": "qiyin",
+      "points": 35
+    },
+    {
+      "id": "q_ms_33",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Uchburchakning tomonlari $a = 12\\text{ sm}, b = 15\\text{ sm}, c = 18\\text{ sm}$. Uzunligi $18\\text{ sm}$ bo'lgan tomonga tushirilgan bissektrisa ushbu tomonni qanday uzunlikdagi kesmalarga ajratadi?",
+      "options": [
+        "$8\\text{ sm va } 10\\text{ sm}$",
+        "$6\\text{ sm va } 12\\text{ sm}$",
+        "$7\\text{ sm va } 11\\text{ sm}$",
+        "$9\\text{ sm va } 9\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Bissektrisa xossasiga ko'ra kesmalar nisbati yondosh tomonlar nisbatiga teng: $\\frac{x}{y} = \\frac{12}{15} = \\frac{4}{5}$. $x + y = 18 \\implies 9k = 18 \\implies k = 2$. Kesmalar: $x = 8\\text{ sm}, y = 10\\text{ sm}$.",
+      "difficulty": "olimpiada",
+      "points": 40
+    },
+    {
+      "id": "q_ms_34",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Radiusi $R = 6\\text{ sm}$ bo'lgan aylanaga tashqi chizilgan muntazam oltiburchakning yuzini toping.",
+      "options": [
+        "$72\\sqrt{3}\\text{ sm}^2$",
+        "$54\\sqrt{3}\\text{ sm}^2$",
+        "$108\\text{ sm}^2$",
+        "$36\\sqrt{3}\\text{ sm}^2$"
+      ],
+      "correct_option": 0,
+      "explanation": "Oltiburchak apofemasi $r = R = 6\\text{ sm}$. $r = \\frac{a\\sqrt{3}}{2} = 6 \\implies a = \\frac{12}{\\sqrt{3}} = 4\\sqrt{3}\\text{ sm}$. Yuza: $S = 6 \\cdot \\frac{a^2\\sqrt{3}}{4} = \\frac{3\\sqrt{3}}{2} \\cdot 48 = 72\\sqrt{3}\\text{ sm}^2$.",
+      "difficulty": "olimpiada",
+      "points": 40
+    },
+    {
+      "id": "q_ms_35",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Balandligi va asosining radiusi teng bo'lgan silindr va konus berilgan. Silindr hajmining konus hajmiga nisbatini toping.",
+      "options": [
+        "$3$",
+        "$\\frac{1}{3}$",
+        "$2$",
+        "$\\frac{3}{2}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Silindr hajmi: $V_{sil} = \\pi R^2 H$. Konus hajmi: $V_{kon} = \\frac{1}{3}\\pi R^2 H$. Ularning nisbati: $\\frac{V_{sil}}{V_{kon}} = 3$.",
+      "difficulty": "olimpiada",
+      "points": 40
+    },
+    {
+      "id": "q_ms_36",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$\\begin{cases} x + y = 7 \\\\ x^2 + y^2 = 25 \\end{cases}$ tenglamalar sistemasining barcha $(x; y)$ yechimlarida $xy$ ko'paytmaning qiymatini toping.",
+      "options": [
+        "$12$",
+        "$10$",
+        "$14$",
+        "$8$"
+      ],
+      "correct_option": 0,
+      "explanation": "$(x + y)^2 = x^2 + 2xy + y^2 \\implies 7^2 = 25 + 2xy \\implies 49 - 25 = 2xy \\implies 2xy = 24 \\implies xy = 12$.",
+      "difficulty": "olimpiada",
+      "points": 40
+    },
+    {
+      "id": "q_ms_37",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$|x - 1| + |x - 5| = 8$ tenglamaning barcha ildizlari ko'paytmasini toping.",
+      "options": [
+        "$-7$",
+        "$7$",
+        "$-5$",
+        "$5$"
+      ],
+      "correct_option": 0,
+      "explanation": "1) $x < 1$: $1 - x + 5 - x = 8 \\implies 6 - 2x = 8 \\implies x = -1$. 2) $1 \\le x \\le 5$: $x - 1 + 5 - x = 4 \\ne 8$ (yechim yo'q). 3) $x > 5$: $x - 1 + x - 5 = 8 \\implies 2x - 6 = 8 \\implies x = 7$. Ildizlar: $-1$ va $7$. Ko'paytmasi: $-1 \\cdot 7 = -7$.",
+      "difficulty": "olimpiada",
+      "points": 40
+    },
+    {
+      "id": "q_ms_38",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "$f(x) = 3\\sin x - 4\\cos x + 2$ funksiyaning eng katta qiymatini toping.",
+      "options": [
+        "$7$",
+        "$5$",
+        "$9$",
+        "$6$"
+      ],
+      "correct_option": 0,
+      "explanation": "$A\\sin x + B\\cos x$ ifodaning qiymatlar sohasi $[-\\sqrt{A^2+B^2}; \\sqrt{A^2+B^2}]$. $\\sqrt{3^2 + (-4)^2} = 5$. Demak, $-5 \\le 3\\sin x - 4\\cos x \\le 5$. Eng katta qiymat: $5 + 2 = 7$.",
+      "difficulty": "olimpiada",
+      "points": 45
+    },
+    {
+      "id": "q_ms_39",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Yig'indisi $24$ ga teng bo'lgan ikki musbat sonning ko'paytmasi eng katta bo'lishi uchun bu sonlar qanday bo'lishi kerak?",
+      "options": [
+        "$12 \\text{ va } 12$",
+        "$10 \\text{ va } 14$",
+        "$8 \\text{ va } 16$",
+        "$11 \\text{ va } 13$"
+      ],
+      "correct_option": 0,
+      "explanation": "$x + y = 24 \\implies y = 24 - x$. $P(x) = x(24 - x) = 24x - x^2$. Hosilasi $P'(x) = 24 - 2x = 0 \\implies x = 12 \\implies y = 12$. Sonlar $12$ va $12$.",
+      "difficulty": "olimpiada",
+      "points": 45
+    },
+    {
+      "id": "q_ms_40",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Nuqta to'g'ri chiziq bo'ylab $v(t) = 3t^2 - 4t + 1\\text{ (m/s)}$ tezlik bilan harakatlanmoqda. Uning $t_1 = 1\\text{ s}$ dan $t_2 = 3\\text{ s}$ gacha bo'lgan vaqt oralig'ida bosib o'tgan masofasini hisoblang.",
+      "options": [
+        "$12\\text{ m}$",
+        "$10\\text{ m}$",
+        "$14\\text{ m}$",
+        "$16\\text{ m}$"
+      ],
+      "correct_option": 0,
+      "explanation": "$S = \\int_{1}^{3} (3t^2 - 4t + 1) dt = \\left[t^3 - 2t^2 + t\\right]_1^3 = (27 - 18 + 3) - (1 - 2 + 1) = 12 - 0 = 12\\text{ metr}$.",
+      "difficulty": "olimpiada",
+      "points": 45
+    },
+    {
+      "id": "q_ms_41",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Muntazam to'rtburchakli piramidaning barcha qirralari o'zaro teng va $a$ ga teng. Uning yon qirrasi va asos tekisligi orasidagi burchak kosinusini toping.",
+      "options": [
+        "$\\frac{\\sqrt{2}}{2}$",
+        "$\\frac{\\sqrt{3}}{2}$",
+        "$\\frac{1}{2}$",
+        "$\\frac{\\sqrt{6}}{3}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Asos diagonali $d = a\\sqrt{2}$, uning yarmi $R = \\frac{a\\sqrt{2}}{2}$. Yon qirra uzunligi $l = a$. Burchak kosinusi: $\\cos \\alpha = \\frac{R}{l} = \\frac{a\\sqrt{2}/2}{a} = \\frac{\\sqrt{2}}{2}$ (ya'ni $\\alpha = 45^\\circ$).",
+      "difficulty": "olimpiada",
+      "points": 50
+    },
+    {
+      "id": "q_ms_42",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Hajmi $216\\text{ sm}^3$ bo'lgan kubga ichki chizilgan sharning radiusini toping.",
+      "options": [
+        "$3\\text{ sm}$",
+        "$6\\text{ sm}$",
+        "$2\\text{ sm}$",
+        "$4\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kub hajmi: $V = a^3 = 216 \\implies a = 6\\text{ sm}$. Kubga ichki chizilgan shar radiusi qirraning yarmiga teng: $r = \\frac{a}{2} = \\frac{6}{2} = 3\\text{ sm}$.",
+      "difficulty": "olimpiada",
+      "points": 50
+    },
+    {
+      "id": "q_ms_43",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Tekislikdan $12\\text{ sm}$ masofada joylashgan nuqtadan tekislikka uzunliklari $13\\text{ sm}$ va $15\\text{ sm}$ bo'lgan ikkita og'ma o'tkazilgan. Ushbu og'malarning tekislikdagi proyeksiyalari uzunliklari yig'indisini toping.",
+      "options": [
+        "$14\\text{ sm}$",
+        "$12\\text{ sm}$",
+        "$16\\text{ sm}$",
+        "$15\\text{ sm}$"
+      ],
+      "correct_option": 0,
+      "explanation": "Perpendikulyar $h = 12\\text{ sm}$. 1-proyeksiya: $x_1 = \\sqrt{13^2 - 12^2} = \\sqrt{25} = 5\\text{ sm}$. 2-proyeksiya: $x_2 = \\sqrt{15^2 - 12^2} = \\sqrt{81} = 9\\text{ sm}$. Yig'indisi: $5 + 9 = 14\\text{ sm}$.",
+      "difficulty": "olimpiada",
+      "points": 50
+    },
+    {
+      "id": "q_ms_44",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Uchlari $A(1; 2; 3)$ va $B(5; 6; 7)$ nuqtalarda bo'lgan $AB$ kesma o'rtasining koordinatalarini toping.",
+      "options": [
+        "$(3; 4; 5)$",
+        "$(4; 4; 4)$",
+        "$(2; 3; 4)$",
+        "$(6; 8; 10)$"
+      ],
+      "correct_option": 0,
+      "explanation": "Kesma o'rtasining koordinatalari: $M\\left(\\frac{1+5}{2}; \\frac{2+6}{2}; \\frac{3+7}{2}\\right) = M(3; 4; 5)$.",
+      "difficulty": "olimpiada",
+      "points": 50
+    },
+    {
+      "id": "q_ms_45",
+      "section_id": "sec_milliy_sertifikat",
+      "title": "Berilgan sonlar qatori: $4, 7, 7, 8, 10, 12, 15$. Ushbu qatorning medianasi va modasi yig'indisini toping.",
+      "options": [
+        "$15$",
+        "$14$",
+        "$16$",
+        "$17$"
+      ],
+      "correct_option": 0,
+      "explanation": "Qator o'sish tartibida joylashgan $7$ ta sondan iborat. Mediana: o'rtadagi 4-son, ya'ni $8$. Moda: eng ko'p takrorlangan son, ya'ni $7$. Ularning yig'indisi: $8 + 7 = 15$.",
+      "difficulty": "olimpiada",
+      "points": 50
     }
   ],
   "quiz_stats": {
-    "total_solved": 151,
-    "correct_count": 137
+    "total_solved": 153,
+    "correct_count": 139
   },
   "quiz_leaderboard": [
     {
@@ -3834,18 +4525,6 @@
       "current_streak": 25,
       "last_active": "2026-09-02 22:10:00",
       "created_at": "2026-08-22 14:30:00"
-    },
-    {
-      "user_id": "tg_888999",
-      "name": "Shoxrux Bek",
-      "username": "shox_math",
-      "points": 350,
-      "correct_count": 1,
-      "total_solved": 1,
-      "best_streak": 7,
-      "current_streak": 7,
-      "last_active": "2026-09-02 22:17:43",
-      "created_at": "2026-09-02 22:17:43"
     },
     {
       "user_id": "tg_jahong1r0909",
@@ -3894,18 +4573,6 @@
       "current_streak": 1,
       "last_active": "2026-09-02 21:40:00",
       "created_at": "2026-08-28 09:20:00"
-    },
-    {
-      "user_id": "tg_12345",
-      "name": "Ali Valiyev",
-      "username": "alivaliyev",
-      "points": 0,
-      "correct_count": 0,
-      "total_solved": 0,
-      "best_streak": 0,
-      "current_streak": 0,
-      "last_active": "2026-09-02 22:17:43",
-      "created_at": "2026-09-02 22:17:43"
     }
   ],
   "quiz_user_progress": [],
@@ -3913,6 +4580,6 @@
     "site_name": "Kenjayev BLOG & Matematika Quiz",
     "tagline": "Matematika va Shaxsiy Fikrlar Platformasi"
   },
-  "updated_at": "2026-09-02T22:17:42.804007",
-  "version": 100
+  "updated_at": "2026-09-12T22:53:19.383191",
+  "version": 106
 }

@@ -1043,6 +1043,100 @@
             50% { transform: scale(1.08); filter: drop-shadow(0 0 14px rgba(245, 158, 11, 0.8)); }
         }
 
+        /* Tier Category Filters (Oson / Qiyin) */
+        .tier-filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tier-filter-pills {
+            display: inline-flex;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            padding: 5px;
+            border-radius: var(--radius-md);
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tier-pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid transparent;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .tier-pill-btn:hover {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+        }
+
+        .tier-pill-btn.active {
+            background: var(--surface-elevated);
+            color: var(--text-primary);
+            border-color: var(--border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .tier-pill-btn.tier-pill-qiyin.active {
+            border-color: rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.14);
+            color: #f87171;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+        }
+
+        .tier-count-chip {
+            display: inline-flex;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 0.75rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+        }
+
+        .tier-count-chip.hot {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+        }
+
+        .section-card.qiyin-card {
+            border-color: rgba(239, 68, 68, 0.4);
+            background: linear-gradient(180deg, rgba(239, 68, 68, 0.07) 0%, var(--surface-card) 45%);
+            box-shadow: 0 6px 24px rgba(239, 68, 68, 0.12);
+        }
+
+        .section-card.qiyin-card:hover {
+            border-color: #ef4444;
+            box-shadow: 0 10px 32px rgba(239, 68, 68, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .section-card.qiyin-card .section-icon-badge {
+            border-color: #ef4444 !important;
+            color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.15) !important;
+            animation: flamePulse 2s infinite ease-in-out;
+        }
+
+        @keyframes flamePulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6)); }
+        }
+
         /* Category Performance Bars */
         .category-perf-row {
             display: flex;
@@ -2086,11 +2180,14 @@
                 <div class="hero-content-col">
                     <div class="hero-badge">⚡ MATHEMATICS // DIGITAL TRAINING LAB</div>
                     <h1 class="hero-title">Matematika & Computational Laboratory</h1>
-                    <p class="hero-desc">250+ interaktiv masala, real vaqt rejimidagi takrorlanmas progress, KaTeX formulalari va milliy reyting tizimi.</p>
+                    <p class="hero-desc">295+ interaktiv masala, Milliy Sertifikat standarti, real vaqt rejimidagi takrorlanmas progress, KaTeX formulalari va milliy reyting tizimi.</p>
                     
                     <div class="hero-action-bar">
                         <button class="btn btn-primary" onclick="mathApp.startRandomPractice()">
                             <span>🎲 Tasodifiy Mashq</span>
+                        </button>
+                        <button class="btn btn-secondary" style="border-color: rgba(239, 68, 68, 0.45); color: #f87171; background: rgba(239, 68, 68, 0.08);" onclick="mathApp.setSectionTier('qiyin'); mathApp.switchTab('quizzes');">
+                            <span>🎖️ Milliy Sertifikat (45)</span>
                         </button>
                         <button class="btn btn-secondary" onclick="mathApp.startTimedExam()">
                             <span>⏱ Imtihon Rejimi</span>
@@ -2112,11 +2209,11 @@
 
                 <div class="hero-stats">
                     <div class="stat-card">
-                        <div class="stat-val count-up" id="statQuestionsCount">250</div>
+                        <div class="stat-val count-up" id="statQuestionsCount">295</div>
                         <div class="stat-lbl">Jami Savollar</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-val count-up" id="statSectionsCount">5</div>
+                        <div class="stat-val count-up" id="statSectionsCount">6</div>
                         <div class="stat-lbl">Bo'limlar</div>
                     </div>
                     <div class="stat-card">
@@ -2149,6 +2246,24 @@
                     <button class="btn btn-sm btn-success" onclick="mathApp.openSectionModal()">➕ Yangi Bo'lim</button>
                     <button class="btn btn-sm btn-primary" onclick="mathApp.openQuestionModal()">➕ Yangi Savol</button>
                     <button class="btn btn-sm btn-secondary" onclick="mathApp.openManageQuestionsModal()">📋 Barcha Savollar</button>
+                </div>
+            </div>
+
+            <!-- Tier Category Filter (Oson / Qiyin / Barchasi) -->
+            <div class="tier-filter-container">
+                <div class="tier-filter-pills">
+                    <button class="tier-pill-btn active" id="tierBtn_all" onclick="mathApp.setSectionTier('all')">
+                        <span>🌐 Barcha Bo'limlar</span>
+                        <span class="tier-count-chip" id="tierCountAll">6 ta</span>
+                    </button>
+                    <button class="tier-pill-btn" id="tierBtn_oson" onclick="mathApp.setSectionTier('oson')">
+                        <span>🟢 Oson Masalalar</span>
+                        <span class="tier-count-chip" id="tierCountOson">250 ta savol</span>
+                    </button>
+                    <button class="tier-pill-btn tier-pill-qiyin" id="tierBtn_qiyin" onclick="mathApp.setSectionTier('qiyin')">
+                        <span>🔥 Qiyin Masalalar (Milliy Sertifikat)</span>
+                        <span class="tier-count-chip hot" id="tierCountQiyin">45 ta savol</span>
+                    </button>
                 </div>
             </div>
 
@@ -2729,6 +2844,7 @@ class MathQuizApp {
 
         // Player State
         this.activeSectionId = 'all';
+        this.activeSectionTier = 'all'; // 'all', 'oson', 'qiyin'
         this.playerQueue = [];
         this.currentQuestionIndex = 0;
         this.selectedRenderedIndex = null;
@@ -3482,10 +3598,37 @@ class MathQuizApp {
         if (notify) this.showToast("ℹ️ Admin rejimidan chiqdingiz");
     }
 
+    setSectionTier(tier) {
+        this.activeSectionTier = tier;
+        ['all', 'oson', 'qiyin'].forEach(t => {
+            const btn = document.getElementById('tierBtn_' + t);
+            if (btn) btn.classList.toggle('active', t === tier);
+        });
+        this.renderSections();
+    }
+
     // --- SECTIONS RENDERING WITH USER PROGRESS & RESUME BADGES ---
     renderSections() {
         const container = document.getElementById('sectionsGridContainer');
         if (!container) return;
+
+        // Update counts in Tier pills if present
+        const tierAllEl = document.getElementById('tierCountAll');
+        const tierOsonEl = document.getElementById('tierCountOson');
+        const tierQiyinEl = document.getElementById('tierCountQiyin');
+        
+        const osonCount = this.quizzes.filter(q => {
+            const s = this.sections.find(sec => sec.id === q.section_id);
+            return !s || s.category_tier !== 'qiyin';
+        }).length;
+        const qiyinCount = this.quizzes.filter(q => {
+            const s = this.sections.find(sec => sec.id === q.section_id);
+            return s && s.category_tier === 'qiyin';
+        }).length;
+
+        if (tierAllEl) tierAllEl.textContent = `${this.sections.length} ta`;
+        if (tierOsonEl) tierOsonEl.textContent = `${osonCount} ta savol`;
+        if (tierQiyinEl) tierQiyinEl.textContent = `${qiyinCount} ta savol`;
 
         if (!this.sections || this.sections.length === 0) {
             container.innerHTML = `
@@ -3496,9 +3639,33 @@ class MathQuizApp {
             return;
         }
 
-        const indexLabels = ['01 ALGEBRA', '02 GEOMETRIYA', '03 TRIGONOMETRIYA', '04 ANALIZ', '05 DTM & SERTIFIKAT'];
+        let filteredSections = this.sections;
+        if (this.activeSectionTier === 'oson') {
+            filteredSections = this.sections.filter(s => s.category_tier !== 'qiyin');
+        } else if (this.activeSectionTier === 'qiyin') {
+            filteredSections = this.sections.filter(s => s.category_tier === 'qiyin');
+        }
 
-        container.innerHTML = this.sections.map((sec, secIdx) => {
+        if (filteredSections.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+                    Tanlangan toifada bo'limlar mavjud emas.
+                </div>
+            `;
+            return;
+        }
+
+        const indexLabels = {
+            'sec_algebra': '01 ALGEBRA',
+            'sec_geometriya': '02 GEOMETRIYA',
+            'sec_trigonometriya': '03 TRIGONOMETRIYA',
+            'sec_analiz': '04 ANALIZ',
+            'sec_dtm': '05 DTM TEST',
+            'sec_milliy_sertifikat': '🔥 06 MILLIY SERTIFIKAT'
+        };
+
+        container.innerHTML = filteredSections.map((sec, secIdx) => {
+            const isQiyin = (sec.category_tier === 'qiyin' || sec.id === 'sec_milliy_sertifikat');
             const secQuestions = this.quizzes.filter(q => q.section_id === sec.id);
             const totalCount = secQuestions.length;
             const solvedCount = secQuestions.filter(q => this.isQuestionSolved(q.id)).length;
@@ -3506,7 +3673,7 @@ class MathQuizApp {
             const session = this.getActiveSession(sec.id);
             const hasOngoing = session && session.queueIds && session.queueIds.length > 0 && session.currentIndex < session.queueIds.length;
             const isAllCompleted = (totalCount > 0 && solvedCount >= totalCount);
-            const sectionLabel = indexLabels[secIdx] || `0${secIdx + 1} BO'LIM`;
+            const sectionLabel = indexLabels[sec.id] || `0${secIdx + 1} BO'LIM`;
 
             // Badge Display
             let countBadgeHtml = '';
@@ -3514,6 +3681,8 @@ class MathQuizApp {
                 countBadgeHtml = `<span class="section-count-badge" style="background:#059669; color:#fff;">✅ 100% Yechilgan</span>`;
             } else if (hasOngoing) {
                 countBadgeHtml = `<span class="section-count-badge" style="background:#2563eb; color:#fff;">▶️ Savol ${session.currentIndex + 1}/${session.queueIds.length}</span>`;
+            } else if (isQiyin) {
+                countBadgeHtml = `<span class="section-count-badge" style="background:rgba(239, 68, 68, 0.2); color:#fca5a5; border:1px solid rgba(239, 68, 68, 0.4);">🔥 Qiyin Daraja (45)</span>`;
             } else {
                 countBadgeHtml = `<span class="section-count-badge">${solvedCount}/${totalCount} yechilgan</span>`;
             }
@@ -3538,6 +3707,15 @@ class MathQuizApp {
                         <span>🔄</span>
                     </button>
                 `;
+            } else if (isQiyin) {
+                actionBtnsHtml = `
+                    <button class="btn btn-secondary" style="flex:1; border-color:rgba(239, 68, 68, 0.4); color:#f87171; background:rgba(239, 68, 68, 0.08);" onclick="mathApp.startSectionExam('${sec.id}')">
+                        <span>⏱ 150 Daq. Imtihon</span>
+                    </button>
+                    <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
+                        <span>🎯 Mashq Rejimi</span>
+                    </button>
+                `;
             } else {
                 actionBtnsHtml = `
                     <button class="btn btn-primary" style="flex:1;" onclick="mathApp.startSectionPractice('${sec.id}')">
@@ -3557,8 +3735,11 @@ class MathQuizApp {
                 </div>
             ` : '';
 
+            const cardClass = isQiyin ? 'section-card qiyin-card' : 'section-card';
+            const extraTag = isQiyin ? `<div style="font-size:0.75rem; color:#f87171; font-weight:700; margin-bottom:6px; font-family:'JetBrains Mono', monospace;">🎖️ MILLIY SERTIFIKAT STANDARTI • 150 DAQ</div>` : '';
+
             return `
-                <div class="section-card" onclick="mathApp.startSectionPractice('${sec.id}')">
+                <div class="${cardClass}" onclick="mathApp.startSectionPractice('${sec.id}')">
                     ${adminBtns}
                     <div class="section-card-top">
                         <div class="section-icon-badge" style="border-color: ${sec.color || '#3b82f6'}; color: ${sec.color || '#3b82f6'};">
@@ -3570,12 +3751,13 @@ class MathQuizApp {
                         </div>
                     </div>
 
+                    ${extraTag}
                     <h3 class="section-title">${sec.title}</h3>
                     <p class="section-desc">${sec.description || "Matematika bo'yicha interaktiv testlar"}</p>
 
                     <!-- Mini Progress Bar -->
                     <div style="background:var(--border); border-radius:10px; height:6px; overflow:hidden; margin: 10px 0 12px;">
-                        <div style="background: ${isAllCompleted ? '#10b981' : '#3b82f6'}; width:${percent}%; height:100%; transition: width 0.3s ease;"></div>
+                        <div style="background: ${isAllCompleted ? '#10b981' : (isQiyin ? '#ef4444' : '#3b82f6')}; width:${percent}%; height:100%; transition: width 0.3s ease;"></div>
                     </div>
 
                     <div class="section-meta-row">

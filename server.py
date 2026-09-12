@@ -931,6 +931,7 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "description": str(section_data.get('description', '')).strip(),
                     "icon": str(section_data.get('icon', '📐')).strip() or '📐',
                     "color": str(section_data.get('color', '#3b82f6')).strip() or '#3b82f6',
+                    "category_tier": str(section_data.get('category_tier', 'oson')).strip() or 'oson',
                     "order": int(section_data.get('order', len(data["quiz_sections"]) + 1)),
                     "created_at": datetime.now().isoformat()
                 }
@@ -954,6 +955,8 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                             sec['icon'] = str(section_data['icon']).strip()
                         if 'color' in section_data:
                             sec['color'] = str(section_data['color']).strip()
+                        if 'category_tier' in section_data:
+                            sec['category_tier'] = str(section_data['category_tier']).strip()
                         if 'order' in section_data:
                             sec['order'] = int(section_data['order'])
                         sec['updated_at'] = datetime.now().isoformat()
