@@ -2131,7 +2131,7 @@
                     <span>🎯</span> <span>Quizlar</span>
                 </button>
                 <button class="nav-tab-btn" id="tabBtnLeaderboard" onclick="mathApp.switchTab('leaderboard')">
-                    <span>🏆</span> <span>Reyting</span>
+                    <span>🏆</span> <span>Reyting</span> <span style="font-size: 0.68rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; padding: 1px 5px; border-radius: 4px; margin-left: 2px; font-weight: 700;">Yopiq</span>
                 </button>
                 <button class="nav-tab-btn" id="tabBtnFormulas" onclick="mathApp.openFormulasModal()">
                     <span>📖</span> <span>Formulalar</span>
@@ -2196,7 +2196,7 @@
                             <span>📖 Formulalar 2.0</span>
                         </button>
                         <button class="btn btn-secondary" onclick="mathApp.switchTab('leaderboard')">
-                            <span>🏆 Jonli Reyting</span>
+                            <span>🏆 Reyting (Vaqtincha yopiq)</span>
                         </button>
                         <button class="btn btn-success" id="btnHeroAddSection" style="display:none;" onclick="mathApp.openSectionModal()">
                             <span>➕ Bo'lim Yaratish</span>
@@ -2275,57 +2275,72 @@
 
         <!-- VIEW 3: GLOBAL LEADERBOARD & RATING (Raqobat Tizimi) -->
         <div id="viewLeaderboard" class="app-view">
-            <div class="section-header-bar">
-                <div>
-                    <div class="view-heading">
-                        <span>🏆</span> <span>Jonli Matematika Reytingi</span>
+            <!-- Closed Notice Card -->
+            <div class="card" style="text-align: center; padding: 60px 24px; max-width: 600px; margin: 40px auto; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                <div style="font-size: 3.8rem; margin-bottom: 16px;">⏳</div>
+                <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; color: var(--text-primary);">Bu bo'lim vaqtinchalik yopildi</h2>
+                <p style="color: var(--text-secondary); font-size: 1.02rem; line-height: 1.6; margin-bottom: 26px;">
+                    Reyting tizimida texnik yangilanish ishlari olib borilmoqda. Tez orada yangilangan holda qayta ishga tushiriladi!
+                </p>
+                <button class="btn btn-primary" onclick="mathApp.switchTab('quizzes')" style="margin: 0 auto; padding: 12px 28px; font-size: 1rem; border-radius: 12px;">
+                    <span>🎯 Quizlar bo'limiga o'tish</span>
+                </button>
+            </div>
+
+            <!-- Leaderboard Content (Vaqtinchalik yashirilgan) -->
+            <div id="leaderboardActiveContent" style="display: none;">
+                <div class="section-header-bar">
+                    <div>
+                        <div class="view-heading">
+                            <span>🏆</span> <span>Jonli Matematika Reytingi</span>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">
+                            Real vaqt rejimida yangilanuvchi eng kuchli bilimdonlar shoxsupasi
+                        </p>
                     </div>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">
-                        Real vaqt rejimida yangilanuvchi eng kuchli bilimdonlar shoxsupasi
-                    </p>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary" onclick="mathApp.openProfileModal()">
+                            <span>👤 Mening Profilim</span>
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="mathApp.fetchLeaderboard(true)">
+                            <span>🔄 Yangilash</span>
+                        </button>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-sm btn-primary" onclick="mathApp.openProfileModal()">
-                        <span>👤 Mening Profilim</span>
-                    </button>
-                    <button class="btn btn-sm btn-secondary" onclick="mathApp.fetchLeaderboard(true)">
-                        <span>🔄 Yangilash</span>
-                    </button>
+
+                <!-- Current User Rank Bar -->
+                <div id="myRankBar" class="my-rank-banner" style="display:none;">
+                    <!-- Injected via JS -->
                 </div>
-            </div>
 
-            <!-- Current User Rank Bar -->
-            <div id="myRankBar" class="my-rank-banner" style="display:none;">
-                <!-- Injected via JS -->
-            </div>
+                <!-- Top 3 Podium Cards -->
+                <div class="podium-grid" id="leaderboardPodium">
+                    <!-- Injected via JS -->
+                </div>
 
-            <!-- Top 3 Podium Cards -->
-            <div class="podium-grid" id="leaderboardPodium">
-                <!-- Injected via JS -->
-            </div>
-
-            <!-- Full Leaderboard Table -->
-            <div class="data-table-wrap" style="margin-top: 20px;">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 70px;">O'rin</th>
-                            <th>Ishtirokchi</th>
-                            <th style="text-align: right;">Ball</th>
-                            <th style="text-align: center;">To'g'ri / Jami</th>
-                            <th style="text-align: center;">Aniqlik</th>
-                            <th style="text-align: center;">Maks. Streak</th>
-                            <th>Daraja</th>
-                        </tr>
-                    </thead>
-                    <tbody id="leaderboardTableBody">
-                        <tr>
-                            <td colspan="7" style="text-align:center; padding: 24px; color: var(--text-muted);">
-                                Reyting ma'lumotlari yuklanmoqda...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Full Leaderboard Table -->
+                <div class="data-table-wrap" style="margin-top: 20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">O'rin</th>
+                                <th>Ishtirokchi</th>
+                                <th style="text-align: right;">Ball</th>
+                                <th style="text-align: center;">To'g'ri / Jami</th>
+                                <th style="text-align: center;">Aniqlik</th>
+                                <th style="text-align: center;">Maks. Streak</th>
+                                <th>Daraja</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardTableBody">
+                            <tr>
+                                <td colspan="7" style="text-align:center; padding: 24px; color: var(--text-muted);">
+                                    Reyting ma'lumotlari yuklanmoqda...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 

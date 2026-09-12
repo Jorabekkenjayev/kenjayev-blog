@@ -519,43 +519,19 @@ class BotEngine:
         self.handle_user_message_to_admin(user, message)
 
     def handle_leaderboard_command(self, user, chat_id):
-        user_id = user["telegram_id"]
-        top_users = bot_db.get_leaderboard_top(limit=10)
-        user_rank = bot_db.get_user_leaderboard_rank(f"tg_{user_id}")
-
-        text = "🏆 <b>Matematika Quiz — Jonli Reyting (Top 10)</b>\n\n"
-        if not top_users:
-            text += "<i>Hozircha reytingda ishtirokchilar mavjud emas. Birinchi bo'lib test yeching va 1-o'rinni egallang!</i>\n\n"
-        else:
-            for u in top_users:
-                uname = f" (@{html.escape(u['username'])})" if u.get('username') else ""
-                name = html.escape(u.get('name', 'Ishtirokchi'))
-                pts = u.get('points', 0)
-                acc = u.get('accuracy', 0)
-                streak = u.get('best_streak', 0)
-                badge = u.get('badge', '🎯')
-                text += f"{badge} <b>{u['rank']}. {name}</b>{uname}\n"
-                text += f"   └ 🎯 <b>{pts} ball</b> | {acc}% aniqlik | 🔥 {streak} streak\n\n"
-
-        if user_rank and user_rank.get('total_solved', 0) > 0:
-            text += f"━━━━━━━━━━━━━━━━━━━━\n"
-            text += f"📊 <b>Sizning o'rningiz:</b> #{user_rank['rank']} ({user_rank['points']} ball | {user_rank['accuracy']}%)\n"
-        else:
-            text += f"━━━━━━━━━━━━━━━━━━━━\n"
-            text += f"💡 <i>Siz hali quiz yechmadingiz. Pastdagi tugma orqali boshlang!</i>\n"
-
+        text = (
+            "⏳ <b>Bu bo'lim vaqtinchalik yopildi</b>\n\n"
+            "Reyting tizimida texnik qayta hisoblash va yangilanish ishlari olib borilmoqda. "
+            "Tez orada yangilangan holda qayta ishga tushiriladi!\n\n"
+            "Ungacha siz saytda testlarni yechib, bilimlaringizni oshirib turishingiz mumkin. "
+            "Savollar va yangi Milliy Sertifikat bo'limi 100% faol!"
+        )
         kb = {
             "inline_keyboard": [
                 [
                     {
-                        "text": "🚀 Quizni boshlash va Ball yig'ish",
+                        "text": "🚀 Saytga kirish va Testlarni yechish",
                         "web_app": {"url": WEB_APP_URL}
-                    }
-                ],
-                [
-                    {
-                        "text": "📊 To'liq Reyting Jadvali",
-                        "web_app": {"url": f"{WEB_APP_URL}#leaderboard"}
                     }
                 ]
             ]

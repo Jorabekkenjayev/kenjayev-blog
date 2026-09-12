@@ -71,6 +71,11 @@ class TestKenjayevTelegramBot(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.mkdtemp()
         self.db_path = os.path.join(self.temp_dir, "test_bot.db")
+        self.orig_data_json = bot_db.DATA_JSON_FILE
+        self.test_data_json = os.path.join(self.temp_dir, "test_data.json")
+        with open(self.test_data_json, 'w') as f:
+            json.dump({}, f)
+        bot_db.DATA_JSON_FILE = self.test_data_json
         bot_db.init_db(self.db_path)
         bot_db.DB_FILE = self.db_path
 
@@ -84,6 +89,7 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         bot._rate_limits.clear()
 
     def tearDown(self):
+        bot_db.DATA_JSON_FILE = self.orig_data_json
         self.bot_engine._running = False
         shutil.rmtree(self.temp_dir, ignore_errors=True)
 
@@ -373,9 +379,7 @@ class TestKenjayevTelegramBot(unittest.TestCase):
             }
         })
         msg = self.mock_client.sent_messages[-1]
-        self.assertIn("Matematika Quiz — Jonli Reyting", msg["text"])
-        self.assertIn("Shoxrux Bek", msg["text"])
-        self.assertIn("350 ball", msg["text"])
+        self.assertIn("vaqtinchalik yopildi", msg["text"])
 
         # 4. User requests /stat
         self.bot_engine.handle_update({
