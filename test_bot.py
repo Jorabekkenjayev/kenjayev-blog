@@ -134,14 +134,29 @@ class TestKenjayevTelegramBot(unittest.TestCase):
 
         welcome_msg = [m for m in self.mock_client.sent_messages if m["chat_id"] == chat_id and "Kenjayev Jo’rabek botiga xush kelibsiz" in m["text"]][0]
         buttons = welcome_msg["reply_markup"]["inline_keyboard"]
-        self.assertEqual(len(buttons), 2)
-        self.assertEqual(buttons[0][0]["text"], "🌐 Saytga kirish")
-        self.assertEqual(buttons[1][0]["text"], "💬 Jo’rabekka yozish")
-        self.assertEqual(buttons[1][0]["callback_data"], "write_to_admin")
+        self.assertEqual(len(buttons), 3)
+        self.assertEqual(buttons[0][0]["text"], "📝 1. TESTNI TEKSHIRISH")
+        self.assertEqual(buttons[0][0]["callback_data"], "check_test")
+        self.assertEqual(buttons[1][0]["text"], "🎯 2. QUIZ TESTGA KIRISH")
+        self.assertEqual(buttons[2][0]["text"], "💬 3. Jo’rabekka yozish")
+        self.assertEqual(buttons[2][0]["callback_data"], "write_to_admin")
 
-        # 3. User clicks "💬 Jo’rabekka yozish"
+        # 3. User clicks "📝 1. TESTNI TEKSHIRISH"
         self.bot_engine.handle_update({
             "update_id": 3,
+            "callback_query": {
+                "id": "cq_check",
+                "from": {"id": user_id},
+                "data": "check_test",
+                "message": {"chat": {"id": chat_id}, "message_id": welcome_msg["message_id"]}
+            }
+        })
+        check_msg = self.mock_client.sent_messages[-1]
+        self.assertIn("TESTNI TEKSHIRISH BO'LIMI", check_msg["text"])
+
+        # 4. User clicks "💬 3. Jo’rabekka yozish"
+        self.bot_engine.handle_update({
+            "update_id": 4,
             "callback_query": {
                 "id": "cq_write",
                 "from": {"id": user_id},

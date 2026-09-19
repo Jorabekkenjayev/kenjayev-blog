@@ -209,18 +209,24 @@ def check_rate_limit(user_id):
 
 # --- UI BUILDERS ---
 def get_main_menu_keyboard():
-    """Generates the 2 core buttons: Mini App and Write to Admin."""
+    """Generates the 3 buttons: Testni tekshirish, Quiz testga kirish, and Write to Admin."""
     return {
         "inline_keyboard": [
             [
                 {
-                    "text": "🌐 Saytga kirish",
+                    "text": "📝 1. TESTNI TEKSHIRISH",
+                    "callback_data": "check_test"
+                }
+            ],
+            [
+                {
+                    "text": "🎯 2. QUIZ TESTGA KIRISH",
                     "web_app": {"url": WEB_APP_URL}
                 }
             ],
             [
                 {
-                    "text": "💬 Jo’rabekka yozish",
+                    "text": "💬 3. Jo’rabekka yozish",
                     "callback_data": "write_to_admin"
                 }
             ]
@@ -389,7 +395,17 @@ class BotEngine:
                 bot_db.resolve_pending_verification(group_id, user_id)
                 return
 
-        # 3. Jo'rabekka yozish button handler
+        # 3. Testni tekshirish button handler
+        if data == "check_test":
+            self.client.answer_callback_query(cq_id)
+            info_text = (
+                "📝 <b>TESTNI TEKSHIRISH BO'LIMI</b>\n\n"
+                "Ushbu bo'lim tez orada ishga tushadi."
+            )
+            self.client.send_message(chat_id, info_text)
+            return
+
+        # 4. Jo'rabekka yozish button handler
         if data == "write_to_admin":
             bot_db.set_user_state(user_id, "WRITING_TO_ADMIN")
             self.client.answer_callback_query(cq_id)
