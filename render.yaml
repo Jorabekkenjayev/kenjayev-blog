@@ -6,9 +6,12 @@ services:
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn server:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 60
+    healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
+      - key: WEB_APP_URL
+        value: "https://kenjayev-blog.onrender.com"
       - key: ADMIN_LOGIN
         value: "+998919705191"
       - key: ADMIN_PASSWORD
@@ -25,5 +28,7 @@ services:
         sync: false
       - key: ADMIN_CHAT_ID
         sync: false
-      - key: WEB_APP_URL
-        sync: false
+      - key: MAIN_BOT_USERNAME
+        value: "KenjayevJorabekBot"
+      - key: GUARD_BOT_USERNAME
+        value: "Botlarni_tekshiruvchi_Bot"

@@ -448,7 +448,11 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "app": "Kenjayev BLOG",
                 "version": data.get("version", 1),
                 "posts": len(data.get("posts", [])),
+                "quiz_sections": len(data.get("quiz_sections", [])),
+                "quizzes": len(data.get("quizzes", [])),
                 "db_connected": bool(DATABASE_URL),
+                "web_app_url": os.environ.get("WEB_APP_URL", "").strip(),
+                "bots_enabled": bool(os.environ.get("BOT_TOKEN", "").strip() or os.environ.get("GUARD_BOT_TOKEN", "").strip()),
                 "timestamp": datetime.now().isoformat()
             })
             return
@@ -1216,12 +1220,22 @@ class ThreadedHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         # 9. Telegram Bot Webhook Endpoint (/api/telegram-webhook)
         elif path == '/api/telegram-webhook':
             try:
+                secret = os.environ.get('TELEGRAM_WEBHOOK_SECRET', '').strip()
+                if secret:
+                    provided = self.headers.get('X-Telegram-Bot-Api-Secret-Token', '')
+                    if not hmac_compare_internal(secret.encode('utf-8'), str(provided).encode('utf-8')):
+                        self.send_json(403, {"error": "Webhook token xato"})
+                        return
+
                 body = self.read_json_body()
                 if body:
                     import bot
-                    bot_engine = bot.BotEngine()
-                    # Process asynchronously in thread to immediately return 200 OK to Telegram
-                    threading.Thread(target=bot_engine.handle_update, args=(body,), daemon=True).start()
+                    # Bitta umumiy engine ishlatiladi — har so'rovda yangi thread ochilmaydi
+                    threading.Thread(
+                        target=bot.get_shared_engine().handle_update,
+                        args=(body,),
+                        daemon=True
+                    ).start()
                 self.send_json(200, {"ok": True})
             except Exception as e:
                 print(f"⚠️ [TELEGRAM WEBHOOK ERROR]: {e}")
