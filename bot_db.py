@@ -19,6 +19,9 @@ def get_connection(db_path=None):
         conn.execute("PRAGMA journal_mode=WAL;")
         conn.execute("PRAGMA synchronous=NORMAL;")
         conn.execute("PRAGMA foreign_keys=ON;")
+        # Containers (Render) may not allow SQLite to create on-disk temp files for
+        # sorting; without this an ORDER BY query fails with "disk I/O error".
+        conn.execute("PRAGMA temp_store=MEMORY;")
     except Exception:
         pass
     return conn
@@ -192,8 +195,9 @@ def sync_leaderboard_to_json(conn):
         return
     try:
         cur = conn.cursor()
-        cur.execute("SELECT * FROM quiz_leaderboard ORDER BY points DESC, correct_count DESC")
+        cur.execute("SELECT * FROM quiz_leaderboard")
         all_lb = [dict(r) for r in cur.fetchall()]
+        all_lb.sort(key=_leaderboard_sort_key)
         cur.execute("SELECT * FROM quiz_user_progress")
         all_prog = [dict(r) for r in cur.fetchall()]
 
@@ -579,57 +583,79 @@ def update_leaderboard_score(user_id, name, username=None, points_earned=0, is_c
         finally:
             conn.close()
 
-def get_leaderboard_top(limit=50, db_path=None):
-    conn = get_connection(db_path)
+def _leaderboard_sort_key(row):
+    pts = int(row.get('points', 0) or 0)
+    cor = int(row.get('correct_count', 0) or 0)
+    tot = max(1, int(row.get('total_solved', 0) or 0))
+    return (-pts, -cor, -(cor / tot), str(row.get('last_active', '') or ''))
+
+def _leaderboard_from_json():
     try:
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active
-            FROM quiz_leaderboard
-            WHERE total_solved > 0
-            ORDER BY points DESC, correct_count DESC, (CAST(correct_count AS FLOAT) / MAX(total_solved, 1)) DESC, last_active ASC
-            LIMIT ?
-        """, (limit,))
-        rows = [dict(r) for r in cur.fetchall()]
-        
-        # Calculate dynamic ranks and badges
-        result = []
-        for idx, row in enumerate(rows):
-            rank = idx + 1
-            tot = max(1, row.get('total_solved', 0))
-            cor = row.get('correct_count', 0)
-            acc = round((cor / tot) * 100)
-            pts = row.get('points', 0)
+        with open(DATA_JSON_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"[LeaderboardJSON] Error: {e}")
+        return []
+    return [u for u in data.get('quiz_leaderboard', []) if int(u.get('total_solved', 0) or 0) > 0]
 
-            # Badges and Titles
-            if rank == 1:
-                badge = "🥇"
-                title = "Oltin Peshqadam"
-            elif rank == 2:
-                badge = "🥈"
-                title = "Kumush Peshqadam"
-            elif rank == 3:
-                badge = "🥉"
-                title = "Bronza Peshqadam"
-            elif rank <= 10:
-                badge = "🎖"
-                title = "Grossmeyster"
-            elif pts >= 100:
-                badge = "⭐"
-                title = "Usta"
-            else:
-                badge = "🎯"
-                title = "Ishtirokchi"
+def get_leaderboard_top(limit=50, db_path=None):
+    # Sorted in Python: SQLite's ORDER BY needs a temp file, which fails on container
+    # filesystems and took the whole rating section down with "disk I/O error".
+    rows = []
+    try:
+        conn = get_connection(db_path)
+        try:
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT user_id, name, username, points, correct_count, total_solved, best_streak, current_streak, last_active
+                FROM quiz_leaderboard
+                WHERE total_solved > 0
+            """)
+            rows = [dict(r) for r in cur.fetchall()]
+        finally:
+            conn.close()
+    except Exception as e:
+        print(f"[LeaderboardTop] SQLite read failed, using data.json: {e}")
+        rows = _leaderboard_from_json()
 
-            row['rank'] = rank
-            row['accuracy'] = acc
-            row['badge'] = badge
-            row['title'] = title
-            result.append(row)
+    rows.sort(key=_leaderboard_sort_key)
 
-        return result
-    finally:
-        conn.close()
+    # Calculate dynamic ranks and badges
+    result = []
+    for idx, row in enumerate(rows[:limit]):
+        rank = idx + 1
+        tot = max(1, row.get('total_solved', 0))
+        cor = row.get('correct_count', 0)
+        acc = round((cor / tot) * 100)
+        pts = row.get('points', 0)
+
+        # Badges and Titles
+        if rank == 1:
+            badge = "🥇"
+            title = "Oltin Peshqadam"
+        elif rank == 2:
+            badge = "🥈"
+            title = "Kumush Peshqadam"
+        elif rank == 3:
+            badge = "🥉"
+            title = "Bronza Peshqadam"
+        elif rank <= 10:
+            badge = "🎖"
+            title = "Grossmeyster"
+        elif pts >= 100:
+            badge = "⭐"
+            title = "Usta"
+        else:
+            badge = "🎯"
+            title = "Ishtirokchi"
+
+        row['rank'] = rank
+        row['accuracy'] = acc
+        row['badge'] = badge
+        row['title'] = title
+        result.append(row)
+
+    return result
 
 def get_user_leaderboard_rank(user_id, db_path=None):
     if not user_id:

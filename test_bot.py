@@ -698,6 +698,35 @@ class TestKenjayevTelegramBot(unittest.TestCase):
         self.assertIn("350 ball", stat_msg["text"])
         self.assertIn("100%", stat_msg["text"])
 
+    def test_leaderboard_sorted_without_sql_sorter(self):
+        bot_db.update_leaderboard_score("tg_low", "Low Player", "low", 100, True, 2)
+        bot_db.update_leaderboard_score("tg_mid", "Mid Player", "mid", 400, True, 5)
+        bot_db.update_leaderboard_score("tg_high", "High Player", "high", 900, False, 0)
+
+        top = bot_db.get_leaderboard_top()
+        self.assertEqual([u["user_id"] for u in top], ["tg_high", "tg_mid", "tg_low"])
+        self.assertEqual([u["rank"] for u in top], [1, 2, 3])
+        self.assertEqual(top[0]["badge"], "🥇")
+        self.assertEqual(len(bot_db.get_leaderboard_top(limit=2)), 2)
+
+    def test_leaderboard_falls_back_to_data_json_when_sqlite_broken(self):
+        with open(self.test_data_json, 'w', encoding='utf-8') as f:
+            json.dump({"quiz_leaderboard": [
+                {"user_id": "tg_one", "name": "One Two", "username": "one", "points": 70, "correct_count": 3, "total_solved": 4},
+                {"user_id": "tg_zero", "name": "Zero Solved", "username": "zero", "points": 999, "correct_count": 9, "total_solved": 0},
+                {"user_id": "tg_two", "name": "Two Three", "username": "two", "points": 120, "correct_count": 5, "total_solved": 5},
+            ]}, f)
+
+        orig_db_file = bot_db.DB_FILE
+        bot_db.DB_FILE = os.path.join(self.temp_dir, "no_such_dir", "broken.db")
+        try:
+            top = bot_db.get_leaderboard_top()
+        finally:
+            bot_db.DB_FILE = orig_db_file
+
+        self.assertEqual([u["user_id"] for u in top], ["tg_two", "tg_one"])
+        self.assertEqual(top[0]["rank"], 1)
+
     def test_math_cleaning(self):
         self.assertEqual(bot.clean_math("$2x + 7 = 19$ tenglamani yeching."), "2x + 7 = 19 tenglamani yeching.")
         self.assertIn("⇒", bot.clean_math("$2x = 12$ \\implies $x = 6$"))
